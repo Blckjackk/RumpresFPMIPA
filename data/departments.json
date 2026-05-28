@@ -1,0 +1,74 @@
+[
+  {
+    "id": "psdt",
+    "name": "PSDT",
+    "fullName": "Departemen Pengembangan Sumber Daya Taruna",
+    "kadepName": "Fathur Rahman",
+    "kadepPhoto": "https://api.dicebear.com/7.x/avataaars/svg?seed=Fathur",
+    "color": "#3B82F6",
+    "message": "Selamat bergabung di PSDT! Di sini kita akan belajar bersama untuk mengenali potensi terbaik diri kita, membangun karakter tangguh, dan menjadi motor penggerak bagi kemajuan rekan-rekan di FPMIPA. Mari tumbuh bersama!"
+  },
+  {
+    "id": "seni",
+    "name": "Seni",
+    "fullName": "Departemen Seni dan Budaya",
+    "kadepName": "Nadia Salsabila",
+    "kadepPhoto": "https://api.dicebear.com/7.x/avataaars/svg?seed=Nadia",
+    "color": "#EC4899",
+    "message": "Halo Sobat Seni! Pintu kreativitas kini terbuka lebar untukmu. Di departemen ini, imajinasi dan ekspresimu adalah warna yang akan memperindah Rumah Prestasi. Mari ciptakan karya-karya hebat bersama!"
+  },
+  {
+    "id": "medinfo",
+    "name": "Medinfo",
+    "fullName": "Departemen Media dan Informasi",
+    "kadepName": "Rian Adi Wijaya",
+    "kadepPhoto": "https://api.dicebear.com/7.x/avataaars/svg?seed=Rian",
+    "color": "#06B6D4",
+    "message": "Selamat datang di Medinfo! Kamu adalah mata dan suara bagi Rumah Prestasi. Bersama-sama, kita akan mengemas setiap informasi dan prestasi menjadi konten kreatif yang menginspirasi semua orang."
+  },
+  {
+    "id": "riset",
+    "name": "Riset",
+    "fullName": "Departemen Riset dan Inovasi",
+    "kadepName": "Ahmad Dani",
+    "kadepPhoto": "https://api.dicebear.com/7.x/avataaars/svg?seed=Dani",
+    "color": "#10B981",
+    "message": "Selamat bergabung di Riset! Di sinilah ide-ide analitis dan rasa ingin tahu bertransformasi menjadi solusi nyata. Mari bereksplorasi, meneliti, dan membawa inovasi baru demi kemajuan bersama!"
+  },
+  {
+    "id": "literasi",
+    "name": "Literasi",
+    "fullName": "Departemen Literasi dan Keilmuan",
+    "kadepName": "Siti Nurhaliza",
+    "kadepPhoto": "https://api.dicebear.com/7.x/avataaars/svg?seed=Siti",
+    "color": "#8B5CF6",
+    "message": "Selamat datang di Literasi! Buku adalah jendela dunia, dan keilmuan adalah fondasi masa depan. Bersama, mari kita budayakan gemar membaca, berdiskusi kritis, dan menyebarkan kebermanfaatan ilmu."
+  },
+  {
+    "id": "teknologi",
+    "name": "Teknologi",
+    "fullName": "Departemen Komunikasi dan Teknologi",
+    "kadepName": "Farhan Maulana",
+    "kadepPhoto": "https://api.dicebear.com/7.x/avataaars/svg?seed=Farhan",
+    "color": "#1E40AF",
+    "message": "Selamat datang di Teknologi! Di era digital ini, kitalah arsitek perubahan. Mari kita bangun sistem yang andal, solutif, dan bantu memajukan digitalisasi seluruh program Rumah Prestasi!"
+  },
+  {
+    "id": "sertifikasi",
+    "name": "Sertifikasi",
+    "fullName": "Departemen Sertifikasi dan Kompetensi",
+    "kadepName": "Zahra Annisa",
+    "kadepPhoto": "https://api.dicebear.com/7.x/avataaars/svg?seed=Zahra",
+    "color": "#F59E0B",
+    "message": "Selamat bergabung di Sertifikasi! Peningkatan keahlian dan pengakuan kompetensi adalah fokus utama kita. Mari persiapkan bekal terbaik untuk karir dan masa depan profesional yang cemerlang!"
+  },
+  {
+    "id": "kewirausahaan",
+    "name": "Kewirausahaan",
+    "fullName": "Departemen Kewirausahaan dan Ekobis",
+    "kadepName": "Rafi Pratama",
+    "kadepPhoto": "https://api.dicebear.com/7.x/avataaars/svg?seed=Rafi",
+    "color": "#10B981",
+    "message": "Halo Wirausahawan Muda! Di Kewirausahaan, kita tidak hanya belajar bisnis, tapi juga membangun mental kemandirian ekonomi. Mari kita kembangkan unit usaha kreatif dan kolaborasi finansial yang mandiri!"
+  }
+]

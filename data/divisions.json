@@ -1,0 +1,50 @@
+[
+  {
+    "id": "divadsospol",
+    "name": "Divadsospol",
+    "fullName": "Divisi Advokasi Sosial Politik",
+    "image": "/divisions/divadsospol.svg"
+  },
+  {
+    "id": "divdiklat",
+    "name": "Divdiklat",
+    "fullName": "Divisi Pendidikan dan Pelatihan",
+    "image": "/divisions/divdiklat.svg"
+  },
+  {
+    "id": "divroh",
+    "name": "Divroh",
+    "fullName": "Divisi Kerohanian",
+    "image": "/divisions/divroh.svg"
+  },
+  {
+    "id": "divkomtekinfo",
+    "name": "Divkomtekinfo",
+    "fullName": "Divisi Komunikasi Teknologi Informasi",
+    "image": "/divisions/divkomtekinfo.svg"
+  },
+  {
+    "id": "dpmb",
+    "name": "DPMB",
+    "fullName": "Departemen Pengembangan Minat dan Bakat",
+    "image": "/divisions/dpmb.svg"
+  },
+  {
+    "id": "dpo",
+    "name": "DPO",
+    "fullName": "Departemen Pengabdian dan Olahraga",
+    "image": "/divisions/dpo.svg"
+  },
+  {
+    "id": "divekobis",
+    "name": "Divekobis",
+    "fullName": "Divisi Ekonomi dan Bisnis",
+    "image": "/divisions/divekobis.svg"
+  },
+  {
+    "id": "nondivisi",
+    "name": "Nondivisi",
+    "fullName": "Staff Non-Divisi",
+    "image": "/divisions/nondivisi.svg"
+  }
+]
