@@ -110,6 +110,7 @@ export default function Home() {
 
   // Responsive state helper
   const [windowWidth, setWindowWidth] = useState(1200);
+  const [isTouch, setIsTouch] = useState(false);
 
   // Unboxing & Celebration Scene States
   const [scene, setScene] = useState<"login" | "intro" | "envelope" | "letters" | "celebration">("login");
@@ -130,10 +131,11 @@ export default function Home() {
   const nameRef = useRef<HTMLParagraphElement>(null);
   const headingUnderlineRef = useRef<HTMLHeadingElement>(null);
 
-  // Window Resize Listener
+  // Window Resize & Client detection (prevents hydration mismatch)
   useEffect(() => {
     if (typeof window !== "undefined") {
       setWindowWidth(window.innerWidth);
+      setIsTouch(getIsTouch());
       const handleResize = () => setWindowWidth(window.innerWidth);
       window.addEventListener("resize", handleResize);
       return () => window.removeEventListener("resize", handleResize);
@@ -189,12 +191,12 @@ export default function Home() {
           particles.push({
             x: originX * width,
             y: originY * height,
-            size: Math.random() * 8 + 5,
+            size: Math.random() * 5 + 3, // Smaller, more elegant particles
             color: colors[Math.floor(Math.random() * colors.length)],
-            speedY: -(Math.random() * 6 + 3),
-            speedX: (Math.random() - 0.5) * 8,
+            speedY: -(Math.random() * 5 + 3),
+            speedX: (Math.random() - 0.5) * 6,
             rotation: Math.random() * 360,
-            rotationSpeed: Math.random() * 6 - 3,
+            rotationSpeed: Math.random() * 4 - 2,
             shape: shapes[Math.floor(Math.random() * shapes.length)],
           });
         }
@@ -202,26 +204,10 @@ export default function Home() {
     };
 
     const particles: Particle[] = [];
-    // Burst 1: from left
-    createBurst(0.15, 0.6, 80, 0);
-    // Burst 2: from right
-    createBurst(0.85, 0.6, 80, 200);
-    // Burst 3: from top center
-    createBurst(0.5, 0.2, 120, 400);
-    // Continuous rain
-    for (let i = 0; i < 80; i++) {
-      particles.push({
-        x: Math.random() * width,
-        y: Math.random() * -height - 20,
-        size: Math.random() * 8 + 5,
-        color: colors[Math.floor(Math.random() * colors.length)],
-        speedY: Math.random() * 3 + 1.5,
-        speedX: Math.random() * 2 - 1,
-        rotation: Math.random() * 360,
-        rotationSpeed: Math.random() * 4 - 2,
-        shape: shapes[Math.floor(Math.random() * shapes.length)],
-      });
-    }
+    // Elegant, smaller burst waves
+    createBurst(0.15, 0.6, 40, 0);   // left
+    createBurst(0.85, 0.6, 40, 200); // right
+    createBurst(0.5, 0.25, 50, 400); // top center
 
     const gravity = 0.12;
 
@@ -238,6 +224,12 @@ export default function Home() {
 
     const update = () => {
       ctx.clearRect(0, 0, width, height);
+      
+      // Filter out particles that fell off the screen (no infinite recycling loop)
+      const activeParticles = particles.filter(p => p.y <= height + 20);
+      particles.length = 0;
+      particles.push(...activeParticles);
+
       particles.forEach(p => {
         p.speedY += gravity;
         p.y += p.speedY;
@@ -258,13 +250,6 @@ export default function Home() {
           ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
         }
         ctx.restore();
-
-        if (p.y > height + 20) {
-          p.y = -20;
-          p.x = Math.random() * width;
-          p.speedY = Math.random() * 3 + 1.5;
-          p.speedX = Math.random() * 2 - 1;
-        }
       });
       animationId = requestAnimationFrame(update);
     };
@@ -765,7 +750,7 @@ export default function Home() {
      RENDER
      ====================================================== */
   return (
-    <div ref={containerRef} className="relative min-h-screen flex flex-col bg-rp-hero overflow-x-hidden cursor-none sm:cursor-none" style={{ cursor: getIsTouch() ? 'auto' : undefined }}>
+    <div ref={containerRef} className="relative min-h-screen flex flex-col bg-rp-hero overflow-x-hidden cursor-none sm:cursor-none" style={{ cursor: isTouch ? 'auto' : undefined }}>
 
       {/* ── Grain texture overlay ── */}
       <div className="grain-overlay" />
