@@ -826,7 +826,7 @@ export default function Home() {
                 onClick={scrollToPortal} 
                 className="btn-light text-[11px] font-bold px-4 py-1.5 rounded-full shadow-sm hover:scale-105 transition-all duration-200"
               >
-                Cek NIM 🔎
+                Cek NIM
               </button>
             ) : (
               <button onClick={handleLogout} className="btn-light text-xs px-3.5 py-1.5 rounded-lg font-sans">
@@ -848,7 +848,7 @@ export default function Home() {
             <div className="text-center max-w-3xl mb-12 flex flex-col items-center">
               <div className="hero-el badge-gold mb-5 mx-auto animate-pulse flex items-center gap-1.5">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#D4A828]" />
-                SELEKSI KABINET TUMBUHASA 2026
+                RUMAH PRESTASI
               </div>
 
               <h1 className="hero-el flow-hero-title mb-5">
@@ -861,6 +861,7 @@ export default function Home() {
 
               <p className="hero-el text-xs sm:text-[14px] text-[#4A7BA5] max-w-xl mx-auto leading-relaxed mb-8">
                 Platform resmi penerimaan anggota baru Rumah Prestasi FPMIPA UPI 2026. Buka lembaran perjuanganmu, ukir prestasi terbaik, dan tumbuh bersama keluarga juara.
+                <span className="block mt-2 font-bold text-[#B8A88A] text-sm">#JuaranyaFPMIPA</span>
               </p>
 
               <button 
@@ -869,7 +870,7 @@ export default function Home() {
                 onMouseLeave={handleMagneticLeave}
                 className="hero-el flow-pill-btn px-7 py-3 text-xs sm:text-sm shadow-md cursor-pointer"
               >
-                Cek Hasil Seleksi Anda <span className="text-[#B8A88A]">→</span>
+                Cek Hasil Seleksi Anda
               </button>
             </div>
 
@@ -976,7 +977,9 @@ export default function Home() {
                 
                 {/* Gold wax seal at top center */}
                 <div className="absolute top-[-16px] left-1/2 -translate-x-1/2 w-12 h-12 bg-gradient-to-br from-[#ECA628] to-[#B26C08] rounded-full border-2 border-[#F3C46B] shadow-md flex items-center justify-center z-10 animate-floatGentle">
-                  <span className="text-[14px]">🏆</span>
+                  <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+                  </svg>
                 </div>
 
                 <div className="text-center space-y-3 mb-6 pt-5">
@@ -1028,7 +1031,7 @@ export default function Home() {
                         <span className="animate-pulse">Validasi Data...</span>
                       </span>
                     ) : (
-                      "Buka Amplop Pengumuman ✉️"
+                      "Buka Amplop Pengumuman"
                     )}
                   </button>
                 </form>
@@ -1062,7 +1065,7 @@ export default function Home() {
             {scene === "envelope" && (
               <div className="w-full max-w-[400px] text-center space-y-6 flex flex-col items-center">
                 <div className="space-y-2">
-                  <div className="badge-rp mx-auto">TUMBUHASA 2026</div>
+                  <div className="badge-rp mx-auto">RUMAH PRESTASI</div>
                   <h2 className="text-xl font-bold text-[#0D2B4E] font-serif">Amplop Hasil Seleksi</h2>
                   <p className="text-xs text-[#4A7BA5] leading-relaxed">Klik amplop segel di bawah ini untuk membuka pesan kelulusan Anda</p>
                 </div>
@@ -1101,7 +1104,7 @@ export default function Home() {
                 </div>
 
                 <p className="text-[10px] font-bold text-[#8AACCC] tracking-wider uppercase animate-bounce mt-4">
-                  👇 TAP AMPLOP UNTUK MEMBUKA 👇
+                  TAP AMPLOP UNTUK MEMBUKA
                 </p>
               </div>
             )}
@@ -1165,7 +1168,7 @@ export default function Home() {
                                 <p className="text-sm font-bold text-[#C36B62] border-y border-dashed border-[#B8A88A] py-2 my-1 tracking-wide font-sans text-center bg-[#EDF6FC]/30 rounded-lg gradient-text">
                                   ✦ {applicant.nama} ✦
                                 </p>
-                                <p>dinyatakan <strong className="text-[#5B6B54] font-black">LOLOS SELEKSI</strong> dan diterima sebagai anggota baru Rumah Prestasi Kabinet TumbuhAsa 2026!</p>
+                                <p>dinyatakan <strong className="text-[#5B6B54] font-black">LOLOS SELEKSI</strong> dan diterima sebagai anggota baru Rumah Prestasi 2026!</p>
                               </div>
                             </div>
 
@@ -1223,8 +1226,10 @@ export default function Home() {
                             <div className="sf-paperclip" />
                             
                             {/* Stitched Star top right */}
-                            <div className="absolute top-6 right-8 sf-stitched-star transform rotate-12 shadow-sm animate-pulse bg-amber-500 border-amber-300">
-                              <span className="text-white text-[10px] font-bold">👑</span>
+                            <div className="absolute top-6 right-8 sf-stitched-star transform rotate-12 shadow-sm animate-pulse bg-amber-500 border-amber-300 flex items-center justify-center">
+                              <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+                              </svg>
                             </div>
 
                             <div className="space-y-5 text-left">
@@ -1268,7 +1273,7 @@ export default function Home() {
                               <div className="space-y-1 pb-3 border-b border-[#B8A88A]/30 mt-2">
                                 <span className="sf-card-line text-[9px] font-bold text-[#B8A88A] tracking-widest uppercase block">MEMO RESMI</span>
                                 <h3 className="sf-card-line text-lg font-black text-[#5B6B54] font-serif flex items-center gap-1.5">
-                                  📌 Langkah Selanjutnya
+                                  Langkah Selanjutnya
                                 </h3>
                               </div>
 
@@ -1296,7 +1301,7 @@ export default function Home() {
                                 onMouseLeave={handleMagneticLeave}
                                 className="w-full btn-rp py-3.5 rounded-xl text-sm bg-gradient-to-r from-[#5B6B54] to-[#8B7E66] border border-[#B8A88A]/20 shimmer-gold cursor-pointer"
                               >
-                                Rayakan Kelulusanmu! 🎉
+                                Rayakan Kelulusanmu!
                               </button>
                             </div>
                           </div>
@@ -1341,16 +1346,15 @@ export default function Home() {
                 
                 {/* Overlay canvas */}
                 <canvas ref={canvasRef} className="pointer-events-none fixed inset-0 z-50 w-full h-full" />
-
-                <div className="badge-rp bg-[#C36B62]/10 text-[#C36B62] border-[#C36B62]/20 mx-auto font-sans">
+                            <div className="badge-rp bg-[#C36B62]/10 text-[#C36B62] border-[#C36B62]/20 mx-auto font-sans">
                   Selamat Bergabung!
                 </div>
                 
                 {/* Sparkle container */}
                 <div ref={sparkleContainerRef} className="absolute inset-0 overflow-hidden pointer-events-none" />
 
-                <h1 className="text-4xl sm:text-5xl font-black tracking-tight leading-none font-serif gradient-text">
-                  WELCOME. 🎉
+                <h1 className="text-4xl sm:text-5xl font-black tracking-tight leading-none font-serif welcome-title">
+                  WELCOME
                 </h1>
                 
                 <p ref={nameRef} className="text-xs sm:text-sm text-[#5C5549] font-medium max-w-xs mx-auto leading-relaxed font-serif">
@@ -1360,7 +1364,8 @@ export default function Home() {
                       <span key={i} className="name-char inline-block opacity-0">{ch === " " ? "\u00A0" : ch}</span>
                     ))}
                   </strong> <br/>
-                  Rumah Prestasi 2026
+                  Rumah Prestasi 2026 <br/>
+                  <span className="text-[11px] font-extrabold text-[#5B6B54] tracking-wider block mt-2 font-sans">#JuaranyaFPMIPA</span>
                 </p>
 
                 {/* Final data receipt with Sarah Ferguson Stitches */}
@@ -1402,7 +1407,7 @@ export default function Home() {
                     onMouseLeave={handleMagneticLeave}
                     className="btn-light py-2.5 text-[11px] w-full cursor-pointer"
                   >
-                    Lihat Ulang Surat ✉️
+                    Lihat Ulang Surat
                   </button>
                 </div>
               </div>
@@ -1434,8 +1439,8 @@ export default function Home() {
               </a>
             ))}
           </div>
-          <div className="text-center space-y-0.5 font-sans">
-            <p className="text-[11px] text-[#4A7BA5]">© 2026 Rumah Prestasi FPMIPA UPI — Kabinet TumbuhAsa</p>
+          <div className="text-center space-y-0.5 font-sans mt-4">
+            <p className="text-[11px] text-[#4A7BA5]">© 2026 Rumah Prestasi FPMIPA UPI</p>
             <p className="text-[10px] text-[#8AACCC]">Universitas Pendidikan Indonesia · Bandung</p>
           </div>
         </div>
