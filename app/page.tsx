@@ -36,7 +36,53 @@ interface DepartmentData {
 }
 
 /* ======================================================
-   PAGE
+   LANDING CONSTANTS
+   ====================================================== */
+const LANDING_DEPARTMENTS = [
+  {
+    title: "Medinfo & Teknologi",
+    tagline: "Wadah Kreatif & Media Digital",
+    desc: "Mengasah kemampuan di bidang multimedia, publikasi visual, desain grafis, jurnalistik, serta pengembangan platform web inovatif untuk kabinet.",
+    icon: "/divisions/medinfo.svg",
+    color: "#C36B62", // Terracotta
+    badge: "DIGITAL & CREATIVE",
+    feltAppleColor: "#C36B62",
+    rotation: "-3deg"
+  },
+  {
+    title: "Pengembangan SDM (PSDM)",
+    tagline: "Kaderisasi & Pelatihan Kepemimpinan",
+    desc: "Fokus pada pemberdayaan potensi pengurus, mengelola sistem kaderisasi berkelanjutan, menyelenggarakan pelatihan kepemimpinan, dan membangun keakraban.",
+    icon: "/divisions/psdm.svg",
+    color: "#5B6B54", // Sage green
+    badge: "LEADERSHIP & TALENT",
+    feltAppleColor: "#5B6B54",
+    rotation: "2deg"
+  },
+  {
+    title: "Litbang & Riset Keilmuan",
+    tagline: "Inkubasi Prestasi & Kajian Akademis",
+    desc: "Mendorong atmosfer riset ilmiah, inkubasi kompetisi nasional mahasiswa, penulisan kajian, serta menyelenggarakan diskusi akademis yang mendalam.",
+    icon: "/divisions/litbang.svg",
+    color: "#B8A88A", // Sandy gold
+    badge: "RESEARCH & STRATEGY",
+    feltAppleColor: "#B8A88A",
+    rotation: "-4deg"
+  },
+  {
+    title: "Kewirausahaan (Kewirus)",
+    tagline: "Kemandirian Finansial & Creative Hub",
+    desc: "Mengembangkan jiwa entrepreneurship bagi pengurus dan mahasiswa melalui pengelolaan unit bisnis kreatif, penjualan merchandise, dan pendanaan mandiri.",
+    icon: "/divisions/kewirus.svg",
+    color: "#D4A828", // Trophy gold
+    badge: "BUSINESS & FINTECH",
+    feltAppleColor: "#D4A828",
+    rotation: "3deg"
+  }
+];
+
+/* ======================================================
+   PAGE COMPONENT
    ====================================================== */
 export default function Home() {
   const [nim, setNim] = useState("");
@@ -51,9 +97,287 @@ export default function Home() {
   const [departmentsList, setDepartmentsList] = useState<DepartmentData[]>([]);
   const [dataReady, setDataReady] = useState(false);
 
+  // Responsive state helper
+  const [windowWidth, setWindowWidth] = useState(1200);
+
+  // Unboxing & Celebration Scene States
+  const [scene, setScene] = useState<"login" | "intro" | "envelope" | "letters" | "celebration">("login");
+  const [activeLetter, setActiveLetter] = useState(0);
+  const [envelopeOpen, setEnvelopeOpen] = useState(false);
+  
+  // Landing Carousel Active Card
+  const [activeLandingCard, setActiveLandingCard] = useState(0);
+
   const inputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const resultRef = useRef<HTMLDivElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  // Window Resize Listener
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setWindowWidth(window.innerWidth);
+      const handleResize = () => setWindowWidth(window.innerWidth);
+      window.addEventListener("resize", handleResize);
+      return () => window.removeEventListener("resize", handleResize);
+    }
+  }, []);
+
+  // 1. Intro Transition Timer
+  useEffect(() => {
+    if (scene !== "intro") return;
+    const timer = setTimeout(() => {
+      setScene("envelope");
+    }, 2400);
+    return () => clearTimeout(timer);
+  }, [scene]);
+
+  // 2. Confetti Particle Loop for Celebration Scene
+  useEffect(() => {
+    if (scene !== "celebration" || !canvasRef.current) return;
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    let width = (canvas.width = window.innerWidth);
+    let height = (canvas.height = window.innerHeight);
+    let animationId: number;
+
+    const handleResize = () => {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    };
+    window.addEventListener("resize", handleResize);
+
+    interface Particle {
+      x: number;
+      y: number;
+      size: number;
+      color: string;
+      speedY: number;
+      speedX: number;
+      rotation: number;
+      rotationSpeed: number;
+    }
+
+    const colors = ["#C36B62", "#D4A828", "#5B6B54", "#B8A88A", "#1B5E9E"];
+    const particles: Particle[] = Array.from({ length: 180 }, () => ({
+      x: Math.random() * width,
+      y: Math.random() * -height - 20,
+      size: Math.random() * 8 + 6,
+      color: colors[Math.floor(Math.random() * colors.length)],
+      speedY: Math.random() * 3 + 2,
+      speedX: Math.random() * 2 - 1,
+      rotation: Math.random() * 360,
+      rotationSpeed: Math.random() * 4 - 2,
+    }));
+
+    const update = () => {
+      ctx.clearRect(0, 0, width, height);
+      particles.forEach(p => {
+        p.y += p.speedY;
+        p.x += p.speedX;
+        p.rotation += p.rotationSpeed;
+
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.rotate((p.rotation * Math.PI) / 180);
+        ctx.fillStyle = p.color;
+        ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+        ctx.restore();
+
+        if (p.y > height) {
+          p.y = -20;
+          p.x = Math.random() * width;
+        }
+      });
+      animationId = requestAnimationFrame(update);
+    };
+
+    update();
+
+    return () => {
+      cancelAnimationFrame(animationId);
+      window.removeEventListener("resize", handleResize);
+    };
+  }, [scene]);
+
+  // 3. Stagger-in text & flip animations for Stitched Paper Cards
+  useEffect(() => {
+    if (scene !== "letters") return;
+    
+    // Slide & slight rotation for the card
+    gsap.fromTo(".sf-card", {
+      opacity: 0,
+      y: 50,
+      rotate: activeLetter % 2 === 0 ? -1 : 1
+    }, {
+      opacity: 1,
+      y: 0,
+      rotate: activeLetter % 2 === 0 ? -1.5 : 1.5,
+      duration: 0.6,
+      ease: "power2.out"
+    });
+
+    // Stagger each line of text
+    gsap.fromTo(".sf-card-line", {
+      opacity: 0,
+      y: 15
+    }, {
+      opacity: 1,
+      y: 0,
+      stagger: 0.1,
+      duration: 0.45,
+      ease: "power2.out",
+      delay: 0.15
+    });
+  }, [activeLetter, scene]);
+
+  // 4. Envelope Opening Sequence
+  const handleOpenEnvelope = () => {
+    if (envelopeOpen) return;
+    setEnvelopeOpen(true);
+    
+    const tl = gsap.timeline({
+      onComplete: () => {
+        setTimeout(() => {
+          setScene("letters");
+        }, 600);
+      }
+    });
+
+    // Flip flap open
+    tl.to(".envelope-flap", {
+      rotateX: 180,
+      duration: 0.6,
+      ease: "power2.inOut"
+    });
+
+    // Seal fade out
+    tl.to(".envelope-wax-seal", {
+      scale: 0.8,
+      opacity: 0,
+      duration: 0.3
+    }, "-=0.3");
+
+    // Paper preview slide out
+    tl.to(".envelope-paper-preview", {
+      y: -60,
+      duration: 0.45,
+      ease: "back.out(1.5)"
+    });
+
+    // Shrink envelope wrapper
+    tl.to(".envelope-wrapper", {
+      scale: 0.9,
+      opacity: 0,
+      duration: 0.4
+    });
+  };
+
+  // 3D perspective layout style calculations for Results cards (Scenic Envelope)
+  const getCardStyle = (index: number) => {
+    const diff = index - activeLetter;
+    const isMobile = windowWidth < 640;
+    const offset = isMobile ? 120 : 230; // Compressed spacing on mobile viewports
+    const farOffset = isMobile ? 200 : 360;
+    
+    if (diff === 0) {
+      return {
+        transform: "translateX(0) translateZ(80px) rotateY(0deg) scale(1.02)",
+        zIndex: 50,
+        opacity: 1,
+        pointerEvents: "auto" as const
+      };
+    } else if (diff === -1) {
+      return {
+        transform: `translateX(-${offset}px) translateZ(0px) rotateY(25deg) scale(${isMobile ? 0.75 : 0.85}) rotate(-3deg)`,
+        zIndex: 30,
+        opacity: isMobile ? 0.45 : 0.65,
+        pointerEvents: "auto" as const
+      };
+    } else if (diff === 1) {
+      return {
+        transform: `translateX(${offset}px) translateZ(0px) rotateY(-25deg) scale(${isMobile ? 0.75 : 0.85}) rotate(3deg)`,
+        zIndex: 30,
+        opacity: isMobile ? 0.45 : 0.65,
+        pointerEvents: "auto" as const
+      };
+    } else if (diff === -2) {
+      return {
+        transform: `translateX(-${farOffset}px) translateZ(-40px) rotateY(40deg) scale(${isMobile ? 0.6 : 0.7}) rotate(-6deg)`,
+        zIndex: 10,
+        opacity: isMobile ? 0 : 0.2,
+        pointerEvents: "none" as const
+      };
+    } else if (diff === 2) {
+      return {
+        transform: `translateX(${farOffset}px) translateZ(-40px) rotateY(-40deg) scale(${isMobile ? 0.6 : 0.7}) rotate(6deg)`,
+        zIndex: 10,
+        opacity: isMobile ? 0 : 0.2,
+        pointerEvents: "none" as const
+      };
+    } else {
+      return {
+        transform: `translateX(${diff > 0 ? farOffset + 100 : -farOffset - 100}px) translateZ(-80px) rotateY(0deg) scale(0.5)`,
+        zIndex: 0,
+        opacity: 0,
+        pointerEvents: "none" as const
+      };
+    }
+  };
+
+  // 3D perspective layout style calculations for Landing Page Departments Carousel
+  const getLandingCardStyle = (index: number) => {
+    const diff = index - activeLandingCard;
+    const isMobile = windowWidth < 640;
+    const offset = isMobile ? 115 : 210;
+    const farOffset = isMobile ? 180 : 330;
+    
+    if (diff === 0) {
+      return {
+        transform: "translateX(0) translateZ(80px) rotateY(0deg) scale(1.02)",
+        zIndex: 50,
+        opacity: 1,
+        pointerEvents: "auto" as const
+      };
+    } else if (diff === -1) {
+      return {
+        transform: `translateX(-${offset}px) translateZ(0px) rotateY(25deg) scale(${isMobile ? 0.75 : 0.85}) rotate(-3deg)`,
+        zIndex: 30,
+        opacity: isMobile ? 0.5 : 0.7,
+        pointerEvents: "auto" as const
+      };
+    } else if (diff === 1) {
+      return {
+        transform: `translateX(${offset}px) translateZ(0px) rotateY(-25deg) scale(${isMobile ? 0.75 : 0.85}) rotate(3deg)`,
+        zIndex: 30,
+        opacity: isMobile ? 0.5 : 0.7,
+        pointerEvents: "auto" as const
+      };
+    } else if (diff === -2) {
+      return {
+        transform: `translateX(-${farOffset}px) translateZ(-40px) rotateY(40deg) scale(${isMobile ? 0.6 : 0.7}) rotate(-6deg)`,
+        zIndex: 10,
+        opacity: isMobile ? 0 : 0.25,
+        pointerEvents: "none" as const
+      };
+    } else if (diff === 2) {
+      return {
+        transform: `translateX(${farOffset}px) translateZ(-40px) rotateY(-40deg) scale(${isMobile ? 0.6 : 0.7}) rotate(6deg)`,
+        zIndex: 10,
+        opacity: isMobile ? 0 : 0.25,
+        pointerEvents: "none" as const
+      };
+    } else {
+      return {
+        transform: `translateX(${diff > 0 ? farOffset + 100 : -farOffset - 100}px) translateZ(-80px) rotateY(0deg) scale(0.5)`,
+        zIndex: 0,
+        opacity: 0,
+        pointerEvents: "none" as const
+      };
+    }
+  };
 
   /* ---- Load data ---- */
   useEffect(() => {
@@ -79,20 +403,20 @@ export default function Home() {
     load();
   }, []);
 
-  /* ---- GSAP: Login animations ---- */
+  /* ---- GSAP: Landing animations ---- */
   useEffect(() => {
     if (!containerRef.current || applicant) return;
     const ctx = gsap.context(() => {
-      gsap.fromTo(".nav-bar", { y: -40, opacity: 0 }, {
-        y: 0, opacity: 1, duration: 0.7, ease: "power2.out", delay: 0.1,
+      gsap.fromTo(".nav-bar", { y: -45, opacity: 0 }, {
+        y: 0, opacity: 1, duration: 0.8, ease: "power3.out", delay: 0.1,
       });
-      gsap.fromTo(".hero-el", { y: 30, opacity: 0 }, {
-        y: 0, opacity: 1, duration: 0.65, stagger: 0.1, ease: "power2.out", delay: 0.25,
+      gsap.fromTo(".hero-el", { y: 40, opacity: 0 }, {
+        y: 0, opacity: 1, duration: 0.75, stagger: 0.12, ease: "power2.out", delay: 0.2,
       });
-      // Floating cloud shapes
-      gsap.to(".cloud-a", { y: -10, x: 5, duration: 5, ease: "sine.inOut", yoyo: true, repeat: -1 });
-      gsap.to(".cloud-b", { y: 8, x: -6, duration: 6, ease: "sine.inOut", yoyo: true, repeat: -1, delay: -2 });
-      gsap.to(".cloud-c", { y: -6, x: 4, duration: 7, ease: "sine.inOut", yoyo: true, repeat: -1, delay: -3 });
+      // Floating ambient shapes
+      gsap.to(".cloud-a", { y: -12, x: 6, duration: 6, ease: "sine.inOut", yoyo: true, repeat: -1 });
+      gsap.to(".cloud-b", { y: 10, x: -7, duration: 7, ease: "sine.inOut", yoyo: true, repeat: -1, delay: -2 });
+      gsap.to(".cloud-c", { y: -8, x: 5, duration: 8, ease: "sine.inOut", yoyo: true, repeat: -1, delay: -4 });
     }, containerRef);
     return () => ctx.revert();
   }, [applicant, dataReady]);
@@ -113,6 +437,11 @@ export default function Home() {
     }, resultRef);
     return () => ctx.revert();
   }, [applicant]);
+
+  /* ---- Scroll to NIM Portal ---- */
+  const scrollToPortal = () => {
+    document.getElementById("check-portal")?.scrollIntoView({ behavior: "smooth" });
+  };
 
   /* ---- NIM submit ---- */
   const handleSubmit = (e: React.FormEvent) => {
@@ -140,6 +469,7 @@ export default function Home() {
       setApplicant(found);
       setPersonalMessage(foundMsg?.message ?? "");
       setDeptInfo(foundDept ?? null);
+      setScene("intro");
       setIsLoading(false);
     }, 800);
   };
@@ -147,6 +477,7 @@ export default function Home() {
   const handleLogout = () => {
     setApplicant(null); setDeptInfo(null); setPersonalMessage("");
     setNim(""); setNotFound(false); setError("");
+    setScene("login"); setActiveLetter(0); setEnvelopeOpen(false);
   };
 
   /* ======================================================
@@ -155,13 +486,12 @@ export default function Home() {
   return (
     <div ref={containerRef} className="relative min-h-screen flex flex-col bg-rp-hero overflow-x-hidden">
 
-      {/* ── Decorative clouds ── */}
+      {/* ── Background decoration / Ambient clouds ── */}
       <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
-        <div className="cloud-a absolute -top-20 -left-20 w-[350px] h-[350px] rounded-full bg-white/40 blur-[80px]" />
-        <div className="cloud-b absolute top-[30%] -right-10 w-[300px] h-[300px] rounded-full bg-[#A8D8F0]/30 blur-[90px]" />
-        <div className="cloud-c absolute -bottom-10 left-[30%] w-[400px] h-[400px] rounded-full bg-[#C4E2F5]/25 blur-[100px]" />
-        {/* Subtle brand glow at top */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] rounded-full bg-[#5CB3E8]/10 blur-[120px]" />
+        <div className="cloud-a absolute -top-20 -left-20 w-[400px] h-[400px] rounded-full bg-white/40 blur-[90px]" />
+        <div className="cloud-b absolute top-[25%] -right-10 w-[350px] h-[350px] rounded-full bg-[#A8D8F0]/25 blur-[100px]" />
+        <div className="cloud-c absolute -bottom-10 left-[25%] w-[450px] h-[450px] rounded-full bg-[#C4E2F5]/20 blur-[110px]" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[450px] rounded-full bg-[#5CB3E8]/8 blur-[130px]" />
       </div>
 
       {/* ── Navbar ── */}
@@ -174,20 +504,38 @@ export default function Home() {
               className="w-9 h-9 object-contain shrink-0 filter drop-shadow-sm"
             />
             <div className="flex flex-col leading-tight">
-              <span className="text-[13px] font-bold text-[#0D2B4E] tracking-[-0.01em]">
+              <span className="text-[13px] font-bold text-[#0D2B4E] tracking-[-0.01em] font-sans">
                 Rumah Prestasi
               </span>
-              <span className="text-[10px] text-[#4A7BA5] tracking-wide">
+              <span className="text-[10px] text-[#4A7BA5] tracking-wide font-sans">
                 FPMIPA UPI · Open Recruitment 2026
               </span>
             </div>
           </div>
+
+          {/* Desktop/Tablet Middle Navigation Links (Flowblox inspired) */}
+          <nav className="hidden md:flex items-center gap-6">
+            {["Tentang", "Departemen", "Galeri", "Hubungi"].map((link) => (
+              <span 
+                key={link}
+                onClick={applicant ? undefined : scrollToPortal}
+                className="text-[12px] font-semibold text-[#4A7BA5] hover:text-[#0D2B4E] transition-colors duration-200 cursor-pointer"
+              >
+                {link}
+              </span>
+            ))}
+          </nav>
+
           <div className="flex items-center gap-2.5">
-            <span className="hidden sm:inline-flex badge-rp">
-              #FPMIPAJUARA
-            </span>
-            {applicant && (
-              <button onClick={handleLogout} className="btn-light text-xs px-3.5 py-1.5 rounded-lg">
+            {!applicant ? (
+              <button 
+                onClick={scrollToPortal} 
+                className="btn-light text-[11px] font-bold px-4 py-1.5 rounded-full shadow-sm hover:scale-105 transition-all duration-200"
+              >
+                Cek NIM 🔎
+              </button>
+            ) : (
+              <button onClick={handleLogout} className="btn-light text-xs px-3.5 py-1.5 rounded-lg font-sans">
                 Keluar
               </button>
             )}
@@ -196,306 +544,639 @@ export default function Home() {
       </header>
 
       {/* ── Main ── */}
-      <main className="relative z-10 flex-1 flex flex-col justify-center items-center px-4 py-16 w-full max-w-5xl mx-auto">
+      <main className="relative z-10 flex-1 flex flex-col justify-center items-center w-full max-w-5xl mx-auto px-4 py-8">
 
         {!applicant ? (
-          /* ========== LOGIN VIEW ========== */
-          <div className="w-full max-w-[400px]">
-            {/* Hero text */}
-            <div className="text-center mb-8">
-              <div className="hero-el badge-gold mb-5 mx-auto">
+          /* ========== LANDING PAGE VIEW (Flowblox Styled) ========== */
+          <div className="w-full flex flex-col items-center py-6 sm:py-10">
+            
+            {/* Hero Section */}
+            <div className="text-center max-w-3xl mb-12 flex flex-col items-center">
+              <div className="hero-el badge-gold mb-5 mx-auto animate-pulse flex items-center gap-1.5">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#D4A828]" />
-                Pengumuman Resmi
+                SELEKSI KABINET TUMBUHASA 2026
               </div>
 
-              <h1 className="hero-el text-[1.85rem] sm:text-[2.25rem] font-extrabold text-[#0D2B4E] leading-[1.15] mb-3">
-                Cek Hasil Seleksi{" "}
-                <br className="hidden sm:block" />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#1B5E9E] to-[#5CB3E8]">
-                  Open Recruitment
+              <h1 className="hero-el flow-hero-title mb-5">
+                Tumbuh Bersama, <br className="sm:hidden" />
+                Raih Prestasi di <br />
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#5B6B54] via-[#C36B62] to-[#B8A88A]">
+                  Rumah Prestasi
                 </span>
               </h1>
 
-              <p className="hero-el text-[14px] text-[#4A7BA5] max-w-xs mx-auto leading-relaxed">
-                Masukkan NIM kamu untuk melihat pengumuman hasil seleksi Rumah Prestasi 2026
+              <p className="hero-el text-xs sm:text-[14px] text-[#4A7BA5] max-w-xl mx-auto leading-relaxed mb-8">
+                Platform resmi penerimaan anggota baru Rumah Prestasi FPMIPA UPI 2026. Buka lembaran perjuanganmu, ukir prestasi terbaik, dan tumbuh bersama keluarga juara.
               </p>
+
+              <button 
+                onClick={scrollToPortal}
+                className="hero-el flow-pill-btn px-7 py-3 text-xs sm:text-sm shadow-md cursor-pointer"
+              >
+                Cek Hasil Seleksi Anda <span className="text-[#B8A88A]">→</span>
+              </button>
             </div>
 
-            {/* Card */}
-            <div className="hero-el card-white accent-line-blue overflow-hidden p-7">
-              <form onSubmit={handleSubmit} className="space-y-5">
-                <div>
-                  <label htmlFor="nim-input" className="block text-[11px] font-semibold text-[#4A7BA5] tracking-wide uppercase mb-2">
-                    Nomor Induk Mahasiswa
-                  </label>
-                  <input
-                    ref={inputRef}
-                    id="nim-input"
-                    type="text"
-                    autoComplete="off"
-                    placeholder="cth: 2401001"
-                    value={nim}
-                    maxLength={10}
-                    onChange={(e) => { setNim(e.target.value); setError(""); setNotFound(false); }}
-                    className={`w-full rounded-xl px-4 py-3 bg-[#EDF6FC] border ${
-                      error || notFound ? "border-red-400 focus:border-red-500" : "border-[#C2DFF0] focus:border-[#3A8FD6]"
-                    } text-[#0D2B4E] font-medium text-center tracking-[0.15em] placeholder:text-[#A8C8E0] placeholder:tracking-normal placeholder:text-sm outline-none transition-all duration-200 focus-ring`}
-                  />
-                  {error && (
-                    <p className="text-xs text-red-500 mt-2 text-center">{error}</p>
-                  )}
-                  {notFound && (
-                    <p className="text-xs text-red-500 mt-2 text-center leading-relaxed">
-                      NIM tidak terdaftar. <span className="text-[#4A7BA5]">Pastikan NIM sudah benar.</span>
+            {/* 3D curved department cards perspective carousel (Flowblox style team arc) */}
+            <div className="hero-el w-full flex flex-col items-center gap-6 py-6 overflow-visible mb-16">
+              <div className="text-center space-y-1">
+                <span className="text-[10px] font-bold text-[#B8A88A] tracking-widest uppercase block">KABINET STRUKTUR</span>
+                <h2 className="text-xl sm:text-2xl font-serif font-bold text-[#0D2B4E]">Eksplorasi Departemen Kami</h2>
+              </div>
+
+              {/* 3D Curved deck container */}
+              <div className="relative w-full h-[320px] sm:h-[350px] flex items-center justify-center perspective-[1200px] overflow-visible mt-4 mb-2">
+                {LANDING_DEPARTMENTS.map((dept, idx) => {
+                  const cardStyle = getLandingCardStyle(idx);
+                  return (
+                    <div
+                      key={idx}
+                      style={cardStyle}
+                      onClick={() => setActiveLandingCard(idx)}
+                      className="absolute w-[240px] sm:w-[270px] h-[280px] sm:h-[310px] transition-all duration-700 ease-out-back cursor-pointer select-none origin-center"
+                    >
+                      {/* Department card element with Sarah Ferguson stitched details */}
+                      <div className="sf-card w-full h-full p-6 sm:p-7 flex flex-col justify-between border border-[#8B7E66]/40 shadow-md relative bg-linen-ivory">
+                        <div className="sf-stitched-border" />
+                        <div className="sf-paperclip" style={{ right: "32px" }} />
+                        
+                        {/* Custom decorative felt apple inside the landing cards */}
+                        <div 
+                          style={{ backgroundColor: dept.color }}
+                          className="absolute top-5 right-5 w-8 h-8 rounded-full border border-dashed border-white flex items-center justify-center shadow-sm animate-floatGentle"
+                        >
+                          <div className="w-4 h-4 bg-[#FCFAF2] rounded-full border border-dashed border-[#8B7E66]/30" />
+                          <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-0.5 h-2 bg-[#8B7E66] rounded-sm" />
+                        </div>
+
+                        <div className="text-left space-y-3 pt-2">
+                          <span 
+                            style={{ color: dept.color, borderColor: `${dept.color}25`, backgroundColor: `${dept.color}08` }}
+                            className="inline-block text-[8px] font-bold tracking-wider px-2 py-0.5 rounded border uppercase"
+                          >
+                            {dept.badge}
+                          </span>
+                          <h3 className="text-[16px] sm:text-[18px] font-black text-[#5B6B54] font-serif tracking-tight leading-tight">
+                            {dept.title}
+                          </h3>
+                        </div>
+
+                        <div className="text-left">
+                          <p className="text-[10px] text-[#4A7BA5] italic font-medium leading-relaxed">
+                            "{dept.tagline}"
+                          </p>
+                          <div className="w-12 h-0.5 bg-[#B8A88A]/30 mt-2.5" />
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Detail drawer representing active card info */}
+              <div className="w-full max-w-[500px] text-center px-4 py-2 mt-2">
+                <p className="text-xs text-[#5C5549] leading-relaxed italic bg-white/45 backdrop-blur-sm rounded-xl px-5 py-4 border border-[#C2DFF0]/30 shadow-sm font-sans">
+                  {LANDING_DEPARTMENTS[activeLandingCard].desc}
+                </p>
+              </div>
+
+              {/* Navigation dots and arrows */}
+              <div className="flex items-center gap-4">
+                <button 
+                  disabled={activeLandingCard === 0}
+                  onClick={() => setActiveLandingCard(prev => prev - 1)}
+                  className="btn-light text-[10px] px-3 py-1 rounded-full disabled:opacity-30 cursor-pointer"
+                >
+                  ←
+                </button>
+                <div className="flex gap-1.5">
+                  {LANDING_DEPARTMENTS.map((_, dot) => (
+                    <span 
+                      key={dot}
+                      onClick={() => setActiveLandingCard(dot)}
+                      className={`dot w-1.5 h-1.5 rounded-full cursor-pointer transition-all duration-300 ${activeLandingCard === dot ? "bg-[#5B6B54] w-3" : "bg-[#B8A88A]/40"}`}
+                    />
+                  ))}
+                </div>
+                <button 
+                  disabled={activeLandingCard === 3}
+                  onClick={() => setActiveLandingCard(prev => prev + 1)}
+                  className="btn-light text-[10px] px-3 py-1 rounded-full disabled:opacity-30 cursor-pointer"
+                >
+                  →
+                </button>
+              </div>
+            </div>
+
+            {/* "Everything You Need" Feature Grid Section */}
+            <div className="hero-el w-full space-y-6 mb-16">
+              <div className="text-center space-y-1">
+                <span className="text-[10px] font-bold text-[#B8A88A] tracking-widest uppercase block">NILAI UTAMA</span>
+                <h2 className="text-xl sm:text-2xl font-serif font-bold text-[#0D2B4E]">Segala Potensi untuk Tumbuh Bersama</h2>
+              </div>
+
+              {/* Pastel Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full">
+                
+                {/* Block 1 (Large 2-column card, soft sage green theme) */}
+                <div className="flow-feature-card md:col-span-2 p-7 sm:p-8 bg-[#F4F6F2] flex flex-col justify-between min-h-[220px]">
+                  <div className="sf-stitched-border" />
+                  
+                  {/* Decorative felt star */}
+                  <div className="absolute top-6 right-6 sf-stitched-star scale-75 transform rotate-6 animate-pulse">
+                    <span className="text-white text-[8px] font-bold">✩</span>
+                  </div>
+
+                  <div className="text-left space-y-2.5 max-w-md">
+                    <span className="inline-block text-[9px] font-bold tracking-widest text-[#5B6B54] uppercase bg-[#5B6B54]/8 px-2 py-0.5 rounded">KOLABORASI AKTIF</span>
+                    <h3 className="text-lg sm:text-xl font-serif font-bold text-[#0D2B4E]">Sinergi Terbuka & Produktif</h3>
+                    <p className="text-xs text-[#5C5549] leading-relaxed">
+                      Membangun harmoni lintas keilmuan dan departemen. Kami membiasakan ekosistem kerja yang supportif, ramah, dan adaptif untuk melahirkan karya nyata terbaik.
                     </p>
-                  )}
+                  </div>
+                  <div className="text-left text-[9px] font-bold text-[#5B6B54] tracking-wider uppercase font-serif mt-4">
+                    — KELUARGA BESAR RUMAH PRESTASI
+                  </div>
                 </div>
 
-                <button
-                  type="submit"
-                  disabled={isLoading || !dataReady}
-                  className="btn-rp w-full py-3.5 text-sm disabled:opacity-40 disabled:cursor-not-allowed"
-                >
-                  {isLoading ? (
-                    <span className="flex items-center justify-center gap-2">
-                      <span className="spin inline-block w-4 h-4 rounded-full border-2 border-white/30 border-t-white" />
-                      Memvalidasi...
-                    </span>
-                  ) : (
-                    "Cek Hasil Seleksi"
-                  )}
-                </button>
-              </form>
+                {/* Block 2 (Small square card, warm sand background) */}
+                <div className="flow-feature-card p-7 bg-[#FCFAF2] flex flex-col justify-between min-h-[220px]">
+                  <div className="sf-stitched-border" />
+                  <div className="sf-paperclip" style={{ right: "28px" }} />
+                  
+                  <div className="text-left space-y-2">
+                    <span className="inline-block text-[9px] font-bold tracking-widest text-[#B8A88A] uppercase bg-[#B8A88A]/8 px-2 py-0.5 rounded">MENTORING</span>
+                    <h3 className="text-base sm:text-lg font-serif font-bold text-[#0D2B4E]">Inkubasi Juara</h3>
+                    <p className="text-[11px] text-[#5C5549] leading-relaxed">
+                      Pendampingan kompetitif intensif serta sharing session langsung bersama alumni berprestasi tingkat nasional.
+                    </p>
+                  </div>
+                  <div className="text-left text-[9px] font-bold text-[#B8A88A] tracking-wider uppercase mt-4">
+                    ✦ PRESTASI MAHASISWA
+                  </div>
+                </div>
+
+                {/* Block 3 (Small square card, warm cream sand background) */}
+                <div className="flow-feature-card p-7 bg-[#FAF5EB] flex flex-col justify-between min-h-[220px]">
+                  <div className="sf-stitched-border" />
+                  <div className="sf-paperclip" style={{ right: "28px", transform: "rotate(-5deg)" }} />
+
+                  <div className="text-left space-y-2">
+                    <span className="inline-block text-[9px] font-bold tracking-widest text-[#D4A828] uppercase bg-[#D4A828]/8 px-2 py-0.5 rounded">CONNECTIONS</span>
+                    <h3 className="text-base sm:text-lg font-serif font-bold text-[#0D2B4E]">Jejaring Luas</h3>
+                    <p className="text-[11px] text-[#5C5549] leading-relaxed">
+                      Hubungkan dirimu dengan jejaring pengurus hebat lintas angkatan, lembaga internal kampus, dan mitra instansi strategis.
+                    </p>
+                  </div>
+                  <div className="text-left text-[9px] font-bold text-[#D4A828] tracking-wider uppercase mt-4">
+                    ✦ STRATEGIC VALUE
+                  </div>
+                </div>
+
+                {/* Block 4 (Large 2-column card, terracotta background with dusty red styling) */}
+                <div className="flow-feature-card md:col-span-2 p-7 sm:p-8 bg-[#FBF6F5] flex flex-col justify-between min-h-[220px]">
+                  <div className="sf-stitched-border" />
+                  
+                  {/* Decorative apple bottom right */}
+                  <div className="absolute bottom-6 right-8 w-10 h-10 bg-[#C36B62] rounded-full border border-dashed border-white flex items-center justify-center shadow-md animate-floatGentle-2">
+                    <div className="w-5 h-5 bg-[#FCFAF2] rounded-full border border-dashed border-[#8B7E66]/40" />
+                    <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-0.5 h-2 bg-[#8B7E66] rounded-sm" />
+                  </div>
+
+                  <div className="text-left space-y-2.5 max-w-md">
+                    <span className="inline-block text-[9px] font-bold tracking-widest text-[#C36B62] uppercase bg-[#C36B62]/8 px-2 py-0.5 rounded">INNOVATION</span>
+                    <h3 className="text-lg sm:text-xl font-serif font-bold text-[#0D2B4E]">Inovasi Tanpa Batas</h3>
+                    <p className="text-xs text-[#5C5549] leading-relaxed">
+                      Tempat di mana ide-ide segar tidak hanya dirancang, namun diuji dan direalisasikan dalam bentuk program terobosan, kajian solutif, serta produk teknologi terapan.
+                    </p>
+                  </div>
+                  <div className="text-left text-[9px] font-bold text-[#C36B62] tracking-wider uppercase font-serif mt-4">
+                    — KARYA RUMAH PRESTASI
+                  </div>
+                </div>
+
+              </div>
             </div>
 
-            <p className="hero-el text-[11px] text-[#8AACCC] text-center mt-5">
-              Data bersifat rahasia dan hanya dapat diakses pemilik NIM
-            </p>
+            {/* NIM Check Dedicated Section (id="check-portal") */}
+            <div id="check-portal" className="hero-el w-full max-w-[440px] mt-4">
+              
+              {/* Luxury Envelope styled check card */}
+              <div className="sf-card w-full p-8 sm:p-9 border border-[#8B7E66]/50 shadow-xl relative overflow-hidden bg-linen-ivory">
+                <div className="sf-stitched-border" />
+                <div className="sf-paperclip" />
+                
+                {/* Gold wax seal at top center */}
+                <div className="absolute top-[-16px] left-1/2 -translate-x-1/2 w-12 h-12 bg-gradient-to-br from-[#ECA628] to-[#B26C08] rounded-full border-2 border-[#F3C46B] shadow-md flex items-center justify-center z-10 animate-floatGentle">
+                  <span className="text-[14px]">🏆</span>
+                </div>
+
+                <div className="text-center space-y-3 mb-6 pt-5">
+                  <span className="text-[9px] font-bold tracking-widest text-[#B8A88A] uppercase">CEK STATUS RESMI</span>
+                  <h3 className="text-xl sm:text-2xl font-serif font-bold text-[#0D2B4E]">Portal Kelulusan</h3>
+                  <p className="text-[11px] text-[#4A7BA5] leading-relaxed max-w-xs mx-auto">
+                    Silakan ketik Nomor Induk Mahasiswa (NIM) Anda untuk membuka amplop pengumuman hasil seleksi.
+                  </p>
+                </div>
+
+                <form onSubmit={handleSubmit} className="space-y-5">
+                  <div className="relative">
+                    <label htmlFor="nim-input" className="block text-[9px] font-bold text-[#B8A88A] tracking-wider uppercase mb-2 text-left pl-1">
+                      Nomor Induk Mahasiswa (NIM)
+                    </label>
+                    <input
+                      ref={inputRef}
+                      id="nim-input"
+                      type="text"
+                      autoComplete="off"
+                      placeholder="cth: 2401001"
+                      value={nim}
+                      maxLength={10}
+                      onChange={(e) => { setNim(e.target.value); setError(""); setNotFound(false); }}
+                      className={`w-full rounded-xl px-4 py-3 bg-[#FCFAF2] border ${
+                        error || notFound ? "border-red-400 focus:border-red-500" : "border-[#B8A88A]/40 focus:border-[#5B6B54]"
+                      } text-[#0D2B4E] font-medium text-center tracking-[0.15em] placeholder:text-[#B8A88A]/50 placeholder:tracking-normal placeholder:text-xs outline-none transition-all duration-200 focus-ring font-sans`}
+                    />
+                    {error && (
+                      <p className="text-xs text-red-500 mt-2 text-center">{error}</p>
+                    )}
+                    {notFound && (
+                      <p className="text-xs text-red-500 mt-2 text-center leading-relaxed">
+                        NIM tidak terdaftar. <span className="text-[#4A7BA5] block">Pastikan NIM sudah benar atau hubungi admin.</span>
+                      </p>
+                    )}
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={isLoading || !dataReady}
+                    className="w-full btn-rp py-3.5 text-xs sm:text-sm font-bold tracking-wider uppercase shadow-md disabled:opacity-40 disabled:cursor-not-allowed bg-gradient-to-r from-[#5B6B54] to-[#8B7E66] border border-[#B8A88A]/20 shimmer-gold cursor-pointer"
+                  >
+                    {isLoading ? (
+                      <span className="flex items-center justify-center gap-2">
+                        <span className="spin inline-block w-4 h-4 rounded-full border-2 border-white/30 border-t-white" />
+                        Validasi Data...
+                      </span>
+                    ) : (
+                      "Buka Amplop Pengumuman ✉️"
+                    )}
+                  </button>
+                </form>
+
+                <p className="text-[9px] text-[#B8A88A]/70 text-center mt-5 uppercase tracking-wider font-semibold">
+                  CONFIDENTIAL • RUMAH PRESTASI 2026
+                </p>
+              </div>
+            </div>
+
           </div>
 
         ) : (
-          /* ========== RESULT VIEW ========== */
-          <div ref={resultRef} className="w-full space-y-8">
+          /* ========== RESULT VIEW (Multi-scene Interactive Unboxing) ========== */
+          <div ref={resultRef} className="w-full flex flex-col justify-center items-center overflow-visible py-6">
 
-            {/* Header */}
-            <div className="res-head text-center space-y-3">
-              <div className="badge-success mx-auto">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                Lulus Seleksi
+            {/* ── Scene 0: Intro Animation ── */}
+            {scene === "intro" && (
+              <div className="w-full max-w-[400px] text-center space-y-6 py-20 px-6 animate-pulse">
+                <div className="text-[10px] font-black tracking-[0.25em] text-[#B8931F] uppercase font-serif">RUMAH PRESTASI 2026</div>
+                <h2 className="text-[#0D2B4E] text-2xl font-black font-serif leading-relaxed">
+                  Ada pesan penting <br/> untukmu...
+                </h2>
+                <div className="text-xl font-bold font-serif text-[#1B5E9E] border-y border-dashed border-[#B8A88A]/40 py-3.5 tracking-wide">
+                  ✦ {applicant.nama} ✦
+                </div>
               </div>
-              <h1 className="text-2xl sm:text-3xl font-extrabold text-[#0D2B4E]">
-                Selamat, <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#1B5E9E] to-[#3A8FD6]">{applicant.nama}</span>!
-              </h1>
-              <p className="text-sm text-[#4A7BA5]">
-                NIM: {applicant.nim}
-                <span className="mx-1.5 text-[#C2DFF0]">·</span>
-                <span className="text-emerald-600 font-medium">Diterima sebagai Staf Muda</span>
-              </p>
-            </div>
+            )}
 
-            {/* Grid */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            {/* ── Scene 1: Sealed Envelope Unboxing ── */}
+            {scene === "envelope" && (
+              <div className="w-full max-w-[400px] text-center space-y-6 flex flex-col items-center">
+                <div className="space-y-2">
+                  <div className="badge-rp mx-auto">TUMBUHASA 2026</div>
+                  <h2 className="text-xl font-bold text-[#0D2B4E] font-serif">Amplop Hasil Seleksi</h2>
+                  <p className="text-xs text-[#4A7BA5] leading-relaxed">Klik amplop segel di bawah ini untuk membuka pesan kelulusan Anda</p>
+                </div>
 
-              {/* LEFT COL */}
-              <div className="lg:col-span-7 space-y-8">
+                <div className="envelope-container py-8">
+                  <div 
+                    onClick={handleOpenEnvelope}
+                    className={`envelope-wrapper ${envelopeOpen ? "open" : ""}`}
+                  >
+                    {/* Top Flap */}
+                    <div className="envelope-flap" />
+                    
+                    {/* Wax Seal */}
+                    <div className="envelope-wax-seal" />
 
-                {/* Info card */}
-                <div className="res-card card-white accent-line-green overflow-hidden p-6 shadow-md border border-[#C2DFF0]/60">
-                  <div className="flex items-center gap-3 mb-6">
-                    <div className="w-10 h-10 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center text-lg text-emerald-600 shrink-0 shadow-sm">
-                      ✓
+                    {/* Paper preview slide out */}
+                    <div className="envelope-paper-preview absolute bottom-4 left-4 right-4 h-24 bg-[#FCFAF2] rounded-lg shadow-inner z-2 p-4 flex flex-col justify-center items-center pointer-events-none transform translate-y-0">
+                      <span className="text-[9px] font-bold text-[#1B5E9E] tracking-wider uppercase mb-1">SURAT KEPUTUSAN</span>
+                      <div className="w-20 h-0.5 bg-[#EDDCC9]" />
                     </div>
-                    <div>
-                      <span className="text-[10px] font-bold text-[#8AACCC] tracking-widest uppercase block">STATUS KELULUSAN</span>
-                      <h2 className="text-base font-extrabold text-[#0D2B4E]">Diterima Sebagai Staf Muda</h2>
-                    </div>
+
+                    {/* Front sides overlay */}
+                    <div className="envelope-front" />
+                    
+                    {/* Back side panel */}
+                    <div className="envelope-back" />
                   </div>
+                </div>
 
-                  <div className="space-y-1">
-                    {[
-                      { label: "Nama Lengkap", value: applicant.nama, bold: true, icon: "👤" },
-                      { label: "NIM", value: applicant.nim, icon: "🆔" },
-                      { label: "Departemen", value: deptInfo?.fullName ?? applicant.departemen, highlight: true, icon: "🏢" },
-                      { label: "Jabatan", value: applicant.jabatan, gold: true, icon: "🏆" },
-                      { label: "Pelantikan", value: "Segera diinfokan via grup", muted: true, icon: "📅" },
-                    ].map((row, idx) => (
-                      <div key={idx} className="rp-info-card-row">
-                        <span className="text-[9px] font-bold tracking-widest text-[#8AACCC] mb-1 flex items-center gap-1.5 uppercase">
-                          <span className="text-xs">{row.icon}</span>
-                          {row.label}
-                        </span>
-                        <span className={`text-sm ${
-                          row.bold ? "font-bold text-[#0D2B4E] text-[15px]" :
-                          row.highlight ? "font-semibold text-[#1B5E9E]" :
-                          row.gold ? "font-semibold text-[#B8931F]" :
-                          row.muted ? "text-[#8AACCC] text-[13px]" :
-                          "text-[#2D4A6A]"
-                        }`}>
-                          {row.value}
-                        </span>
+                <p className="text-[10px] font-bold text-[#8AACCC] tracking-wider uppercase animate-bounce mt-4">
+                  👇 TAP AMPLOP UNTUK MEMBUKA 👇
+                </p>
+              </div>
+            )}
+
+            {/* ── Scene 2: Flowblox Curved Stitched Card Perspective Deck ── */}
+            {scene === "letters" && (
+              <div className="w-full max-w-[800px] flex flex-col items-center gap-8 py-8 overflow-visible">
+                
+                {/* 3D Arc Card Deck */}
+                <div className="relative w-full h-[450px] flex items-center justify-center perspective-[1200px] overflow-visible mb-6">
+                  {[0, 1, 2, 3].map((idx) => {
+                    const cardStyle = getCardStyle(idx);
+                    return (
+                      <div
+                        key={idx}
+                        style={cardStyle}
+                        onClick={() => { if (idx !== activeLetter) setActiveLetter(idx); }}
+                        className="absolute w-[310px] sm:w-[360px] min-h-[400px] transition-all duration-700 ease-out-back cursor-pointer select-none origin-center"
+                      >
+                        {idx === 0 && (
+                          /* Card 0: Selamat Kelulusan */
+                          <div className="sf-card w-full p-8 sm:p-9 min-h-[400px] flex flex-col justify-between border border-[#8B7E66]/40 shadow-lg relative h-full bg-linen-ivory">
+                            <div className="sf-stitched-border" />
+                            <div className="sf-paperclip" />
+                            
+                            {/* Apple 1 */}
+                            <div className="absolute top-6 right-8 w-14 h-14 bg-[#C36B62] rounded-full border border-dashed border-white flex items-center justify-center shadow-md transform rotate-12 z-10 animate-floatGentle">
+                              <div className="w-9 h-9 bg-[#FCFAF2] rounded-full border border-dashed border-[#8B7E66]/40 flex items-center justify-center">
+                                <span className="text-[5px] text-[#8B7E66] font-bold">● ●</span>
+                              </div>
+                              <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-1.5 h-4 bg-[#8B7E66] rounded-sm origin-bottom transform -rotate-12" />
+                            </div>
+                            
+                            {/* Apple 2 */}
+                            <div className="absolute top-24 right-5 w-10 h-10 bg-[#C36B62] rounded-full border border-dashed border-white flex items-center justify-center shadow-md transform -rotate-12 z-10 animate-floatGentle-2">
+                              <div className="w-6 h-6 bg-[#FCFAF2] rounded-full border border-dashed border-[#8B7E66]/40 flex items-center justify-center">
+                                <span className="text-[4px] text-[#8B7E66] font-bold">● ●</span>
+                              </div>
+                              <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-1 h-3 bg-[#8B7E66] rounded-sm origin-bottom" />
+                            </div>
+
+                            {/* Stitched Star bottom left */}
+                            <div className="absolute bottom-8 left-8 sf-stitched-star transform -rotate-12 shadow-sm animate-pulse">
+                              <span className="text-white text-[10px] font-bold">✩</span>
+                            </div>
+
+                            <div className="space-y-4 pt-2 text-left">
+                              <div className="sf-card-line flex items-center gap-1.5 text-[#5B6B54] font-bold text-[9px] tracking-wider uppercase font-serif">
+                                <span>Illustration ✩ Graphic Design</span>
+                              </div>
+                              
+                              <div className="space-y-1">
+                                <span className="sf-card-line text-[9px] font-bold tracking-widest text-[#B8A88A] uppercase block">KEPUTUSAN RESMI</span>
+                                <h1 className="sf-card-line text-3xl font-black text-[#5B6B54] tracking-tight leading-[1.1] font-serif">
+                                  CONGRATS.
+                                </h1>
+                              </div>
+
+                              <div className="sf-card-line text-[12px] leading-relaxed text-[#5C5549] space-y-3.5 font-serif">
+                                <p>Dengan bangga kami menyampaikan bahwa:</p>
+                                <p className="text-sm font-bold text-[#C36B62] border-y border-dashed border-[#B8A88A] py-2 my-1 tracking-wide font-sans text-center bg-[#EDF6FC]/30 rounded-lg">
+                                  ✦ {applicant.nama} ✦
+                                </p>
+                                <p>dinyatakan <strong className="text-[#5B6B54] font-black">LOLOS SELEKSI</strong> dan diterima sebagai anggota baru Rumah Prestasi Kabinet TumbuhAsa 2026!</p>
+                              </div>
+                            </div>
+
+                            <div className="sf-card-line flex justify-end text-[9px] font-bold text-[#B8A88A] tracking-wider uppercase relative z-10 font-serif">
+                              — PANITIA OPREC 2026
+                            </div>
+                          </div>
+                        )}
+
+                        {idx === 1 && (
+                          /* Card 1: Sambutan Ketua Departemen */
+                          <div className="sf-card w-full p-8 sm:p-9 min-h-[400px] flex flex-col justify-between border border-[#8B7E66]/40 shadow-lg relative h-full bg-linen-ivory">
+                            <div className="sf-stitched-border" />
+                            <div className="sf-paperclip" />
+                            
+                            {/* Stitched felt apple bottom right */}
+                            <div className="absolute bottom-6 right-8 w-11 h-11 bg-[#C36B62] rounded-full border border-dashed border-white flex items-center justify-center shadow-md transform rotate-12 z-10 animate-floatGentle">
+                              <div className="w-7 h-7 bg-[#FCFAF2] rounded-full border border-dashed border-[#8B7E66]/40 flex items-center justify-center">
+                                <span className="text-[4px] text-[#8B7E66] font-bold">● ●</span>
+                              </div>
+                              <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-1.5 h-3 bg-[#8B7E66] rounded-sm origin-bottom" />
+                            </div>
+
+                            <div className="space-y-5 text-left">
+                              <div className="sf-card-line flex items-center gap-3 border-b border-[#B8A88A]/30 pb-4 mt-2">
+                                <div className="relative shrink-0">
+                                  <div className="absolute -inset-1 rounded-full border border-dashed border-[#5B6B54]" />
+                                  <img
+                                    src={deptInfo?.kadepPhoto ?? "/image/foto_kadep.png"}
+                                    alt={deptInfo?.kadepName ?? "Kadep"}
+                                    className="w-12 h-12 rounded-full object-cover bg-stone-100 border border-white"
+                                  />
+                                </div>
+                                <div>
+                                  <h4 className="text-[13px] font-bold text-[#5B6B54] font-serif leading-tight">{deptInfo?.kadepName ?? "Kepala Departemen"}</h4>
+                                  <p className="text-[9px] text-[#B8A88A] font-bold uppercase tracking-wider mt-0.5">Ketua {deptInfo?.name ?? applicant.departemen}</p>
+                                </div>
+                              </div>
+
+                              <div className="sf-card-line text-[12px] leading-relaxed text-[#5C5549] font-medium font-serif italic pl-4 border-l-2 border-[#5B6B54] bg-[#EDF6FC]/20 py-2 pr-2 rounded-r-lg">
+                                &ldquo;{deptInfo?.message ?? "Selamat bergabung! Mari berkarya dan melangkah bersama demi masa depan gemilang di departemen ini."}&rdquo;
+                              </div>
+                            </div>
+
+                            <div className="sf-card-line text-[9px] font-bold text-[#B8A88A] tracking-wider uppercase relative z-10 font-serif text-left">
+                              — KETUA DEPARTEMEN
+                            </div>
+                          </div>
+                        )}
+
+                        {idx === 2 && (
+                          /* Card 2: Pesan Ketua Umum BEM */
+                          <div className="sf-card w-full p-8 sm:p-9 min-h-[400px] flex flex-col justify-between border border-[#8B7E66]/40 shadow-lg relative h-full bg-linen-ivory">
+                            <div className="sf-stitched-border" />
+                            <div className="sf-paperclip" />
+                            
+                            {/* Stitched Star top right */}
+                            <div className="absolute top-6 right-8 sf-stitched-star transform rotate-12 shadow-sm animate-pulse bg-amber-500 border-amber-300">
+                              <span className="text-white text-[10px] font-bold">👑</span>
+                            </div>
+
+                            <div className="space-y-5 text-left">
+                              <div className="sf-card-line flex items-center gap-3 border-b border-[#B8A88A]/30 pb-4 mt-2">
+                                <div className="relative shrink-0">
+                                  <div className="absolute -inset-1 rounded-full border border-dashed border-[#D4A828]" />
+                                  <img
+                                    src="/image/foto_ketum.png"
+                                    alt="Ahmad Izzuddin Azzam"
+                                    className="w-12 h-12 rounded-full object-cover bg-stone-100 border border-white"
+                                  />
+                                </div>
+                                <div>
+                                  <h4 className="text-[13px] font-bold text-[#5B6B54] font-serif leading-tight">Ahmad Izzuddin Azzam</h4>
+                                  <p className="text-[9px] text-[#B8A88A] font-bold uppercase tracking-wider mt-0.5">Ketua Umum BEM</p>
+                                </div>
+                              </div>
+
+                              <div className="sf-card-line text-[12px] leading-relaxed text-[#5C5549] font-medium font-serif italic pl-4 border-l-2 border-[#D4A828] bg-[#FFFBEB]/45 py-2 pr-2 rounded-r-lg">
+                                {personalMessage ? (
+                                  <span>&ldquo;{personalMessage}&rdquo;</span>
+                                ) : (
+                                  <span>&ldquo;Selamat bergabung di keluarga besar Rumah Prestasi! Ini adalah langkah awal perjuangan barumu. Jadikan setiap tantangan sebagai tempat berproses terbaikmu. Aku menunggumu di pelantikan nanti!&rdquo;</span>
+                                )}
+                              </div>
+                            </div>
+
+                            <div className="sf-card-line text-[9px] font-bold text-[#B8A88A] tracking-wider uppercase relative z-10 font-serif text-left">
+                              — KETUA UMUM BEM
+                            </div>
+                          </div>
+                        )}
+
+                        {idx === 3 && (
+                          /* Card 3: Langkah Selanjutnya (Next Steps) */
+                          <div className="sf-card w-full p-8 sm:p-9 min-h-[400px] flex flex-col justify-between border border-[#8B7E66]/40 shadow-lg relative h-full bg-linen-ivory">
+                            <div className="sf-stitched-border" />
+                            <div className="sf-paperclip" />
+
+                            <div className="space-y-4 text-left">
+                              <div className="space-y-1 pb-3 border-b border-[#B8A88A]/30 mt-2">
+                                <span className="sf-card-line text-[9px] font-bold text-[#B8A88A] tracking-widest uppercase block">MEMO RESMI</span>
+                                <h3 className="sf-card-line text-lg font-black text-[#5B6B54] font-serif flex items-center gap-1.5">
+                                  📌 Langkah Selanjutnya
+                                </h3>
+                              </div>
+
+                              <div className="space-y-3 sf-card-line pt-2">
+                                {[
+                                  "Simpan bukti kelulusan ini",
+                                  "Gabung grup koordinasi staf resmi",
+                                  "Hadir di acara Inaugurasi: 1 Juni 2026",
+                                  "Dresscode: Pakaian Formal Hitam",
+                                ].map((step, idx) => (
+                                  <div key={idx} className="flex items-center gap-3">
+                                    <div className="w-5 h-5 rounded-full border border-dashed border-[#5B6B54] flex items-center justify-center text-[10px] text-[#5B6B54] font-extrabold shrink-0 bg-[#EDF6FC]">
+                                      ✓
+                                    </div>
+                                    <span className="text-[11px] font-semibold text-[#5C5549]">{step}</span>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+
+                            <div className="sf-card-line relative z-10 pt-4 flex flex-col items-center">
+                              <button 
+                                onClick={() => setScene("celebration")}
+                                className="w-full btn-rp py-3.5 rounded-xl text-sm bg-gradient-to-r from-[#5B6B54] to-[#8B7E66] border border-[#B8A88A]/20 shimmer-gold cursor-pointer"
+                              >
+                                Rayakan Kelulusanmu! 🎉
+                              </button>
+                            </div>
+                          </div>
+                        )}
                       </div>
+                    );
+                  })}
+                </div>
+
+                {/* Progress dot indicators & navigation controls */}
+                <div className="flex justify-between items-center w-full max-w-[480px] px-4 py-1 z-10 font-sans">
+                  <button 
+                    disabled={activeLetter === 0}
+                    onClick={() => setActiveLetter(prev => prev - 1)}
+                    className="btn-light text-[11px] px-3.5 py-1.5 rounded-lg disabled:opacity-30 disabled:cursor-not-allowed shrink-0 cursor-pointer"
+                  >
+                    ← Kembali
+                  </button>
+                  <div className="progress flex justify-center gap-1.5 shrink-0 mx-2">
+                    {[0, 1, 2, 3].map(dot => (
+                      <span 
+                        key={dot}
+                        onClick={() => setActiveLetter(dot)}
+                        className={`dot w-2 h-2 rounded-full cursor-pointer transition-all duration-300 ${activeLetter === dot ? "bg-[#5B6B54] scale-125 px-2" : "bg-[#B8A88A]/40"}`}
+                      />
                     ))}
                   </div>
-                </div>
-
-                {/* Dept welcome - Premium poster-style */}
-                {deptInfo && (
-                  <div className="res-card rp-poster-card p-6 md:p-8 flex flex-col md:flex-row items-center gap-6 border border-white/20 shadow-xl">
-                    {/* Grid background */}
-                    <div className="poster-grid-overlay" />
-                    
-                    {/* Glowing background shapes */}
-                    <div className="poster-glow-circle -top-10 -left-10 w-32 h-32 opacity-75" />
-                    <div className="poster-glow-circle bottom-[-20px] right-[-20px] w-40 h-40 bg-gradient-to-br from-[#5CB3E8]/30 to-[#EDF6FC]/10 blur-xl" />
-
-                    {/* Kadep Photo Area */}
-                    <div className="relative shrink-0 flex flex-col items-center text-center z-10">
-                      <div className="relative group">
-                        {/* Glow effect behind photo */}
-                        <div className="absolute -inset-1 rounded-full bg-gradient-to-r from-sky-400 to-blue-500 blur opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 animate-pulse" />
-                        <img
-                          src={deptInfo.kadepPhoto}
-                          alt={deptInfo.kadepName}
-                          className="relative w-28 h-28 rounded-full border-4 border-white bg-white/10 shrink-0 shadow-lg object-cover transform transition duration-500 hover:scale-105 float-gentle"
-                        />
-                      </div>
-                      <div className="mt-3">
-                        <h4 className="text-sm font-bold text-white tracking-wide drop-shadow-md">{deptInfo.kadepName}</h4>
-                        <span className="text-[10px] font-semibold text-sky-200 tracking-wider uppercase block drop-shadow-sm mt-0.5">
-                          Ketua {deptInfo.name}
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Speech bubble */}
-                    <div className="relative flex-1 z-10 w-full">
-                      <div className="poster-speech-bubble p-5 relative">
-                        {/* Quote bubble arrow pointing to photo */}
-                        <div className="absolute top-1/2 -left-2 -translate-y-1/2 w-4 h-4 bg-white rotate-45 border-l border-b border-white/80 hidden md:block" />
-                        
-                        <div className="flex items-center gap-2 mb-2.5">
-                          <span className="flex items-center justify-center w-5 h-5 rounded-full bg-[#1B5E9E] text-white text-[10px] font-extrabold shadow-sm">
-                            🏆
-                          </span>
-                          <span className="text-[10px] font-bold text-[#1B5E9E] tracking-wider uppercase">
-                            Sambutan Kadep
-                          </span>
-                        </div>
-
-                        <p className="text-[13px] leading-relaxed text-[#0D2B4E] font-medium italic relative pl-1">
-                          &ldquo;{deptInfo.message}&rdquo;
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* RIGHT COL */}
-              <div className="lg:col-span-5 space-y-8">
-
-                {/* Azzam message - Premium poster-style */}
-                <div className="res-card rp-poster-card p-6 md:p-8 flex flex-col md:flex-row items-center gap-6 border border-white/20 shadow-xl">
-                  {/* Grid background */}
-                  <div className="poster-grid-overlay" />
-                  
-                  {/* Glowing background shapes */}
-                  <div className="poster-glow-circle -top-10 -right-10 w-32 h-32 opacity-75" />
-                  <div className="poster-glow-circle bottom-[-20px] left-[-20px] w-40 h-40 bg-gradient-to-br from-[#D4A828]/20 to-[#EDF6FC]/5 blur-xl" />
-
-                  {/* Ketum Photo Area */}
-                  <div className="relative shrink-0 flex flex-col items-center text-center z-10 md:order-2">
-                    <div className="relative group">
-                      {/* Glow effect behind photo */}
-                      <div className="absolute -inset-1 rounded-full bg-gradient-to-r from-amber-400 to-[#D4A828] blur opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 animate-pulse" />
-                      <img
-                        src="/image/foto_ketum.png"
-                        alt="Ahmad Izzuddin Azzam"
-                        className="relative w-28 h-28 rounded-full border-4 border-white bg-white/10 shrink-0 shadow-lg object-cover transform transition duration-500 hover:scale-105 float-gentle-2"
-                      />
-                    </div>
-                    <div className="mt-3">
-                      <h4 className="text-sm font-bold text-white tracking-wide drop-shadow-md">Ahmad Izzuddin Azzam</h4>
-                      <span className="text-[10px] font-semibold text-amber-300 tracking-wider uppercase block drop-shadow-sm mt-0.5">
-                        Ketua Umum BEM
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Speech bubble */}
-                  <div className="relative flex-1 z-10 w-full md:order-1">
-                    <div className="poster-speech-bubble p-5 relative">
-                      {/* Quote bubble arrow pointing to photo (right side on desktop) */}
-                      <div className="absolute top-1/2 -right-2 -translate-y-1/2 w-4 h-4 bg-white rotate-45 border-r border-t border-white/80 hidden md:block" />
-                      
-                      <div className="flex items-center gap-2 mb-2.5">
-                        <span className="flex items-center justify-center w-5 h-5 rounded-full bg-[#D4A828] text-white text-[10px] font-extrabold shadow-sm">
-                          👑
-                        </span>
-                        <span className="text-[10px] font-bold text-[#B8931F] tracking-wider uppercase">
-                          Pesan Ketua Umum
-                        </span>
-                      </div>
-
-                      {personalMessage ? (
-                        <p className="text-[13px] leading-relaxed text-[#0D2B4E] font-semibold italic relative pl-1">
-                          &ldquo;{personalMessage}&rdquo;
-                        </p>
-                      ) : (
-                        <p className="text-[13px] leading-relaxed text-[#0D2B4E] font-medium italic relative pl-1">
-                          &ldquo;Selamat bergabung di keluarga besar Rumah Prestasi! Ini adalah langkah awal perjuangan barumu. Jadikan setiap tantangan sebagai tempat berproses terbaikmu. Aku menunggumu di pelantikan nanti!&rdquo;
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Surat - Premium wax-sealed luxury parchment card */}
-                <div className="res-card rp-letter-card p-6 sm:p-8 mt-6">
-                  {/* Parchment background assets */}
-                  <div className="rp-letter-lines" />
-                  <div className="rp-letter-watermark" />
-                  
-                  {/* 3D Gold Wax Seal */}
-                  <div className="rp-wax-seal" />
-
-                  <div className="relative z-10 space-y-5 pt-6">
-                    <div className="text-center border-b border-[#E8D48B]/40 pb-4">
-                      <h4 className="text-xs font-black text-[#1B5E9E] tracking-widest uppercase mb-1">SURAT UNTUK KELUARGA BARU</h4>
-                      <span className="text-[9px] font-extrabold text-[#B8931F] tracking-widest uppercase">BEM FPMIPA UPI 2026 · KABINET TUMBUHASA</span>
-                    </div>
-
-                    <div className="text-[12px] sm:text-[13px] leading-[1.9] text-[#2D4A6A] space-y-4 text-justify font-serif">
-                      <p className="first-letter:text-3xl first-letter:font-black first-letter:text-[#1B5E9E] first-letter:mr-2 first-letter:float-left first-letter:leading-none">
-                        Assalamu&rsquo;alaikum Warahmatullahi Wabarakatuh, salam hangat, dan salam prestasi! 🌟
-                      </p>
-                      <p>
-                        Dengan penuh rasa bahagia dan bangga, kami menyambut kehadiranmu. Kamu yang sedang membaca surat ini adalah orang yang luar biasa — terpilih dari sekian banyak pendaftar karena semangat, integritas, dan potensi besarmu.
-                      </p>
-                      <p>
-                        Rumah Prestasi hadir bukan sekadar wadah berorganisasi, melainkan tempat bertumbuh, merajut mimpi, dan berkolaborasi menciptakan dampak nyata bagi seluruh mahasiswa FPMIPA.
-                      </p>
-                      <p className="font-semibold text-[#1B5E9E] italic text-center text-[12px] sm:text-xs py-2 px-3 my-2 border-y border-[#E8D48B]/20 bg-[#EDF6FC]/50 rounded-xl">
-                        Selamat berproses, tuangkan karya terbaikmu, dan mari tunjukkan bersama bahwa #FPMIPAJUARA!
-                      </p>
-                    </div>
-
-                    <div className="pt-4 border-t border-[#E8D48B]/40 flex flex-col items-end">
-                      <span className="text-[10px] italic text-[#8AACCC]">Tertanda hangat,</span>
-                      <span className="font-dancing text-3xl text-[#1B5E9E] mt-1 mb-0.5 transform -rotate-2">Azzam</span>
-                      <span className="text-[9px] font-bold text-[#8AACCC] tracking-wider uppercase">Ahmad Izzuddin Azzam</span>
-                    </div>
-                  </div>
+                  <button 
+                    disabled={activeLetter === 3}
+                    onClick={() => setActiveLetter(prev => prev + 1)}
+                    className="btn-light text-[11px] px-3.5 py-1.5 rounded-lg disabled:opacity-30 disabled:cursor-not-allowed shrink-0 cursor-pointer"
+                  >
+                    Lanjut →
+                  </button>
                 </div>
               </div>
-            </div>
+            )}
 
-            {/* Action */}
-            <div className="res-action flex justify-center pt-2">
-              <button onClick={handleLogout} className="btn-light inline-flex items-center gap-2 rounded-xl px-6 py-2.5 text-[13px]">
-                ← Kembali ke Halaman Utama
-              </button>
-            </div>
+            {/* ── Scene 3: Canvas Confetti Ending Celebration ── */}
+            {scene === "celebration" && (
+              <div className="w-full max-w-[420px] text-center space-y-6 relative z-10 py-4 flex flex-col items-center">
+                
+                {/* Overlay canvas */}
+                <canvas ref={canvasRef} className="pointer-events-none fixed inset-0 z-50 w-full h-full" />
+
+                <div className="badge-rp bg-[#C36B62]/10 text-[#C36B62] border-[#C36B62]/20 mx-auto font-sans">
+                  Selamat Bergabung!
+                </div>
+                
+                <h1 className="text-4xl sm:text-5xl font-black text-[#5B6B54] tracking-tight leading-none font-serif animate-pulse">
+                  WELCOME. 🎉
+                </h1>
+                
+                <p className="text-xs sm:text-sm text-[#5C5549] font-medium max-w-xs mx-auto leading-relaxed font-serif">
+                  Kamu resmi bergabung di keluarga besar <br/>
+                  <strong className="text-[#C36B62]">{deptInfo?.fullName ?? applicant.departemen}</strong> <br/>
+                  Rumah Prestasi 2026
+                </p>
+
+                {/* Final data receipt with Sarah Ferguson Stitches */}
+                <div className="sf-card p-6 text-left border border-[#E8D48B]/50 shadow-md w-full relative bg-linen-ivory">
+                  <div className="sf-stitched-border" />
+                  <h4 className="text-[10px] font-black text-[#B8A88A] tracking-widest uppercase mb-3.5 text-center border-b pb-2 font-sans">DATA PENGURUS BARU</h4>
+                  <div className="space-y-2.5 font-sans">
+                    <div className="flex justify-between text-xs py-1 border-b border-[#EDF6FC]/50">
+                      <span className="font-bold text-[#8AACCC]">NAMA LENGKAP:</span>
+                      <span className="font-bold text-[#0D2B4E]">{applicant.nama}</span>
+                    </div>
+                    <div className="flex justify-between text-xs py-1 border-b border-[#EDF6FC]/50">
+                      <span className="font-bold text-[#8AACCC]">NIM:</span>
+                      <span className="font-bold text-[#2D4A6A]">{applicant.nim}</span>
+                    </div>
+                    <div className="flex justify-between text-xs py-1 border-b border-[#EDF6FC]/50">
+                      <span className="font-bold text-[#8AACCC]">DEPARTEMEN:</span>
+                      <span className="font-bold text-[#1B5E9E]">{applicant.departemen}</span>
+                    </div>
+                    <div className="flex justify-between text-xs py-1">
+                      <span className="font-bold text-[#8AACCC]">JABATAN:</span>
+                      <span className="font-bold text-[#B8931F]">{applicant.jabatan}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="pt-4 flex flex-col gap-2.5 w-full font-sans">
+                  <button 
+                    onClick={handleLogout} 
+                    className="btn-rp py-3.5 text-sm w-full shadow-lg bg-gradient-to-r from-[#5B6B54] to-[#8B7E66] border border-[#B8A88A]/20 cursor-pointer"
+                  >
+                    Selesai & Keluar
+                  </button>
+                  <button 
+                    onClick={() => { setScene("envelope"); setEnvelopeOpen(false); setActiveLetter(0); }} 
+                    className="btn-light py-2.5 text-[11px] w-full cursor-pointer"
+                  >
+                    Lihat Ulang Surat ✉️
+                  </button>
+                </div>
+              </div>
+            )}
+
           </div>
         )}
       </main>
@@ -503,7 +1184,7 @@ export default function Home() {
       {/* ── Footer ── */}
       <footer className="relative z-10 w-full py-8 px-5 border-t border-[#C2DFF0]/50 bg-white/50 backdrop-blur-sm">
         <div className="max-w-5xl mx-auto space-y-4">
-          <div className="flex justify-center gap-3">
+          <div className="flex justify-center gap-3 font-sans">
             {[
               { handle: "@rumahprestasi.fpmipa", href: "https://www.instagram.com/rumahprestasi.fpmipa" },
               { handle: "@fpmipaupiofficial", href: "https://www.instagram.com/fpmipaupiofficial" },
@@ -522,7 +1203,7 @@ export default function Home() {
               </a>
             ))}
           </div>
-          <div className="text-center space-y-0.5">
+          <div className="text-center space-y-0.5 font-sans">
             <p className="text-[11px] text-[#4A7BA5]">© 2026 Rumah Prestasi FPMIPA UPI — Kabinet TumbuhAsa</p>
             <p className="text-[10px] text-[#8AACCC]">Universitas Pendidikan Indonesia · Bandung</p>
           </div>

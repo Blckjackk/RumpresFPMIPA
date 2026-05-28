@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Dancing_Script } from "next/font/google";
+import { Inter, Dancing_Script, Fraunces } from "next/font/google";
 import "./globals.css";
 
 const inter = Inter({
@@ -13,6 +13,13 @@ const dancingScript = Dancing_Script({
   variable: "--font-dancing",
   subsets: ["latin"],
   weight: ["600", "700"],
+  display: "swap",
+});
+
+const fraunces = Fraunces({
+  variable: "--font-serif",
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700", "800", "900"],
   display: "swap",
 });
 
@@ -32,7 +39,7 @@ export default function RootLayout({
   return (
     <html lang="id">
       <body
-        className={`${inter.variable} ${dancingScript.variable} antialiased`}
+        className={`${inter.variable} ${dancingScript.variable} ${fraunces.variable} antialiased`}
       >
         {children}
       </body>

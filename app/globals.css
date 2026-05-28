@@ -48,13 +48,13 @@
   --rp-mid:      #3A8FD6;   /* medium blue accent */
   --rp-sky:      #5CB3E8;   /* vibrant sky blue */
   --rp-light:    #A8D8F0;   /* soft pale blue */
-  --rp-ice:      #D9EEF9;   /* very light blue */
-  --rp-frost:    #EDF6FC;   /* near-white blue */
-  --rp-white:    #F7FBFE;   /* warm white */
+  --rp-ice:      #F5F2EB;   /* warm cream sand */
+  --rp-frost:    #FAF7F2;   /* clean linen white */
+  --rp-white:    #FCFAF5;   /* pure ivory white */
   --rp-gold:     #D4A828;   /* trophy gold */
 
   /* shadcn tokens — light blue theme */
-  --background:         #EDF6FC;
+  --background:         #FAF7F2;
   --foreground:         #0D2B4E;
   --card:               #FFFFFF;
   --card-foreground:    #0D2B4E;
@@ -122,12 +122,12 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Main page gradient — light sky blue */
 .bg-rp-gradient {
-  background: linear-gradient(170deg, #D9EEF9 0%, #EDF6FC 30%, #F7FBFE 60%, #EDF6FC 100%);
+  background: linear-gradient(170deg, #F5F2EB 0%, #FAF7F2 40%, #FAF7F2 100%);
 }
 
 /* Hero gradient with subtle blue wash */
 .bg-rp-hero {
-  background: linear-gradient(180deg, #C4E2F5 0%, #D9EEF9 35%, #EDF6FC 70%, #F7FBFE 100%);
+  background: linear-gradient(180deg, #EFECE6 0%, #F5F2EB 40%, #FAF7F2 100%);
 }
 
 /* Subtle radial glow */
@@ -528,5 +528,288 @@ h1, h2, h3, h4, h5, h6 {
 .rp-info-card-row:last-child {
   border-bottom: none;
 }
+
+/* ======================================================
+   3D ENVELOPE OPENING EFFECT
+   ====================================================== */
+.envelope-container {
+  width: 100%;
+  max-width: 440px;
+  perspective: 1000px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 10;
+}
+
+.envelope-wrapper {
+  position: relative;
+  width: 100%;
+  height: 250px;
+  background-color: #EDDCC9; /* Warm envelope cream color */
+  border-radius: 0 0 1rem 1rem;
+  box-shadow: 0 20px 40px rgba(13, 43, 78, 0.12);
+  cursor: pointer;
+  transform-style: preserve-3d;
+  transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.5s ease;
+}
+.envelope-wrapper:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 30px 60px rgba(13, 43, 78, 0.2);
+}
+
+.envelope-front {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  background: 
+    linear-gradient(28deg, #eddcc9 49%, #e2d1bc 50%) no-repeat left bottom / 51% 100%,
+    linear-gradient(-28deg, #eddcc9 49%, #e2d1bc 50%) no-repeat right bottom / 51% 100%;
+  border-radius: 0 0 1rem 1rem;
+}
+
+.envelope-back {
+  position: absolute;
+  inset: 0;
+  background: #dfcfb9;
+  border-radius: 0 0 1rem 1rem;
+  z-index: 1;
+}
+
+.envelope-flap {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 125px;
+  background-color: #eddcc9;
+  clip-path: polygon(0 0, 50% 100%, 100% 0);
+  transform-origin: top center;
+  z-index: 4;
+  transition: transform 0.6s cubic-bezier(0.25, 0.8, 0.25, 1);
+  filter: drop-shadow(0 2px 3px rgba(0,0,0,0.1));
+}
+
+.envelope-wrapper.open .envelope-flap {
+  transform: rotateX(180deg) translateY(2px);
+  z-index: 1;
+}
+
+.envelope-wax-seal {
+  position: absolute;
+  top: 95px;
+  left: 50%;
+  transform: translateX(-50%) translateZ(10px);
+  width: 56px;
+  height: 56px;
+  background: radial-gradient(circle at 35% 35%, #DC2626 0%, #991B1B 60%, #7F1D1D 100%);
+  border-radius: 50%;
+  box-shadow: 0 6px 15px rgba(153, 27, 27, 0.4), inset 0 2px 4px rgba(255,255,255,0.3);
+  border: 2px solid #F87171;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 5;
+  transition: transform 0.4s ease, opacity 0.4s ease;
+}
+.envelope-wax-seal::after {
+  content: "🏆";
+  font-size: 1.35rem;
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.2));
+}
+
+.envelope-wrapper.open .envelope-wax-seal {
+  transform: translateX(-50%) scale(0.8);
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ======================================================
+   SARAH FERGUSON DESIGN SYSTEM (Stitches, paperclips, stars)
+   ====================================================== */
+.sf-card {
+  background: #FCFAF2; /* Linen/Parchment white */
+  border: 2px solid #8B7E66; /* Elegant olive/slate border */
+  border-radius: 1.5rem;
+  box-shadow: 
+    0 15px 35px rgba(139, 126, 102, 0.12),
+    0 5px 15px rgba(139, 126, 102, 0.06);
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.15);
+}
+
+.sf-stitched-border {
+  position: absolute;
+  inset: 6px;
+  border: 2px dashed #B8A88A;
+  border-radius: 1.15rem;
+  pointer-events: none;
+}
+
+/* Metallic Paperclip ornament */
+.sf-paperclip {
+  position: absolute;
+  top: -12px;
+  right: 48px;
+  width: 20px;
+  height: 52px;
+  border: 2.5px solid #8E9EAA;
+  border-radius: 10px;
+  z-index: 50;
+  pointer-events: none;
+  transform: rotate(8deg);
+  box-shadow: 1px 2px 3px rgba(0,0,0,0.15);
+  background: transparent;
+}
+.sf-paperclip::after {
+  content: '';
+  position: absolute;
+  inset: 3px;
+  border: 2px solid #8E9EAA;
+  border-radius: 7px;
+}
+
+/* Felt stitched star */
+.sf-stitched-star {
+  position: absolute;
+  width: 54px;
+  height: 54px;
+  background-color: #C36B62; /* Dusty red */
+  clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+  border: 1.5px dashed #FFFFFF;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 20;
+}
+
+.sf-apple {
+  position: absolute;
+  background-color: #C36B62;
+  border: 1.5px dashed #FFFFFF;
+  border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+  display: block;
+}
+
+/* ======================================================
+   FLOWBLOX LUXURY UTILITIES
+   ====================================================== */
+.font-serif {
+  font-family: var(--font-serif), 'Fraunces', Georgia, serif;
+}
+
+.flow-hero-title {
+  font-family: var(--font-serif), 'Fraunces', Georgia, serif;
+  font-weight: 800;
+  font-size: 2.5rem;
+  line-height: 1.15;
+  color: #0D2B4E;
+  letter-spacing: -0.02em;
+}
+@media (min-width: 640px) {
+  .flow-hero-title {
+    font-size: 3.75rem;
+  }
+}
+
+.flow-pill-btn {
+  background: #111111;
+  color: #FAF7F2;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 9999px;
+  font-weight: 600;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+.flow-pill-btn:hover {
+  background: #222222;
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 12px 24px rgba(17, 17, 17, 0.18), 0 0 0 3px rgba(212, 168, 40, 0.2);
+}
+.flow-pill-btn:active {
+  transform: translateY(0) scale(1);
+}
+
+.flow-feature-card {
+  border-radius: 1.5rem;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+  position: relative;
+  border: 1px solid rgba(139, 126, 102, 0.15);
+}
+.flow-feature-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 
+    0 22px 35px rgba(139, 126, 102, 0.12),
+    0 8px 15px rgba(139, 126, 102, 0.05);
+}
+
+/* Gold shining effect */
+.shimmer-gold {
+  position: relative;
+  overflow: hidden;
+}
+.shimmer-gold::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -150%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.25),
+    transparent
+  );
+  transform: skewX(-20deg);
+  animation: shine 5s infinite;
+}
+@keyframes shine {
+  0% { left: -150%; }
+  20%, 100% { left: 150%; }
+}
+
+.bg-linen-ivory {
+  background-color: #FCFAF2;
+}
+
+.text-rp-navy {
+  color: #0D2B4E;
+}
+
+.text-rp-sage {
+  color: #5B6B54;
+}
+
+.text-rp-terracotta {
+  color: #C36B62;
+}
+
+.text-rp-gold {
+  color: #B8A88A;
+}
+
+/* Animations for arced cards floating in landing page */
+.animate-floatGentle {
+  animation: floatGentle 6s ease-in-out infinite;
+}
+.animate-floatGentle-2 {
+  animation: floatGentle 8s ease-in-out infinite reverse;
+  animation-delay: -2s;
+}
+
+/* Perspective space helper */
+.perspective-space {
+  perspective: 1200px;
+}
+
+
 
 
