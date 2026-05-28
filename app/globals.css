@@ -600,22 +600,22 @@ h1, h2, h3, h4, h5, h6 {
   top: 95px;
   left: 50%;
   transform: translateX(-50%) translateZ(10px);
-  width: 56px;
-  height: 56px;
-  background: radial-gradient(circle at 35% 35%, #DC2626 0%, #991B1B 60%, #7F1D1D 100%);
+  width: 58px;
+  height: 58px;
+  background: radial-gradient(circle at 35% 35%, #FAF7F2 0%, #ECA628 45%, #D48818 75%, #B26C08 100%);
   border-radius: 50%;
-  box-shadow: 0 6px 15px rgba(153, 27, 27, 0.4), inset 0 2px 4px rgba(255,255,255,0.3);
-  border: 2px solid #F87171;
+  box-shadow: 
+    0 8px 18px rgba(178, 108, 8, 0.35),
+    inset 0 -3px 6px rgba(0,0,0,0.25),
+    inset 0 3px 6px rgba(255,255,255,0.4);
+  border: 2px solid #F3C46B;
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 5;
   transition: transform 0.4s ease, opacity 0.4s ease;
-}
-.envelope-wax-seal::after {
-  content: "🏆";
-  font-size: 1.35rem;
-  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.2));
+  padding: 10px;
+  overflow: hidden;
 }
 
 .envelope-wrapper.open .envelope-wax-seal {

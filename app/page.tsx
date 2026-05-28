@@ -668,95 +668,7 @@ export default function Home() {
               </div>
             </div>
 
-            {/* "Everything You Need" Feature Grid Section */}
-            <div className="hero-el w-full space-y-6 mb-16">
-              <div className="text-center space-y-1">
-                <span className="text-[10px] font-bold text-[#B8A88A] tracking-widest uppercase block">NILAI UTAMA</span>
-                <h2 className="text-xl sm:text-2xl font-serif font-bold text-[#0D2B4E]">Segala Potensi untuk Tumbuh Bersama</h2>
-              </div>
 
-              {/* Pastel Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full">
-                
-                {/* Block 1 (Large 2-column card, soft sage green theme) */}
-                <div className="flow-feature-card md:col-span-2 p-7 sm:p-8 bg-[#F4F6F2] flex flex-col justify-between min-h-[220px]">
-                  <div className="sf-stitched-border" />
-                  
-                  {/* Decorative felt star */}
-                  <div className="absolute top-6 right-6 sf-stitched-star scale-75 transform rotate-6 animate-pulse">
-                    <span className="text-white text-[8px] font-bold">✩</span>
-                  </div>
-
-                  <div className="text-left space-y-2.5 max-w-md">
-                    <span className="inline-block text-[9px] font-bold tracking-widest text-[#5B6B54] uppercase bg-[#5B6B54]/8 px-2 py-0.5 rounded">KOLABORASI AKTIF</span>
-                    <h3 className="text-lg sm:text-xl font-serif font-bold text-[#0D2B4E]">Sinergi Terbuka & Produktif</h3>
-                    <p className="text-xs text-[#5C5549] leading-relaxed">
-                      Membangun harmoni lintas keilmuan dan departemen. Kami membiasakan ekosistem kerja yang supportif, ramah, dan adaptif untuk melahirkan karya nyata terbaik.
-                    </p>
-                  </div>
-                  <div className="text-left text-[9px] font-bold text-[#5B6B54] tracking-wider uppercase font-serif mt-4">
-                    — KELUARGA BESAR RUMAH PRESTASI
-                  </div>
-                </div>
-
-                {/* Block 2 (Small square card, warm sand background) */}
-                <div className="flow-feature-card p-7 bg-[#FCFAF2] flex flex-col justify-between min-h-[220px]">
-                  <div className="sf-stitched-border" />
-                  <div className="sf-paperclip" style={{ right: "28px" }} />
-                  
-                  <div className="text-left space-y-2">
-                    <span className="inline-block text-[9px] font-bold tracking-widest text-[#B8A88A] uppercase bg-[#B8A88A]/8 px-2 py-0.5 rounded">MENTORING</span>
-                    <h3 className="text-base sm:text-lg font-serif font-bold text-[#0D2B4E]">Inkubasi Juara</h3>
-                    <p className="text-[11px] text-[#5C5549] leading-relaxed">
-                      Pendampingan kompetitif intensif serta sharing session langsung bersama alumni berprestasi tingkat nasional.
-                    </p>
-                  </div>
-                  <div className="text-left text-[9px] font-bold text-[#B8A88A] tracking-wider uppercase mt-4">
-                    ✦ PRESTASI MAHASISWA
-                  </div>
-                </div>
-
-                {/* Block 3 (Small square card, warm cream sand background) */}
-                <div className="flow-feature-card p-7 bg-[#FAF5EB] flex flex-col justify-between min-h-[220px]">
-                  <div className="sf-stitched-border" />
-                  <div className="sf-paperclip" style={{ right: "28px", transform: "rotate(-5deg)" }} />
-
-                  <div className="text-left space-y-2">
-                    <span className="inline-block text-[9px] font-bold tracking-widest text-[#D4A828] uppercase bg-[#D4A828]/8 px-2 py-0.5 rounded">CONNECTIONS</span>
-                    <h3 className="text-base sm:text-lg font-serif font-bold text-[#0D2B4E]">Jejaring Luas</h3>
-                    <p className="text-[11px] text-[#5C5549] leading-relaxed">
-                      Hubungkan dirimu dengan jejaring pengurus hebat lintas angkatan, lembaga internal kampus, dan mitra instansi strategis.
-                    </p>
-                  </div>
-                  <div className="text-left text-[9px] font-bold text-[#D4A828] tracking-wider uppercase mt-4">
-                    ✦ STRATEGIC VALUE
-                  </div>
-                </div>
-
-                {/* Block 4 (Large 2-column card, terracotta background with dusty red styling) */}
-                <div className="flow-feature-card md:col-span-2 p-7 sm:p-8 bg-[#FBF6F5] flex flex-col justify-between min-h-[220px]">
-                  <div className="sf-stitched-border" />
-                  
-                  {/* Decorative apple bottom right */}
-                  <div className="absolute bottom-6 right-8 w-10 h-10 bg-[#C36B62] rounded-full border border-dashed border-white flex items-center justify-center shadow-md animate-floatGentle-2">
-                    <div className="w-5 h-5 bg-[#FCFAF2] rounded-full border border-dashed border-[#8B7E66]/40" />
-                    <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-0.5 h-2 bg-[#8B7E66] rounded-sm" />
-                  </div>
-
-                  <div className="text-left space-y-2.5 max-w-md">
-                    <span className="inline-block text-[9px] font-bold tracking-widest text-[#C36B62] uppercase bg-[#C36B62]/8 px-2 py-0.5 rounded">INNOVATION</span>
-                    <h3 className="text-lg sm:text-xl font-serif font-bold text-[#0D2B4E]">Inovasi Tanpa Batas</h3>
-                    <p className="text-xs text-[#5C5549] leading-relaxed">
-                      Tempat di mana ide-ide segar tidak hanya dirancang, namun diuji dan direalisasikan dalam bentuk program terobosan, kajian solutif, serta produk teknologi terapan.
-                    </p>
-                  </div>
-                  <div className="text-left text-[9px] font-bold text-[#C36B62] tracking-wider uppercase font-serif mt-4">
-                    — KARYA RUMAH PRESTASI
-                  </div>
-                </div>
-
-              </div>
-            </div>
 
             {/* NIM Check Dedicated Section (id="check-portal") */}
             <div id="check-portal" className="hero-el w-full max-w-[440px] mt-4">
@@ -866,7 +778,13 @@ export default function Home() {
                     <div className="envelope-flap" />
                     
                     {/* Wax Seal */}
-                    <div className="envelope-wax-seal" />
+                    <div className="envelope-wax-seal">
+                      <img 
+                        src="/image/rumpres.png" 
+                        alt="Segel Rumah Prestasi" 
+                        className="w-10 h-10 object-contain filter drop-shadow-sm select-none brightness-110" 
+                      />
+                    </div>
 
                     {/* Paper preview slide out */}
                     <div className="envelope-paper-preview absolute bottom-4 left-4 right-4 h-24 bg-[#FCFAF2] rounded-lg shadow-inner z-2 p-4 flex flex-col justify-center items-center pointer-events-none transform translate-y-0">
