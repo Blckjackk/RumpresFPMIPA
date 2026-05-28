@@ -108,9 +108,11 @@ export default function Home() {
   const [departmentsList, setDepartmentsList] = useState<DepartmentData[]>([]);
   const [dataReady, setDataReady] = useState(false);
 
-  // Responsive state helper
+  // Responsive state and Premium Interactive helpers
   const [windowWidth, setWindowWidth] = useState(1200);
   const [isTouch, setIsTouch] = useState(false);
+  const [isMuted, setIsMuted] = useState(true);
+  const [isDownloading, setIsDownloading] = useState(false);
 
   // Unboxing & Celebration Scene States
   const [scene, setScene] = useState<"login" | "intro" | "envelope" | "letters" | "celebration">("login");
@@ -131,6 +133,245 @@ export default function Home() {
   const nameRef = useRef<HTMLParagraphElement>(null);
   const headingUnderlineRef = useRef<HTMLHeadingElement>(null);
 
+  // Refs for click-to-burst particles and sound contexts
+  const particlesRef = useRef<any[]>([]);
+  const audioCtxRef = useRef<AudioContext | null>(null);
+
+  // 0A. Pure-JS real-time Web Audio API synthesizer for satisfying SFX (100% offline-compatible)
+  const playSFX = useCallback((type: "pop" | "whoosh" | "chimes") => {
+    if (isMuted) return;
+    try {
+      if (!audioCtxRef.current) {
+        audioCtxRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+      }
+      const ctx = audioCtxRef.current;
+      if (ctx.state === "suspended") {
+        ctx.resume();
+      }
+
+      const now = ctx.currentTime;
+
+      if (type === "pop") {
+        // Satisfying physical wax seal crack/pop
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(180, now);
+        osc.frequency.exponentialRampToValueAtTime(45, now + 0.08);
+
+        gain.gain.setValueAtTime(0.2, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.08);
+      } else if (type === "whoosh") {
+        // Satisfying paper flip / slide whoosh
+        const bufferSize = ctx.sampleRate * 0.3;
+        const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) {
+          data[i] = Math.random() * 2 - 1;
+        }
+        const noise = ctx.createBufferSource();
+        noise.buffer = buffer;
+
+        const filter = ctx.createBiquadFilter();
+        filter.type = "bandpass";
+        filter.frequency.setValueAtTime(500, now);
+        filter.frequency.exponentialRampToValueAtTime(1100, now + 0.12);
+        filter.frequency.exponentialRampToValueAtTime(350, now + 0.3);
+        filter.Q.value = 2.2;
+
+        const gain = ctx.createGain();
+        gain.gain.setValueAtTime(0, now);
+        gain.gain.linearRampToValueAtTime(0.09, now + 0.08);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+
+        noise.connect(filter);
+        filter.connect(gain);
+        gain.connect(ctx.destination);
+
+        noise.start(now);
+      } else if (type === "chimes") {
+        // Ascending magical pentatonic arpeggio sweep for selebrasi
+        const freqs = [523.25, 587.33, 659.25, 783.99, 880.00, 1046.50, 1174.66, 1318.51];
+        freqs.forEach((freq, idx) => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = "triangle";
+          osc.frequency.setValueAtTime(freq, now + idx * 0.04);
+
+          gain.gain.setValueAtTime(0, now);
+          gain.gain.linearRampToValueAtTime(0.045, now + idx * 0.04 + 0.02);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.04 + 0.35);
+
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+
+          osc.start(now + idx * 0.04);
+          osc.stop(now + idx * 0.04 + 0.35);
+        });
+      }
+    } catch (e) {
+      console.warn("Failed playing SFX:", e);
+    }
+  }, [isMuted]);
+
+  // 0B. Certificate Acceptance Share Card Generator (HTML5 Canvas Draw)
+  const handleDownloadCertificate = async () => {
+    if (!applicant) return;
+    setIsDownloading(true);
+    try {
+      const canvas = document.createElement("canvas");
+      canvas.width = 1200;
+      canvas.height = 630;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) throw new Error("Could not get canvas context");
+
+      // Background
+      ctx.fillStyle = "#FCFAF2";
+      ctx.fillRect(0, 0, 1200, 630);
+
+      // Noise texture
+      for (let i = 0; i < 120000; i++) {
+        const x = Math.random() * 1200;
+        const y = Math.random() * 630;
+        ctx.fillStyle = `rgba(139, 126, 102, ${Math.random() * 0.025})`;
+        ctx.fillRect(x, y, 1, 1);
+      }
+
+      // Elegant Dual Borders
+      ctx.lineWidth = 4;
+      ctx.strokeStyle = "#8B7E66";
+      ctx.strokeRect(20, 20, 1160, 590);
+
+      ctx.lineWidth = 2;
+      ctx.setLineDash([8, 6]);
+      ctx.strokeStyle = "#B8A88A";
+      ctx.strokeRect(32, 32, 1136, 566);
+      ctx.setLineDash([]); // reset
+
+      // Draw Logo
+      const logo = new Image();
+      logo.src = "/image/rumpres.png";
+      await new Promise<void>((resolve) => {
+        logo.onload = () => {
+          ctx.drawImage(logo, 600 - 45, 60, 90, 90);
+          resolve();
+        };
+        logo.onerror = () => {
+          ctx.fillStyle = "#B8A88A";
+          ctx.beginPath();
+          ctx.arc(600, 105, 40, 0, Math.PI * 2);
+          ctx.fill();
+          resolve();
+        };
+      });
+
+      ctx.textAlign = "center";
+      
+      // Header
+      ctx.fillStyle = "#0D2B4E";
+      ctx.font = "bold 13px sans-serif";
+      ctx.fillText("RUMAH PRESTASI FPMIPA UPI", 600, 190);
+      
+      ctx.fillStyle = "#B8A88A";
+      ctx.font = "bold 10px sans-serif";
+      ctx.fillText("SELEKSI ANGGOTA BARU 2026", 600, 210);
+
+      // Line
+      ctx.strokeStyle = "rgba(184, 168, 138, 0.4)";
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(450, 230);
+      ctx.lineTo(750, 230);
+      ctx.stroke();
+
+      // Certificate title
+      ctx.fillStyle = "#5B6B54";
+      ctx.font = "italic bold 28px Georgia, serif";
+      ctx.fillText("SURAT KEPUTUSAN KELULUSAN", 600, 275);
+
+      ctx.fillStyle = "#5C5549";
+      ctx.font = "14px Georgia, serif";
+      ctx.fillText("Dengan bangga menyatakan bahwa pendaftar di bawah ini:", 600, 315);
+
+      // Student Name
+      ctx.fillStyle = "#C36B62";
+      ctx.font = "bold 32px sans-serif";
+      ctx.fillText(applicant.nama.toUpperCase(), 600, 365);
+
+      ctx.fillStyle = "#2D4A6A";
+      ctx.font = "bold 15px sans-serif";
+      ctx.fillText(`NIM. ${applicant.nim}`, 600, 395);
+
+      ctx.fillStyle = "#5C5549";
+      ctx.font = "14px Georgia, serif";
+      ctx.fillText("dinyatakan lolos seleksi dan resmi bergabung sebagai staf:", 600, 435);
+
+      // Role & Department
+      ctx.fillStyle = "#1B5E9E";
+      ctx.font = "bold 20px sans-serif";
+      ctx.fillText(`${applicant.jabatan} - ${deptInfo?.fullName ?? applicant.departemen}`, 600, 475);
+
+      // Hashtag
+      ctx.fillStyle = "#B8A88A";
+      ctx.font = "bold 13px sans-serif";
+      ctx.fillText("#JuaranyaFPMIPA", 600, 520);
+
+      // Copyright
+      ctx.fillStyle = "rgba(74, 123, 165, 0.7)";
+      ctx.font = "9px sans-serif";
+      ctx.fillText("© 2026 RUMAH PRESTASI FPMIPA UPI", 600, 570);
+
+      // Download trigger
+      const dataUrl = canvas.toDataURL("image/png");
+      const link = document.createElement("a");
+      link.download = `Kelulusan_${applicant.nama.replace(/\s+/g, "_")}.png`;
+      link.href = dataUrl;
+      link.click();
+    } catch (err) {
+      console.error("Error generating acceptance card:", err);
+    } finally {
+      setIsDownloading(false);
+    }
+  };
+
+  // 0C. Click-to-Burst cursor confetti emitter
+  const handlePageClick = (e: React.MouseEvent) => {
+    if (scene !== "celebration" || !canvasRef.current) return;
+    const colors = ["#C36B62", "#D4A828", "#5B6B54", "#B8A88A", "#1B5E9E"];
+    const shapes = ["rect", "circle", "star"];
+    const rect = canvasRef.current.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    for (let i = 0; i < 15; i++) {
+      particlesRef.current.push({
+        x: x,
+        y: y,
+        size: Math.random() * 5 + 3,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        speedY: -(Math.random() * 4 + 2),
+        speedX: (Math.random() - 0.5) * 6,
+        rotation: Math.random() * 360,
+        rotationSpeed: Math.random() * 4 - 2,
+        shape: shapes[Math.floor(Math.random() * shapes.length)] as any,
+      });
+    }
+  };
+
+  // 0D. Prefilled WA coordinator contact redirect URL
+  const getWhatsAppLink = () => {
+    if (!applicant) return "#";
+    const waText = encodeURIComponent(
+      `Halo Kak! Saya *${applicant.nama}* (NIM: *${applicant.nim}*), dinyatakan lolos seleksi dan diterima sebagai *${applicant.jabatan}* di Departemen *${deptInfo?.fullName ?? applicant.departemen}* Rumah Prestasi 2026.\n\nSaya ingin mengonfirmasi kelulusan saya. Terima kasih banyak kak! #JuaranyaFPMIPA`
+    );
+    return `https://wa.me/62895325785002?text=${waText}`;
+  };
+
   // Window Resize & Client detection (prevents hydration mismatch)
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -150,6 +391,13 @@ export default function Home() {
     }, 2400);
     return () => clearTimeout(timer);
   }, [scene]);
+
+  // 1b. Celebration sound effect observer
+  useEffect(() => {
+    if (scene === "celebration") {
+      playSFX("chimes");
+    }
+  }, [scene, playSFX]);
 
   // 2. Multi-burst Confetti + Sparkle Stars for Celebration Scene
   useEffect(() => {
@@ -203,7 +451,8 @@ export default function Home() {
       }, delay);
     };
 
-    const particles: Particle[] = [];
+    particlesRef.current = [];
+    const particles = particlesRef.current;
     // Elegant, smaller burst waves
     createBurst(0.15, 0.6, 40, 0);   // left
     createBurst(0.85, 0.6, 40, 200); // right
@@ -453,6 +702,7 @@ export default function Home() {
   const handleOpenEnvelope = () => {
     if (envelopeOpen) return;
     setEnvelopeOpen(true);
+    playSFX("pop");
     
     const tl = gsap.timeline({
       onComplete: () => {
@@ -806,6 +1056,15 @@ export default function Home() {
           </nav>
 
           <div className="flex items-center gap-2.5">
+            {/* Audio Toggle */}
+            <button
+              onClick={() => setIsMuted(prev => !prev)}
+              className="btn-light text-[11px] font-bold px-3.5 py-1.5 rounded-full shadow-sm flex items-center gap-1.5 hover:scale-105 transition-all duration-200 cursor-pointer"
+              title={isMuted ? "Aktifkan Suara" : "Matikan Suara"}
+            >
+              {isMuted ? "🔇 Suara Off" : "🔊 Suara On"}
+            </button>
+
             {!applicant ? (
               <button 
                 onClick={scrollToPortal} 
@@ -1277,6 +1536,18 @@ export default function Home() {
                                   </div>
                                 ))}
                               </div>
+
+                              {/* WhatsApp LO Button */}
+                              <div className="sf-card-line pt-2 w-full">
+                                <a
+                                  href={getWhatsAppLink()}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="w-full btn-light py-2 rounded-xl text-[10px] sm:text-[11px] font-bold flex items-center justify-center gap-1.5 border border-[#128C7E]/40 text-[#128C7E] hover:bg-[#128C7E]/5 transition-colors cursor-pointer"
+                                >
+                                  Hubungi LO Staf (WhatsApp)
+                                </a>
+                              </div>
                             </div>
 
                             <div className="sf-card-line relative z-10 pt-4 flex flex-col items-center">
@@ -1300,7 +1571,7 @@ export default function Home() {
                 <div className="flex justify-between items-center w-full max-w-[480px] px-4 py-1 z-10 font-sans">
                   <button 
                     disabled={activeLetter === 0}
-                    onClick={() => setActiveLetter(prev => prev - 1)}
+                    onClick={() => { setActiveLetter(prev => prev - 1); playSFX("whoosh"); }}
                     className="btn-light text-[11px] px-3.5 py-1.5 rounded-lg disabled:opacity-30 disabled:cursor-not-allowed shrink-0 cursor-pointer"
                   >
                     ← Kembali
@@ -1309,14 +1580,14 @@ export default function Home() {
                     {[0, 1, 2, 3].map(dot => (
                       <span 
                         key={dot}
-                        onClick={() => setActiveLetter(dot)}
+                        onClick={() => { setActiveLetter(dot); playSFX("whoosh"); }}
                         className={`dot w-2 h-2 rounded-full cursor-pointer transition-all duration-300 ${activeLetter === dot ? "bg-[#5B6B54] scale-125 px-2" : "bg-[#B8A88A]/40"}`}
                       />
                     ))}
                   </div>
                   <button 
                     disabled={activeLetter === 3}
-                    onClick={() => setActiveLetter(prev => prev + 1)}
+                    onClick={() => { setActiveLetter(prev => prev + 1); playSFX("whoosh"); }}
                     className="btn-light text-[11px] px-3.5 py-1.5 rounded-lg disabled:opacity-30 disabled:cursor-not-allowed shrink-0 cursor-pointer"
                   >
                     Lanjut →
@@ -1327,11 +1598,14 @@ export default function Home() {
 
             {/* ── Scene 3: Canvas Confetti Ending Celebration ── */}
             {scene === "celebration" && (
-              <div className="w-full max-w-[420px] text-center space-y-6 relative z-10 py-4 flex flex-col items-center">
+              <div 
+                onClick={handlePageClick}
+                className="w-full max-w-[420px] text-center space-y-6 relative z-10 py-4 flex flex-col items-center select-none"
+              >
                 
                 {/* Overlay canvas */}
                 <canvas ref={canvasRef} className="pointer-events-none fixed inset-0 z-50 w-full h-full" />
-                            <div className="badge-rp bg-[#C36B62]/10 text-[#C36B62] border-[#C36B62]/20 mx-auto font-sans">
+                <div className="badge-rp bg-[#C36B62]/10 text-[#C36B62] border-[#C36B62]/20 mx-auto font-sans">
                   Selamat Bergabung!
                 </div>
                 
@@ -1376,6 +1650,26 @@ export default function Home() {
                     </div>
                   </div>
                 </div>
+
+                {/* Download Certificate Button */}
+                <button
+                  onClick={handleDownloadCertificate}
+                  disabled={isDownloading}
+                  onMouseMove={handleMagneticMove}
+                  onMouseLeave={handleMagneticLeave}
+                  className="w-full btn-light py-3.5 text-xs font-bold tracking-wider uppercase shadow-md flex items-center justify-center gap-2 border border-[#B8A88A]/40 text-[#5B6B54] bg-[#FCFAF2] hover:bg-white hover:border-[#5B6B54]/60 transition-all cursor-pointer"
+                >
+                  {isDownloading ? (
+                    <>
+                      <span className="spin inline-block w-4 h-4 rounded-full border-2 border-[#5B6B54]/30 border-t-[#5B6B54]" />
+                      Mengunduh Gambar...
+                    </>
+                  ) : (
+                    <>
+                      🎓 Unduh Bukti Kelulusan (PNG)
+                    </>
+                  )}
+                </button>
 
                 <div className="pt-4 flex flex-col gap-2.5 w-full font-sans">
                   <button 
