@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -9,6 +9,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import staffData from "@/data/staff.json";
+import gsap from "gsap";
 
 interface Message {
   nim: string;
@@ -25,11 +26,34 @@ export default function AdminPage() {
   const [responseText, setResponseText] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [filterStaff, setFilterStaff] = useState("all");
+  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const storedMessages = JSON.parse(localStorage.getItem("messages") || "[]");
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setMessages(storedMessages);
+  }, []);
+
+  useEffect(() => {
+    if (!containerRef.current) return;
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        ".admin-header",
+        { y: 20, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.6, ease: "power3.out", delay: 0.1 }
+      );
+      gsap.fromTo(
+        ".admin-stat",
+        { y: 25, opacity: 0, scale: 0.97 },
+        { y: 0, opacity: 1, scale: 1, duration: 0.5, stagger: 0.08, ease: "power3.out", delay: 0.2 }
+      );
+      gsap.fromTo(
+        ".admin-content",
+        { y: 30, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.6, ease: "power3.out", delay: 0.5 }
+      );
+    }, containerRef);
+    return () => ctx.revert();
   }, []);
 
   const handleRespond = (message: Message) => {
@@ -69,158 +93,159 @@ export default function AdminPage() {
     return acc;
   }, {} as Record<string, number>);
 
-  return (
-    <div className="min-h-screen p-4 py-8">
-      <div className="max-w-7xl mx-auto">
-        <Card className="mb-6 border-2 border-primary/20">
-          <CardHeader>
-            <CardTitle className="text-3xl text-primary">Admin Dashboard</CardTitle>
-            <CardDescription className="text-base">
-              Kelola dan balas pesan dari mahasiswa untuk pengurus BEM KEMAKOM
-            </CardDescription>
-          </CardHeader>
-        </Card>
+  const stats = [
+    { label: "Total Pesan", value: messages.length, color: "blue" },
+    { label: "Sudah Dibalas", value: messages.filter(m => m.response).length, color: "gold" },
+    { label: "Belum Dibalas", value: messages.filter(m => !m.response).length, color: "slate" },
+    { label: "Total Pengurus", value: staffData.length, color: "blue" },
+  ];
 
-        <div className="grid gap-6 mb-6 md:grid-cols-4">
-          <Card className="border-2 border-primary/10">
-            <CardContent className="pt-6">
-              <div className="text-2xl font-bold text-primary">{messages.length}</div>
-              <p className="text-sm text-muted-foreground">Total Pesan</p>
-            </CardContent>
-          </Card>
-          <Card className="border-2 border-primary/10">
-            <CardContent className="pt-6">
-              <div className="text-2xl font-bold text-accent">
-                {messages.filter(m => m.response).length}
-              </div>
-              <p className="text-sm text-muted-foreground">Sudah Dibalas</p>
-            </CardContent>
-          </Card>
-          <Card className="border-2 border-primary/10">
-            <CardContent className="pt-6">
-              <div className="text-2xl font-bold text-foreground">
-                {messages.filter(m => !m.response).length}
-              </div>
-              <p className="text-sm text-muted-foreground">Belum Dibalas</p>
-            </CardContent>
-          </Card>
-          <Card className="border-2 border-primary/10">
-            <CardContent className="pt-6">
-              <div className="text-2xl font-bold text-primary">{staffData.length}</div>
-              <p className="text-sm text-muted-foreground">Total Pengurus</p>
-            </CardContent>
-          </Card>
+  return (
+    <div ref={containerRef} className="relative min-h-screen p-4 py-8 bg-[#0a0f1e] text-slate-100 overflow-hidden">
+      {/* Background */}
+      <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
+        <div className="absolute -top-32 -left-32 w-[400px] h-[400px] rounded-full bg-[#1E3A8A] opacity-20 blur-[140px]" />
+        <div className="absolute bottom-[-80px] right-[-60px] w-[350px] h-[350px] rounded-full bg-[#6366F1] opacity-[0.08] blur-[130px]" />
+        <div className="absolute inset-0 dot-pattern" />
+      </div>
+
+      <div className="relative z-10 max-w-7xl mx-auto">
+        {/* Header */}
+        <div className="admin-header glass-card-strong overflow-hidden top-line-gradient mb-6 p-6">
+          <h1 className="text-2xl font-bold text-white tracking-tight">Admin Dashboard</h1>
+          <p className="text-sm text-slate-400 mt-1">
+            Kelola dan balas pesan dari mahasiswa
+          </p>
         </div>
 
-        <Card className="border-2 border-primary/10">
-          <CardHeader>
-            <CardTitle className="text-xl">Filter berdasarkan Pengurus</CardTitle>
-            <div className="mt-4">
-              <select 
-                className="w-full p-2 border rounded-lg bg-background"
-                value={filterStaff}
-                onChange={(e) => setFilterStaff(e.target.value)}
-              >
-                <option value="all">Semua Pengurus ({messages.length} pesan)</option>
-                {(staffData as any[]).map(staff => {
-                  if (staff && staff.nim) {
-                    const count = groupedByStaff[staff.nim] || 0;
-                    if (count > 0) {
-                      return (
-                        <option key={staff.nim} value={staff.nim}>
-                          {staff.nama} ({count} pesan)
-                        </option>
-                      );
-                    }
-                  }
-                  return null;
-                })}
-              </select>
+        {/* Stats */}
+        <div className="grid gap-4 mb-6 grid-cols-2 md:grid-cols-4">
+          {stats.map((stat, idx) => (
+            <div key={idx} className="admin-stat glass-card overflow-hidden p-5">
+              <div className={`text-2xl font-bold mb-1 ${
+                stat.color === "blue" ? "text-blue-400" : 
+                stat.color === "gold" ? "text-[#C9A227]" : "text-white"
+              }`}>
+                {stat.value}
+              </div>
+              <p className="text-xs text-slate-400">{stat.label}</p>
             </div>
-          </CardHeader>
-          <CardContent className="space-y-4 max-h-[600px] overflow-y-auto">
+          ))}
+        </div>
+
+        {/* Messages Section */}
+        <div className="admin-content glass-card-strong overflow-hidden">
+          <div className="p-6 border-b border-white/[0.04]">
+            <h2 className="text-lg font-bold text-white mb-4">Filter Berdasarkan Pengurus</h2>
+            <select 
+              className="w-full p-3 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-sm outline-none focus:border-blue-500/50 transition-colors"
+              value={filterStaff}
+              onChange={(e) => setFilterStaff(e.target.value)}
+            >
+              <option value="all" className="bg-[#0f172a]">Semua Pengurus ({messages.length} pesan)</option>
+              {(staffData as any[]).map(staff => {
+                if (staff && staff.nim) {
+                  const count = groupedByStaff[staff.nim] || 0;
+                  if (count > 0) {
+                    return (
+                      <option key={staff.nim} value={staff.nim} className="bg-[#0f172a]">
+                        {staff.nama} ({count} pesan)
+                      </option>
+                    );
+                  }
+                }
+                return null;
+              })}
+            </select>
+          </div>
+
+          <div className="p-4 space-y-4 max-h-[600px] overflow-y-auto">
             {filteredMessages.length === 0 ? (
-              <div className="text-center py-12 text-muted-foreground">
-                Belum ada pesan {filterStaff !== "all" && "untuk pengurus ini"}
+              <div className="text-center py-16">
+                <div className="w-14 h-14 rounded-2xl bg-white/[0.04] border border-white/[0.06] flex items-center justify-center text-2xl mx-auto mb-3">
+                  📭
+                </div>
+                <p className="text-sm text-slate-400">
+                  Belum ada pesan {filterStaff !== "all" && "untuk pengurus ini"}
+                </p>
               </div>
             ) : (
               filteredMessages.map((msg, idx) => {
                 const staffInfo = getStaffData(msg.staffNim);
                 return (
-                  <Card key={idx} className="border-2 hover:border-primary/30 transition-colors">
-                    <CardHeader>
-                      <div className="flex items-start justify-between gap-4">
-                        <div className="flex items-center gap-4 flex-1">
-                          {staffInfo && staffInfo.nama && (
-                            <Avatar className="h-14 w-14">
-                              <AvatarImage src={staffInfo.photo} alt={staffInfo.nama} />
-                              <AvatarFallback className="bg-primary/10 text-primary font-semibold">
-                                {staffInfo.nama.split(' ').slice(0, 2).map(n => n[0]).join('')}
-                              </AvatarFallback>
-                            </Avatar>
-                          )}
-                          <div className="flex-1">
-                            <div className="flex items-center gap-2 flex-wrap">
-                              <CardTitle className="text-base">Untuk: {msg.staffName}</CardTitle>
-                              {msg.response && (
-                                <Badge variant="secondary" className="bg-accent/20 text-accent-foreground">
-                                  ✓ Sudah Dibalas
-                                </Badge>
-                              )}
-                            </div>
-                            <CardDescription>
-                              Dari NIM: {msg.nim} • {new Date(msg.timestamp).toLocaleString('id-ID')}
-                            </CardDescription>
+                  <div key={idx} className="glass-card overflow-hidden p-5 hover:border-white/[0.12] transition-all duration-300">
+                    <div className="flex items-start justify-between gap-4 mb-4">
+                      <div className="flex items-center gap-3 flex-1">
+                        {staffInfo && staffInfo.nama && (
+                          <Avatar className="h-11 w-11 rounded-xl">
+                            <AvatarImage src={staffInfo.photo} alt={staffInfo.nama} className="rounded-xl" />
+                            <AvatarFallback className="bg-blue-500/10 text-blue-300 font-semibold text-xs rounded-xl">
+                              {staffInfo.nama.split(' ').slice(0, 2).map(n => n[0]).join('')}
+                            </AvatarFallback>
+                          </Avatar>
+                        )}
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <span className="font-semibold text-sm text-white">Untuk: {msg.staffName}</span>
+                            {msg.response && (
+                              <span className="inline-flex items-center gap-1 text-[10px] font-medium px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-400 border border-emerald-400/15">
+                                ✓ Dibalas
+                              </span>
+                            )}
                           </div>
+                          <p className="text-[11px] text-slate-500 mt-0.5">
+                            NIM: {msg.nim} · {new Date(msg.timestamp).toLocaleString('id-ID')}
+                          </p>
                         </div>
                       </div>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
+                    </div>
+
+                    <div className="space-y-3">
                       <div>
-                        <Label className="text-sm font-semibold">Pesan:</Label>
-                        <p className="mt-2 text-sm whitespace-pre-wrap bg-muted/30 p-3 rounded-lg">
+                        <span className="text-[10px] font-medium text-slate-500 tracking-wide uppercase">Pesan:</span>
+                        <p className="mt-1.5 text-sm whitespace-pre-wrap bg-white/[0.03] p-3 rounded-lg border border-white/[0.04] text-slate-200/90">
                           {msg.message}
                         </p>
                       </div>
                       {msg.response && (
                         <div>
-                          <Label className="text-sm font-semibold text-accent">Respon Anda:</Label>
-                          <p className="mt-2 text-sm whitespace-pre-wrap bg-accent/10 border-2 border-accent/20 p-3 rounded-lg">
+                          <span className="text-[10px] font-medium text-[#C9A227]/70 tracking-wide uppercase">Respon:</span>
+                          <p className="mt-1.5 text-sm whitespace-pre-wrap bg-[#C9A227]/[0.04] border border-[#C9A227]/10 p-3 rounded-lg text-slate-200/90">
                             {msg.response}
                           </p>
                         </div>
                       )}
                       <Button 
                         onClick={() => handleRespond(msg)} 
-                        className="w-full bg-primary hover:bg-primary/90"
+                        className="w-full btn-primary-glow border-0 text-white font-medium h-10"
                       >
-                        {msg.response ? "Edit Respon" : "Balas Pesan"}
+                        <span className="relative">{msg.response ? "Edit Respon" : "Balas Pesan"}</span>
                       </Button>
-                    </CardContent>
-                  </Card>
+                    </div>
+                  </div>
                 );
               })
             )}
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogContent className="max-w-2xl">
+          <DialogContent className="max-w-2xl bg-[#0f172a] border-white/[0.08] text-white">
             <DialogHeader>
-              <DialogTitle className="text-xl text-primary">Balas Pesan</DialogTitle>
-              <DialogDescription>
-                Untuk: {selectedMessage?.staffName} • Dari NIM: {selectedMessage?.nim}
+              <DialogTitle className="text-xl text-white">Balas Pesan</DialogTitle>
+              <DialogDescription className="text-slate-400">
+                Untuk: {selectedMessage?.staffName} · Dari NIM: {selectedMessage?.nim}
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-4">
               <div>
-                <Label className="text-sm font-semibold">Pesan dari mahasiswa:</Label>
-                <div className="mt-2 p-4 bg-muted/30 rounded-lg text-sm border">
+                <Label className="text-xs font-medium text-slate-400 tracking-wide uppercase">Pesan dari mahasiswa:</Label>
+                <div className="mt-2 p-4 bg-white/[0.03] rounded-xl text-sm border border-white/[0.04] text-slate-200/90">
                   {selectedMessage?.message}
                 </div>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="response" className="text-base font-semibold">
+                <Label htmlFor="response" className="text-sm font-medium text-white">
                   Respon Anda:
                 </Label>
                 <Textarea
@@ -229,22 +254,22 @@ export default function AdminPage() {
                   value={responseText}
                   onChange={(e) => setResponseText(e.target.value)}
                   rows={6}
-                  className="resize-none"
+                  className="resize-none bg-white/[0.04] border-white/[0.08] text-white placeholder:text-slate-500/60 focus:border-blue-500/50"
                 />
               </div>
               <div className="flex gap-3">
                 <Button
                   variant="outline"
                   onClick={() => setIsDialogOpen(false)}
-                  className="w-full h-12"
+                  className="w-full h-12 bg-white/[0.04] border-white/[0.08] text-slate-300 hover:bg-white/[0.08] hover:text-white"
                 >
                   Batal
                 </Button>
                 <Button 
                   onClick={handleSaveResponse} 
-                  className="w-full h-12 bg-primary hover:bg-primary/90"
+                  className="w-full h-12 btn-primary-glow border-0 text-white font-semibold"
                 >
-                  Simpan Respon
+                  <span className="relative">Simpan Respon</span>
                 </Button>
               </div>
             </div>

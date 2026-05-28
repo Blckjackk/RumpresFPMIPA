@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
-import { Poppins, Dancing_Script } from "next/font/google";
+import { Inter, Dancing_Script } from "next/font/google";
 import "./globals.css";
 
-const poppins = Poppins({
-  variable: "--font-poppins",
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700", "800", "900"],
   display: "swap",
@@ -17,9 +17,11 @@ const dancingScript = Dancing_Script({
 });
 
 export const metadata: Metadata = {
-  title: "Rumah Prestasi FPMIPA UPI – Open Recruitment 2026",
+  title: "Rumah Prestasi FPMIPA UPI — Open Recruitment 2026",
   description:
-    "Selamat datang di halaman Open Recruitment Rumah Prestasi FPMIPA UPI. Masukkan NIM kamu untuk melihat informasi pendaftaran.",
+    "Portal resmi pengumuman hasil seleksi Open Recruitment Rumah Prestasi FPMIPA Universitas Pendidikan Indonesia. Masukkan NIM untuk melihat status penerimaan.",
+  keywords: ["Rumah Prestasi", "FPMIPA", "UPI", "Open Recruitment", "2026", "BEM", "TumbuhAsa"],
+  authors: [{ name: "Rumah Prestasi FPMIPA UPI" }],
 };
 
 export default function RootLayout({
@@ -30,7 +32,7 @@ export default function RootLayout({
   return (
     <html lang="id">
       <body
-        className={`${poppins.variable} ${dancingScript.variable} antialiased`}
+        className={`${inter.variable} ${dancingScript.variable} antialiased`}
       >
         {children}
       </body>
