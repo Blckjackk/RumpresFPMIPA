@@ -294,36 +294,37 @@ export default function Home() {
             </div>
 
             {/* Grid */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
 
               {/* LEFT COL */}
-              <div className="lg:col-span-7 space-y-6">
+              <div className="lg:col-span-7 space-y-8">
 
                 {/* Info card */}
-                <div className="res-card card-white accent-line-green overflow-hidden p-6">
-                  <div className="flex items-center gap-3 mb-5">
-                    <div className="w-10 h-10 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center text-lg text-emerald-600 shrink-0">
+                <div className="res-card card-white accent-line-green overflow-hidden p-6 shadow-md border border-[#C2DFF0]/60">
+                  <div className="flex items-center gap-3 mb-6">
+                    <div className="w-10 h-10 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center text-lg text-emerald-600 shrink-0 shadow-sm">
                       ✓
                     </div>
                     <div>
-                      <span className="text-[10px] font-semibold text-[#4A7BA5] tracking-widest uppercase block">Status</span>
-                      <h2 className="text-base font-bold text-[#0D2B4E]">Diterima Sebagai Staf Muda</h2>
+                      <span className="text-[10px] font-bold text-[#8AACCC] tracking-widest uppercase block">STATUS KELULUSAN</span>
+                      <h2 className="text-base font-extrabold text-[#0D2B4E]">Diterima Sebagai Staf Muda</h2>
                     </div>
                   </div>
 
-                  <div className="space-y-0 divide-y divide-[#EDF6FC]">
+                  <div className="space-y-1">
                     {[
-                      { label: "Nama Lengkap", value: applicant.nama, bold: true },
-                      { label: "NIM", value: applicant.nim },
-                      { label: "Departemen", value: deptInfo?.fullName ?? applicant.departemen, highlight: true },
-                      { label: "Jabatan", value: applicant.jabatan, gold: true },
-                      { label: "Pelantikan", value: "Segera diinfokan via grup", muted: true },
+                      { label: "Nama Lengkap", value: applicant.nama, bold: true, icon: "👤" },
+                      { label: "NIM", value: applicant.nim, icon: "🆔" },
+                      { label: "Departemen", value: deptInfo?.fullName ?? applicant.departemen, highlight: true, icon: "🏢" },
+                      { label: "Jabatan", value: applicant.jabatan, gold: true, icon: "🏆" },
+                      { label: "Pelantikan", value: "Segera diinfokan via grup", muted: true, icon: "📅" },
                     ].map((row, idx) => (
-                      <div key={idx} className="flex flex-col sm:flex-row sm:items-center py-3">
-                        <span className="text-[10px] font-semibold tracking-widest text-[#8AACCC] sm:w-1/3 mb-0.5 sm:mb-0 uppercase">
+                      <div key={idx} className="rp-info-card-row">
+                        <span className="text-[9px] font-bold tracking-widest text-[#8AACCC] mb-1 flex items-center gap-1.5 uppercase">
+                          <span className="text-xs">{row.icon}</span>
                           {row.label}
                         </span>
-                        <span className={`text-sm sm:w-2/3 ${
+                        <span className={`text-sm ${
                           row.bold ? "font-bold text-[#0D2B4E] text-[15px]" :
                           row.highlight ? "font-semibold text-[#1B5E9E]" :
                           row.gold ? "font-semibold text-[#B8931F]" :
@@ -339,7 +340,7 @@ export default function Home() {
 
                 {/* Dept welcome - Premium poster-style */}
                 {deptInfo && (
-                  <div className="res-card bg-rp-poster-blue rounded-2xl p-6 relative overflow-hidden flex flex-col md:flex-row items-center gap-6 border border-white/20 shadow-xl">
+                  <div className="res-card rp-poster-card p-6 md:p-8 flex flex-col md:flex-row items-center gap-6 border border-white/20 shadow-xl">
                     {/* Grid background */}
                     <div className="poster-grid-overlay" />
                     
@@ -371,7 +372,6 @@ export default function Home() {
                       <div className="poster-speech-bubble p-5 relative">
                         {/* Quote bubble arrow pointing to photo */}
                         <div className="absolute top-1/2 -left-2 -translate-y-1/2 w-4 h-4 bg-white rotate-45 border-l border-b border-white/80 hidden md:block" />
-                        <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-white rotate-45 border-t border-l border-white/80 md:hidden" />
                         
                         <div className="flex items-center gap-2 mb-2.5">
                           <span className="flex items-center justify-center w-5 h-5 rounded-full bg-[#1B5E9E] text-white text-[10px] font-extrabold shadow-sm">
@@ -392,10 +392,10 @@ export default function Home() {
               </div>
 
               {/* RIGHT COL */}
-              <div className="lg:col-span-5 space-y-6">
+              <div className="lg:col-span-5 space-y-8">
 
                 {/* Azzam message - Premium poster-style */}
-                <div className="res-card bg-rp-poster-blue rounded-2xl p-6 relative overflow-hidden flex flex-col md:flex-row items-center gap-6 border border-white/20 shadow-xl">
+                <div className="res-card rp-poster-card p-6 md:p-8 flex flex-col md:flex-row items-center gap-6 border border-white/20 shadow-xl">
                   {/* Grid background */}
                   <div className="poster-grid-overlay" />
                   
@@ -427,7 +427,6 @@ export default function Home() {
                     <div className="poster-speech-bubble p-5 relative">
                       {/* Quote bubble arrow pointing to photo (right side on desktop) */}
                       <div className="absolute top-1/2 -right-2 -translate-y-1/2 w-4 h-4 bg-white rotate-45 border-r border-t border-white/80 hidden md:block" />
-                      <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-white rotate-45 border-t border-l border-white/80 md:hidden" />
                       
                       <div className="flex items-center gap-2 mb-2.5">
                         <span className="flex items-center justify-center w-5 h-5 rounded-full bg-[#D4A828] text-white text-[10px] font-extrabold shadow-sm">
@@ -451,31 +450,39 @@ export default function Home() {
                   </div>
                 </div>
 
-                {/* Surat */}
-                <div className="res-card relative rounded-2xl bg-white p-6 shadow-lg shadow-blue-900/[0.04] overflow-hidden border border-[#C2DFF0]">
-                  {/* Notebook lines */}
-                  <div className="absolute inset-0 pointer-events-none opacity-25 bg-[linear-gradient(rgba(194,223,240,0.4)_1px,transparent_1px)] bg-[size:100%_1.75rem]" />
-                  <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#1B5E9E] via-[#3A8FD6] to-[#D4A828]" />
+                {/* Surat - Premium wax-sealed luxury parchment card */}
+                <div className="res-card rp-letter-card p-6 sm:p-8 mt-6">
+                  {/* Parchment background assets */}
+                  <div className="rp-letter-lines" />
+                  <div className="rp-letter-watermark" />
+                  
+                  {/* 3D Gold Wax Seal */}
+                  <div className="rp-wax-seal" />
 
-                  <div className="relative z-10 space-y-4">
-                    <div className="flex justify-between items-start gap-4 border-b border-[#EDF6FC] pb-3.5">
-                      <div>
-                        <h4 className="text-sm font-extrabold text-[#1B5E9E] tracking-wide">SURAT UNTUK KELUARGA BARU</h4>
-                        <span className="text-[10px] text-[#8AACCC] font-semibold uppercase tracking-wider">BEM FPMIPA UPI 2026</span>
-                      </div>
-                      <span className="text-[10px] font-medium text-[#8AACCC] whitespace-nowrap">Mei 2026</span>
+                  <div className="relative z-10 space-y-5 pt-6">
+                    <div className="text-center border-b border-[#E8D48B]/40 pb-4">
+                      <h4 className="text-xs font-black text-[#1B5E9E] tracking-widest uppercase mb-1">SURAT UNTUK KELUARGA BARU</h4>
+                      <span className="text-[9px] font-extrabold text-[#B8931F] tracking-widest uppercase">BEM FPMIPA UPI 2026 · KABINET TUMBUHASA</span>
                     </div>
 
-                    <div className="text-[12px] leading-[1.8] text-[#2D4A6A] space-y-2.5 text-justify">
-                      <p>Assalamu&rsquo;alaikum Warahmatullahi Wabarakatuh, salam hangat, dan salam prestasi! 🌟</p>
-                      <p>Dengan penuh rasa bahagia dan bangga, kami menyambut kehadiranmu. Kamu yang sedang membaca surat ini adalah orang yang luar biasa — terpilih dari sekian banyak pendaftar karena semangat dan potensi besarmu.</p>
-                      <p>Rumah Prestasi hadir bukan sekadar wadah berorganisasi, melainkan tempat bertumbuh, merajut mimpi, dan berkolaborasi menciptakan dampak nyata bagi seluruh mahasiswa FPMIPA.</p>
-                      <p>Selamat berproses, tuangkan karya terbaikmu, dan mari tunjukkan bersama bahwa <strong className="text-[#1B5E9E]">#FPMIPAJUARA</strong>!</p>
+                    <div className="text-[12px] sm:text-[13px] leading-[1.9] text-[#2D4A6A] space-y-4 text-justify font-serif">
+                      <p className="first-letter:text-3xl first-letter:font-black first-letter:text-[#1B5E9E] first-letter:mr-2 first-letter:float-left first-letter:leading-none">
+                        Assalamu&rsquo;alaikum Warahmatullahi Wabarakatuh, salam hangat, dan salam prestasi! 🌟
+                      </p>
+                      <p>
+                        Dengan penuh rasa bahagia dan bangga, kami menyambut kehadiranmu. Kamu yang sedang membaca surat ini adalah orang yang luar biasa — terpilih dari sekian banyak pendaftar karena semangat, integritas, dan potensi besarmu.
+                      </p>
+                      <p>
+                        Rumah Prestasi hadir bukan sekadar wadah berorganisasi, melainkan tempat bertumbuh, merajut mimpi, dan berkolaborasi menciptakan dampak nyata bagi seluruh mahasiswa FPMIPA.
+                      </p>
+                      <p className="font-semibold text-[#1B5E9E] italic text-center text-[12px] sm:text-xs py-2 px-3 my-2 border-y border-[#E8D48B]/20 bg-[#EDF6FC]/50 rounded-xl">
+                        Selamat berproses, tuangkan karya terbaikmu, dan mari tunjukkan bersama bahwa #FPMIPAJUARA!
+                      </p>
                     </div>
 
-                    <div className="pt-3.5 border-t border-[#EDF6FC] flex flex-col items-end">
+                    <div className="pt-4 border-t border-[#E8D48B]/40 flex flex-col items-end">
                       <span className="text-[10px] italic text-[#8AACCC]">Tertanda hangat,</span>
-                      <span className="font-dancing text-2xl text-[#1B5E9E] mt-1 mb-0.5">Azzam</span>
+                      <span className="font-dancing text-3xl text-[#1B5E9E] mt-1 mb-0.5 transform -rotate-2">Azzam</span>
                       <span className="text-[9px] font-bold text-[#8AACCC] tracking-wider uppercase">Ahmad Izzuddin Azzam</span>
                     </div>
                   </div>

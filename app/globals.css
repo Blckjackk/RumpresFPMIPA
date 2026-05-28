@@ -399,41 +399,134 @@ h1, h2, h3, h4, h5, h6 {
    PREMIUM POSTER / DYNAMIC SPEECH CARDS (User-inspired)
    ====================================================== */
 
-.bg-rp-poster-blue {
-  background: linear-gradient(135deg, #154e88 0%, #308ecf 50%, #0d3460 100%);
+.rp-poster-card {
+  background: linear-gradient(135deg, #091e36 0%, #154e88 50%, #2072b2 100%);
   position: relative;
   overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  box-shadow: 0 12px 32px rgba(13, 43, 78, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 20px 45px -12px rgba(13, 43, 78, 0.3);
+  border-radius: 1.5rem;
 }
 
 .poster-grid-overlay {
   position: absolute;
-  inset: -100px;
+  inset: -120px;
   background-image: 
-    linear-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+    linear-gradient(rgba(255, 255, 255, 0.16) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.16) 1px, transparent 1px);
   background-size: 24px 24px;
-  transform: perspective(650px) rotateX(28deg) translateY(-20px);
+  transform: perspective(600px) rotateX(25deg) scale(1.15);
   transform-origin: top center;
-  opacity: 0.95;
+  opacity: 0.9;
   pointer-events: none;
+  z-index: 1;
 }
 
 .poster-glow-circle {
   position: absolute;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.25) 0%, transparent 70%);
-  filter: blur(15px);
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
+  filter: blur(24px);
   pointer-events: none;
+  z-index: 2;
 }
 
 .poster-speech-bubble {
-  background: rgba(255, 255, 255, 0.94);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.85);
+  background: #FFFFFF;
+  border: 1.5px solid rgba(255, 255, 255, 0.95);
   border-radius: 1.25rem;
-  box-shadow: 0 10px 25px -5px rgba(13, 43, 78, 0.12), 0 8px 10px -6px rgba(13, 43, 78, 0.08);
+  box-shadow: 0 15px 35px -5px rgba(9, 30, 54, 0.25), 0 8px 15px -6px rgba(9, 30, 54, 0.15);
+  z-index: 5;
+  position: relative;
 }
+
+/* ======================================================
+   PREMIUM LETTER CARD / SURAT UNTUK KELUARGA BARU
+   ====================================================== */
+
+.rp-letter-card {
+  background: #FCFAF5; /* Warm luxury cream parchment */
+  border: 2px solid #E8D48B; /* Elegant gold border */
+  border-radius: 1.5rem;
+  box-shadow: 
+    0 15px 35px -10px rgba(13, 43, 78, 0.08),
+    0 5px 15px -5px rgba(13, 43, 78, 0.04),
+    inset 0 0 40px rgba(232, 212, 139, 0.06);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Notebook lines for parchment look */
+.rp-letter-lines {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.18;
+  background-image: linear-gradient(#1B5E9E 1px, transparent 1px);
+  background-size: 100% 2rem;
+  background-position: 0 1.5rem;
+}
+
+/* Watermark background */
+.rp-letter-watermark {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-15deg);
+  width: 280px;
+  height: 280px;
+  opacity: 0.035;
+  pointer-events: none;
+  background-image: url("/image/rumpres.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+/* 3D Wax Seal Badge */
+.rp-wax-seal {
+  position: absolute;
+  top: -15px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 54px;
+  height: 54px;
+  background: radial-gradient(circle at 35% 35%, #ECA628 0%, #D48818 50%, #B26C08 100%);
+  border-radius: 50%;
+  box-shadow: 
+    0 6px 12px rgba(178, 108, 8, 0.35),
+    inset 0 -3px 6px rgba(0,0,0,0.2),
+    inset 0 3px 6px rgba(255,255,255,0.4);
+  border: 2px solid #F3C46B;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.rp-wax-seal::after {
+  content: "🏆";
+  font-size: 1.25rem;
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.2));
+}
+
+/* ======================================================
+   RESULT DETAIL ROWS
+   ====================================================== */
+.rp-info-card-row {
+  display: flex;
+  flex-direction: column;
+  padding: 0.875rem 0.5rem;
+  border-bottom: 1px solid #EDF6FC;
+  transition: all 0.2s ease;
+}
+.rp-info-card-row:hover {
+  background-color: rgba(237, 246, 252, 0.6);
+  padding-left: 0.875rem;
+  border-radius: 0.5rem;
+}
+.rp-info-card-row:last-child {
+  border-bottom: none;
+}
+
 
