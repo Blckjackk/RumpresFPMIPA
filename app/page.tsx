@@ -168,9 +168,11 @@ export default function Home() {
       <header className="nav-bar sticky top-0 z-50 w-full nav-glass">
         <div className="max-w-5xl mx-auto flex items-center justify-between px-5 py-3.5">
           <div className="flex items-center gap-2.5">
-            <div className="flex items-center justify-center w-9 h-9 rounded-xl bg-gradient-to-br from-[#1B5E9E] to-[#3A8FD6] text-lg shadow-md shadow-blue-400/15 shrink-0">
-              🏆
-            </div>
+            <img
+              src="/image/rumpres.png"
+              alt="Logo Rumah Prestasi"
+              className="w-9 h-9 object-contain shrink-0 filter drop-shadow-sm"
+            />
             <div className="flex flex-col leading-tight">
               <span className="text-[13px] font-bold text-[#0D2B4E] tracking-[-0.01em]">
                 Rumah Prestasi
@@ -335,33 +337,54 @@ export default function Home() {
                   </div>
                 </div>
 
-                {/* Dept welcome */}
+                {/* Dept welcome - Premium poster-style */}
                 {deptInfo && (
-                  <div className="res-card card-white overflow-hidden p-6" style={{ borderColor: `${deptInfo.color}30` }}>
-                    <div className="absolute top-0 left-0 right-0 h-[3px] rounded-t-xl" style={{ background: `linear-gradient(90deg, ${deptInfo.color}, ${deptInfo.color}88)` }} />
+                  <div className="res-card bg-rp-poster-blue rounded-2xl p-6 relative overflow-hidden flex flex-col md:flex-row items-center gap-6 border border-white/20 shadow-xl">
+                    {/* Grid background */}
+                    <div className="poster-grid-overlay" />
+                    
+                    {/* Glowing background shapes */}
+                    <div className="poster-glow-circle -top-10 -left-10 w-32 h-32 opacity-75" />
+                    <div className="poster-glow-circle bottom-[-20px] right-[-20px] w-40 h-40 bg-gradient-to-br from-[#5CB3E8]/30 to-[#EDF6FC]/10 blur-xl" />
 
-                    <h3 className="text-[10px] font-semibold tracking-[0.12em] text-[#8AACCC] uppercase mb-5 flex items-center gap-2">
-                      <span className="inline-block w-2 h-2 rounded-full" style={{ backgroundColor: deptInfo.color }} />
-                      Sambutan Ketua Departemen
-                    </h3>
+                    {/* Kadep Photo Area */}
+                    <div className="relative shrink-0 flex flex-col items-center text-center z-10">
+                      <div className="relative group">
+                        {/* Glow effect behind photo */}
+                        <div className="absolute -inset-1 rounded-full bg-gradient-to-r from-sky-400 to-blue-500 blur opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 animate-pulse" />
+                        <img
+                          src={deptInfo.kadepPhoto}
+                          alt={deptInfo.kadepName}
+                          className="relative w-28 h-28 rounded-full border-4 border-white bg-white/10 shrink-0 shadow-lg object-cover transform transition duration-500 hover:scale-105 float-gentle"
+                        />
+                      </div>
+                      <div className="mt-3">
+                        <h4 className="text-sm font-bold text-white tracking-wide drop-shadow-md">{deptInfo.kadepName}</h4>
+                        <span className="text-[10px] font-semibold text-sky-200 tracking-wider uppercase block drop-shadow-sm mt-0.5">
+                          Ketua {deptInfo.name}
+                        </span>
+                      </div>
+                    </div>
 
-                    <div className="flex flex-col sm:flex-row items-start gap-4">
-                      <img
-                        src={deptInfo.kadepPhoto}
-                        alt={deptInfo.kadepName}
-                        className="w-14 h-14 rounded-xl border-2 border-[#EDF6FC] bg-[#EDF6FC] shrink-0 shadow-sm"
-                      />
-                      <div className="space-y-2.5 flex-1">
-                        <div>
-                          <h4 className="text-[15px] font-bold text-[#0D2B4E]">{deptInfo.kadepName}</h4>
-                          <span className="text-[11px] text-[#4A7BA5]">Ketua {deptInfo.fullName}</span>
+                    {/* Speech bubble */}
+                    <div className="relative flex-1 z-10 w-full">
+                      <div className="poster-speech-bubble p-5 relative">
+                        {/* Quote bubble arrow pointing to photo */}
+                        <div className="absolute top-1/2 -left-2 -translate-y-1/2 w-4 h-4 bg-white rotate-45 border-l border-b border-white/80 hidden md:block" />
+                        <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-white rotate-45 border-t border-l border-white/80 md:hidden" />
+                        
+                        <div className="flex items-center gap-2 mb-2.5">
+                          <span className="flex items-center justify-center w-5 h-5 rounded-full bg-[#1B5E9E] text-white text-[10px] font-extrabold shadow-sm">
+                            🏆
+                          </span>
+                          <span className="text-[10px] font-bold text-[#1B5E9E] tracking-wider uppercase">
+                            Sambutan Kadep
+                          </span>
                         </div>
-                        <div className="relative bg-[#EDF6FC] rounded-xl p-4">
-                          <span className="absolute -top-2 left-3 text-3xl text-[#C2DFF0] font-serif leading-none">&ldquo;</span>
-                          <p className="text-[13px] leading-relaxed text-[#2D4A6A] italic pl-1">
-                            {deptInfo.message}
-                          </p>
-                        </div>
+
+                        <p className="text-[13px] leading-relaxed text-[#0D2B4E] font-medium italic relative pl-1">
+                          &ldquo;{deptInfo.message}&rdquo;
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -371,38 +394,61 @@ export default function Home() {
               {/* RIGHT COL */}
               <div className="lg:col-span-5 space-y-6">
 
-                {/* Azzam message */}
-                <div className="res-card card-white accent-line-gold overflow-hidden p-6">
-                  <h3 className="text-[10px] font-semibold tracking-[0.12em] text-[#B8931F] uppercase mb-5 flex items-center gap-2">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#D4A828]" />
-                    Pesan Ketua Umum
-                  </h3>
+                {/* Azzam message - Premium poster-style */}
+                <div className="res-card bg-rp-poster-blue rounded-2xl p-6 relative overflow-hidden flex flex-col md:flex-row items-center gap-6 border border-white/20 shadow-xl">
+                  {/* Grid background */}
+                  <div className="poster-grid-overlay" />
+                  
+                  {/* Glowing background shapes */}
+                  <div className="poster-glow-circle -top-10 -right-10 w-32 h-32 opacity-75" />
+                  <div className="poster-glow-circle bottom-[-20px] left-[-20px] w-40 h-40 bg-gradient-to-br from-[#D4A828]/20 to-[#EDF6FC]/5 blur-xl" />
 
-                  <div className="flex items-center gap-3 mb-5">
-                    <img
-                      src="https://api.dicebear.com/7.x/avataaars/svg?seed=Azzam"
-                      alt="Ahmad Izzuddin Azzam"
-                      className="w-12 h-12 rounded-xl border-2 border-[#EDF6FC] bg-[#EDF6FC] shrink-0"
-                    />
-                    <div>
-                      <h4 className="text-sm font-bold text-[#0D2B4E]">Ahmad Izzuddin Azzam</h4>
-                      <span className="text-[10px] text-[#B8931F] font-medium">Ketua Umum · BEM TumbuhAsa</span>
+                  {/* Ketum Photo Area */}
+                  <div className="relative shrink-0 flex flex-col items-center text-center z-10 md:order-2">
+                    <div className="relative group">
+                      {/* Glow effect behind photo */}
+                      <div className="absolute -inset-1 rounded-full bg-gradient-to-r from-amber-400 to-[#D4A828] blur opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 animate-pulse" />
+                      <img
+                        src="/image/foto_ketum.png"
+                        alt="Ahmad Izzuddin Azzam"
+                        className="relative w-28 h-28 rounded-full border-4 border-white bg-white/10 shrink-0 shadow-lg object-cover transform transition duration-500 hover:scale-105 float-gentle-2"
+                      />
+                    </div>
+                    <div className="mt-3">
+                      <h4 className="text-sm font-bold text-white tracking-wide drop-shadow-md">Ahmad Izzuddin Azzam</h4>
+                      <span className="text-[10px] font-semibold text-amber-300 tracking-wider uppercase block drop-shadow-sm mt-0.5">
+                        Ketua Umum BEM
+                      </span>
                     </div>
                   </div>
 
-                  {personalMessage ? (
-                    <div className="bg-[#FFFBEB] rounded-xl p-4 border border-[#F5E6A3]/40">
-                      <p className="text-[13px] leading-relaxed text-[#5D4A0F] whitespace-pre-line italic">
-                        &ldquo;{personalMessage}&rdquo;
-                      </p>
+                  {/* Speech bubble */}
+                  <div className="relative flex-1 z-10 w-full md:order-1">
+                    <div className="poster-speech-bubble p-5 relative">
+                      {/* Quote bubble arrow pointing to photo (right side on desktop) */}
+                      <div className="absolute top-1/2 -right-2 -translate-y-1/2 w-4 h-4 bg-white rotate-45 border-r border-t border-white/80 hidden md:block" />
+                      <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-white rotate-45 border-t border-l border-white/80 md:hidden" />
+                      
+                      <div className="flex items-center gap-2 mb-2.5">
+                        <span className="flex items-center justify-center w-5 h-5 rounded-full bg-[#D4A828] text-white text-[10px] font-extrabold shadow-sm">
+                          👑
+                        </span>
+                        <span className="text-[10px] font-bold text-[#B8931F] tracking-wider uppercase">
+                          Pesan Ketua Umum
+                        </span>
+                      </div>
+
+                      {personalMessage ? (
+                        <p className="text-[13px] leading-relaxed text-[#0D2B4E] font-semibold italic relative pl-1">
+                          &ldquo;{personalMessage}&rdquo;
+                        </p>
+                      ) : (
+                        <p className="text-[13px] leading-relaxed text-[#0D2B4E] font-medium italic relative pl-1">
+                          &ldquo;Selamat bergabung di keluarga besar Rumah Prestasi! Ini adalah langkah awal perjuangan barumu. Jadikan setiap tantangan sebagai tempat berproses terbaikmu. Aku menunggumu di pelantikan nanti!&rdquo;
+                        </p>
+                      )}
                     </div>
-                  ) : (
-                    <div className="bg-[#EDF6FC] rounded-xl p-4">
-                      <p className="text-[13px] leading-relaxed text-[#4A7BA5] italic">
-                        &ldquo;Selamat bergabung di keluarga besar Rumah Prestasi! Ini adalah langkah awal perjuangan barumu. Jadikan setiap tantangan sebagai tempat berproses terbaikmu. Aku menunggumu di pelantikan nanti!&rdquo;
-                      </p>
-                    </div>
-                  )}
+                  </div>
                 </div>
 
                 {/* Surat */}

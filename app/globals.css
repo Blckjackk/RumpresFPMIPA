@@ -394,3 +394,46 @@ h1, h2, h3, h4, h5, h6 {
   background: rgba(58, 143, 214, 0.2);
   color: var(--rp-navy);
 }
+
+/* ======================================================
+   PREMIUM POSTER / DYNAMIC SPEECH CARDS (User-inspired)
+   ====================================================== */
+
+.bg-rp-poster-blue {
+  background: linear-gradient(135deg, #154e88 0%, #308ecf 50%, #0d3460 100%);
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 12px 32px rgba(13, 43, 78, 0.15);
+}
+
+.poster-grid-overlay {
+  position: absolute;
+  inset: -100px;
+  background-image: 
+    linear-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+  background-size: 24px 24px;
+  transform: perspective(650px) rotateX(28deg) translateY(-20px);
+  transform-origin: top center;
+  opacity: 0.95;
+  pointer-events: none;
+}
+
+.poster-glow-circle {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.25) 0%, transparent 70%);
+  filter: blur(15px);
+  pointer-events: none;
+}
+
+.poster-speech-bubble {
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  border-radius: 1.25rem;
+  box-shadow: 0 10px 25px -5px rgba(13, 43, 78, 0.12), 0 8px 10px -6px rgba(13, 43, 78, 0.08);
+}
+
