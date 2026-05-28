@@ -810,6 +810,232 @@ h1, h2, h3, h4, h5, h6 {
   perspective: 1200px;
 }
 
+/* ======================================================
+   ENHANCE.md — VISUAL POLISH SYSTEM
+   ====================================================== */
 
+/* 1A. Grain Texture Overlay (paper depth) */
+.grain-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-size: 180px 180px;
+  animation: grain 0.5s steps(1) infinite;
+}
+@keyframes grain {
+  0%, 100% { transform: translate(0, 0); }
+  20%       { transform: translate(-2%, -3%); }
+  40%       { transform: translate(3%, 1%); }
+  60%       { transform: translate(-1%, 4%); }
+  80%       { transform: translate(4%, -2%); }
+}
+@media (pointer: coarse) {
+  .grain-overlay { opacity: 0.02; }
+}
 
+/* 1C. Vignette overlay (envelope/result scenes) */
+.vignette {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  background: radial-gradient(
+    ellipse at center,
+    transparent 55%,
+    rgba(13, 43, 78, 0.12) 100%
+  );
+}
 
+/* 2A. Stacked paper effect on letter cards */
+.sf-card::before,
+.sf-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  z-index: -1;
+}
+.sf-card::before {
+  transform: rotate(-1.2deg) translate(-3px, 4px);
+  background: #E8E2D8;
+  opacity: 0.5;
+}
+.sf-card::after {
+  transform: rotate(0.8deg) translate(3px, 5px);
+  background: #DDD7CC;
+  opacity: 0.3;
+}
+
+/* 2B. Layered box shadow for letter cards (depth) */
+.sf-card {
+  box-shadow:
+    0 1px 1px rgba(139,126,102,0.06),
+    0 2px 2px rgba(139,126,102,0.06),
+    0 4px 4px rgba(139,126,102,0.06),
+    0 8px 8px rgba(139,126,102,0.06),
+    0 16px 32px rgba(139,126,102,0.1),
+    0 32px 64px rgba(139,126,102,0.06);
+}
+
+/* 3A. Wax seal pulse glow */
+.envelope-wax-seal {
+  animation: seal-pulse 2.2s ease-in-out infinite;
+}
+@keyframes seal-pulse {
+  0%, 100% {
+    box-shadow:
+      0 8px 18px rgba(178, 108, 8, 0.35),
+      inset 0 -3px 6px rgba(0,0,0,0.25),
+      inset 0 3px 6px rgba(255,255,255,0.4),
+      0 0 18px rgba(236, 166, 40, 0.25),
+      0 0 36px rgba(236, 166, 40, 0.08);
+  }
+  50% {
+    box-shadow:
+      0 8px 18px rgba(178, 108, 8, 0.35),
+      inset 0 -3px 6px rgba(0,0,0,0.25),
+      inset 0 3px 6px rgba(255,255,255,0.4),
+      0 0 28px rgba(236, 166, 40, 0.4),
+      0 0 56px rgba(236, 166, 40, 0.15);
+  }
+}
+
+/* 3B. Envelope body linen texture */
+.envelope-wrapper {
+  background-image:
+    repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 10px,
+      rgba(0,0,0,0.012) 10px,
+      rgba(0,0,0,0.012) 11px
+    );
+}
+
+/* 5A. Gradient shimmer text */
+.gradient-text {
+  background: linear-gradient(
+    135deg,
+    #5B6B54 0%,
+    #C36B62 33%,
+    #D4A828 66%,
+    #5B6B54 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: text-shimmer 4s linear infinite;
+}
+@keyframes text-shimmer {
+  0%   { background-position: 0% center; }
+  100% { background-position: 200% center; }
+}
+
+/* 5B. Animated underline */
+.animated-underline {
+  position: relative;
+  display: inline-block;
+}
+.animated-underline::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #5B6B54, #B8A88A);
+  transition: width 1s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.animated-underline.visible::after {
+  width: 100%;
+}
+
+/* 6. Sparkle star */
+.sparkle {
+  position: absolute;
+  pointer-events: none;
+  animation: sparkle-pop 1.4s ease-out forwards;
+}
+@keyframes sparkle-pop {
+  0%   { opacity: 0; transform: scale(0) rotate(0deg); }
+  30%  { opacity: 1; transform: scale(1.2) rotate(40deg); }
+  60%  { opacity: 0.8; transform: scale(0.9) rotate(70deg); }
+  100% { opacity: 0; transform: scale(0) rotate(120deg); }
+}
+
+/* 4D. Shimmer skeleton loading */
+.shimmer-skeleton {
+  background: linear-gradient(
+    90deg,
+    #F5F2EB 25%,
+    #FAF7F2 50%,
+    #F5F2EB 75%
+  );
+  background-size: 200% auto;
+  animation: shimmer-load 1.5s linear infinite;
+  border-radius: 0.5rem;
+}
+@keyframes shimmer-load {
+  0%   { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+/* 4E. Custom cursor (desktop only) */
+.cursor-dot {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 8px;
+  height: 8px;
+  background: #5B6B54;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  transition: width 0.2s, height 0.2s, background 0.2s;
+  transform: translate(-50%, -50%);
+}
+.cursor-ring {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 36px;
+  height: 36px;
+  border: 1.5px solid rgba(91, 107, 84, 0.35);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9998;
+  transition: width 0.3s, height 0.3s, border-color 0.3s;
+  transform: translate(-50%, -50%);
+}
+.cursor-dot.hovering {
+  width: 12px;
+  height: 12px;
+  background: #C36B62;
+}
+.cursor-ring.hovering {
+  width: 50px;
+  height: 50px;
+  border-color: rgba(195, 107, 98, 0.4);
+}
+@media (pointer: coarse) {
+  .cursor-dot, .cursor-ring { display: none !important; }
+}
+
+/* ======================================================
+   REDUCED MOTION — Respect user preferences
+   ====================================================== */
+@media (prefers-reduced-motion: reduce) {
+  .grain-overlay { animation: none; }
+  .envelope-wax-seal { animation: none; }
+  .shimmer-gold::after { animation: none; }
+  .gradient-text { animation: none; }
+  .sparkle { animation: none; }
+  .shimmer-skeleton { animation: none; }
+  .animate-floatGentle,
+  .animate-floatGentle-2 { animation: none; }
+  .cloud-a, .cloud-b, .cloud-c { animation: none !important; }
+}

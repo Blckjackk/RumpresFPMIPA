@@ -1,10 +1,21 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(ScrollTrigger);
+
+/* ======================================================
+   UTILITY: Reduced motion check
+   ====================================================== */
+const getReducedMotion = () =>
+  typeof window !== "undefined" &&
+  window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+const getIsTouch = () =>
+  typeof window !== "undefined" &&
+  window.matchMedia("(pointer: coarse)").matches;
 
 /* ======================================================
    TYPES
@@ -112,6 +123,12 @@ export default function Home() {
   const containerRef = useRef<HTMLDivElement>(null);
   const resultRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const particleCanvasRef = useRef<HTMLCanvasElement>(null);
+  const cursorDotRef = useRef<HTMLDivElement>(null);
+  const cursorRingRef = useRef<HTMLDivElement>(null);
+  const sparkleContainerRef = useRef<HTMLDivElement>(null);
+  const nameRef = useRef<HTMLParagraphElement>(null);
+  const headingUnderlineRef = useRef<HTMLHeadingElement>(null);
 
   // Window Resize Listener
   useEffect(() => {
@@ -132,9 +149,10 @@ export default function Home() {
     return () => clearTimeout(timer);
   }, [scene]);
 
-  // 2. Confetti Particle Loop for Celebration Scene
+  // 2. Multi-burst Confetti + Sparkle Stars for Celebration Scene
   useEffect(() => {
     if (scene !== "celebration" || !canvasRef.current) return;
+    if (getReducedMotion()) return;
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
@@ -158,23 +176,70 @@ export default function Home() {
       speedX: number;
       rotation: number;
       rotationSpeed: number;
+      shape: "rect" | "circle" | "star";
     }
 
     const colors = ["#C36B62", "#D4A828", "#5B6B54", "#B8A88A", "#1B5E9E"];
-    const particles: Particle[] = Array.from({ length: 180 }, () => ({
-      x: Math.random() * width,
-      y: Math.random() * -height - 20,
-      size: Math.random() * 8 + 6,
-      color: colors[Math.floor(Math.random() * colors.length)],
-      speedY: Math.random() * 3 + 2,
-      speedX: Math.random() * 2 - 1,
-      rotation: Math.random() * 360,
-      rotationSpeed: Math.random() * 4 - 2,
-    }));
+    const shapes: Particle["shape"][] = ["rect", "circle", "star"];
+
+    // Multi-burst: 3 waves from different origins
+    const createBurst = (originX: number, originY: number, count: number, delay: number) => {
+      setTimeout(() => {
+        for (let i = 0; i < count; i++) {
+          particles.push({
+            x: originX * width,
+            y: originY * height,
+            size: Math.random() * 8 + 5,
+            color: colors[Math.floor(Math.random() * colors.length)],
+            speedY: -(Math.random() * 6 + 3),
+            speedX: (Math.random() - 0.5) * 8,
+            rotation: Math.random() * 360,
+            rotationSpeed: Math.random() * 6 - 3,
+            shape: shapes[Math.floor(Math.random() * shapes.length)],
+          });
+        }
+      }, delay);
+    };
+
+    const particles: Particle[] = [];
+    // Burst 1: from left
+    createBurst(0.15, 0.6, 80, 0);
+    // Burst 2: from right
+    createBurst(0.85, 0.6, 80, 200);
+    // Burst 3: from top center
+    createBurst(0.5, 0.2, 120, 400);
+    // Continuous rain
+    for (let i = 0; i < 80; i++) {
+      particles.push({
+        x: Math.random() * width,
+        y: Math.random() * -height - 20,
+        size: Math.random() * 8 + 5,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        speedY: Math.random() * 3 + 1.5,
+        speedX: Math.random() * 2 - 1,
+        rotation: Math.random() * 360,
+        rotationSpeed: Math.random() * 4 - 2,
+        shape: shapes[Math.floor(Math.random() * shapes.length)],
+      });
+    }
+
+    const gravity = 0.12;
+
+    const drawStar = (cx: number, cy: number, r: number) => {
+      ctx.beginPath();
+      for (let i = 0; i < 5; i++) {
+        const angle = (i * 4 * Math.PI) / 5 - Math.PI / 2;
+        const method = i === 0 ? "moveTo" : "lineTo";
+        ctx[method](cx + r * Math.cos(angle), cy + r * Math.sin(angle));
+      }
+      ctx.closePath();
+      ctx.fill();
+    };
 
     const update = () => {
       ctx.clearRect(0, 0, width, height);
       particles.forEach(p => {
+        p.speedY += gravity;
         p.y += p.speedY;
         p.x += p.speedX;
         p.rotation += p.rotationSpeed;
@@ -183,12 +248,22 @@ export default function Home() {
         ctx.translate(p.x, p.y);
         ctx.rotate((p.rotation * Math.PI) / 180);
         ctx.fillStyle = p.color;
-        ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+        if (p.shape === "circle") {
+          ctx.beginPath();
+          ctx.arc(0, 0, p.size / 2, 0, Math.PI * 2);
+          ctx.fill();
+        } else if (p.shape === "star") {
+          drawStar(0, 0, p.size / 2);
+        } else {
+          ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+        }
         ctx.restore();
 
-        if (p.y > height) {
+        if (p.y > height + 20) {
           p.y = -20;
           p.x = Math.random() * width;
+          p.speedY = Math.random() * 3 + 1.5;
+          p.speedX = Math.random() * 2 - 1;
         }
       });
       animationId = requestAnimationFrame(update);
@@ -196,11 +271,167 @@ export default function Home() {
 
     update();
 
+    // Sparkle stars around celebration text
+    if (sparkleContainerRef.current) {
+      const container = sparkleContainerRef.current;
+      const sparkleChars = ["✦", "✧", "⟡", "✩", "❋"];
+      for (let i = 0; i < 25; i++) {
+        setTimeout(() => {
+          const sparkle = document.createElement("span");
+          sparkle.className = "sparkle";
+          sparkle.textContent = sparkleChars[Math.floor(Math.random() * sparkleChars.length)];
+          sparkle.style.left = `${Math.random() * 100}%`;
+          sparkle.style.top = `${Math.random() * 100}%`;
+          sparkle.style.fontSize = `${Math.random() * 16 + 10}px`;
+          sparkle.style.color = colors[Math.floor(Math.random() * colors.length)];
+          container.appendChild(sparkle);
+          setTimeout(() => sparkle.remove(), 1400);
+        }, i * 180);
+      }
+    }
+
     return () => {
       cancelAnimationFrame(animationId);
       window.removeEventListener("resize", handleResize);
     };
   }, [scene]);
+
+  // 2b. Ambient Particle Background (envelope & letters scenes)
+  useEffect(() => {
+    if (!applicant || !particleCanvasRef.current) return;
+    if (scene !== "envelope" && scene !== "letters" && scene !== "intro") return;
+    if (getReducedMotion()) return;
+    const canvas = particleCanvasRef.current;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    let width = (canvas.width = window.innerWidth);
+    let height = (canvas.height = window.innerHeight);
+    let animId: number;
+    let mouseX = -9999;
+    let mouseY = -9999;
+
+    const handleResize = () => {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    };
+    const handleMouse = (e: MouseEvent) => { mouseX = e.clientX; mouseY = e.clientY; };
+    window.addEventListener("resize", handleResize);
+    window.addEventListener("mousemove", handleMouse);
+
+    const isMobile = getIsTouch();
+    const count = isMobile ? 35 : 70;
+    const pColors = ["#B8A88A", "#5B6B54", "#C36B62", "#D4A828"];
+
+    interface Dot { x: number; y: number; vx: number; vy: number; r: number; color: string; }
+    const dots: Dot[] = Array.from({ length: count }, () => ({
+      x: Math.random() * width,
+      y: Math.random() * height,
+      vx: (Math.random() - 0.5) * 0.5,
+      vy: (Math.random() - 0.5) * 0.5,
+      r: Math.random() * 1.5 + 1,
+      color: pColors[Math.floor(Math.random() * pColors.length)],
+    }));
+
+    const draw = () => {
+      ctx.clearRect(0, 0, width, height);
+      dots.forEach((d, i) => {
+        // Repulse from cursor
+        const dx = d.x - mouseX;
+        const dy = d.y - mouseY;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < 80 && dist > 0) {
+          const force = (80 - dist) / 80 * 0.8;
+          d.vx += (dx / dist) * force;
+          d.vy += (dy / dist) * force;
+        }
+        d.vx *= 0.98;
+        d.vy *= 0.98;
+        d.x += d.vx;
+        d.y += d.vy;
+        if (d.x < 0) d.x = width;
+        if (d.x > width) d.x = 0;
+        if (d.y < 0) d.y = height;
+        if (d.y > height) d.y = 0;
+
+        ctx.beginPath();
+        ctx.arc(d.x, d.y, d.r, 0, Math.PI * 2);
+        ctx.fillStyle = d.color;
+        ctx.globalAlpha = 0.22;
+        ctx.fill();
+
+        // Links
+        for (let j = i + 1; j < dots.length; j++) {
+          const d2 = dots[j];
+          const ldx = d.x - d2.x;
+          const ldy = d.y - d2.y;
+          const ldist = Math.sqrt(ldx * ldx + ldy * ldy);
+          if (ldist < 100) {
+            ctx.beginPath();
+            ctx.moveTo(d.x, d.y);
+            ctx.lineTo(d2.x, d2.y);
+            ctx.strokeStyle = d.color;
+            ctx.globalAlpha = 0.06 * (1 - ldist / 100);
+            ctx.lineWidth = 0.5;
+            ctx.stroke();
+          }
+        }
+        ctx.globalAlpha = 1;
+      });
+      animId = requestAnimationFrame(draw);
+    };
+    draw();
+
+    return () => {
+      cancelAnimationFrame(animId);
+      window.removeEventListener("resize", handleResize);
+      window.removeEventListener("mousemove", handleMouse);
+    };
+  }, [scene, applicant]);
+
+  // 2c. Custom Cursor (desktop only)
+  useEffect(() => {
+    if (getIsTouch() || getReducedMotion()) return;
+    const dot = cursorDotRef.current;
+    const ring = cursorRingRef.current;
+    if (!dot || !ring) return;
+
+    let mx = 0, my = 0;
+    let rx = 0, ry = 0;
+    let rafId: number;
+
+    const onMove = (e: MouseEvent) => { mx = e.clientX; my = e.clientY; };
+    window.addEventListener("mousemove", onMove);
+
+    const lerp = () => {
+      rx += (mx - rx) * 0.15;
+      ry += (my - ry) * 0.15;
+      dot.style.left = `${mx}px`;
+      dot.style.top = `${my}px`;
+      ring.style.left = `${rx}px`;
+      ring.style.top = `${ry}px`;
+      rafId = requestAnimationFrame(lerp);
+    };
+    lerp();
+
+    // Hover detection for interactive elements
+    const handleOver = () => { dot.classList.add("hovering"); ring.classList.add("hovering"); };
+    const handleOut = () => { dot.classList.remove("hovering"); ring.classList.remove("hovering"); };
+    const interactables = document.querySelectorAll("button, a, .envelope-wrapper, input");
+    interactables.forEach(el => {
+      el.addEventListener("mouseenter", handleOver);
+      el.addEventListener("mouseleave", handleOut);
+    });
+
+    return () => {
+      cancelAnimationFrame(rafId);
+      window.removeEventListener("mousemove", onMove);
+      interactables.forEach(el => {
+        el.removeEventListener("mouseenter", handleOver);
+        el.removeEventListener("mouseleave", handleOut);
+      });
+    };
+  });
 
   // 3. Stagger-in text & flip animations for Stitched Paper Cards
   useEffect(() => {
@@ -274,6 +505,56 @@ export default function Home() {
       duration: 0.4
     });
   };
+
+  // 4b. Envelope dynamic shadow on hover
+  const handleEnvelopeHover = useCallback((e: React.MouseEvent) => {
+    if (getIsTouch()) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width - 0.5) * 20;
+    const y = ((e.clientY - rect.top) / rect.height - 0.5) * 20;
+    gsap.to(e.currentTarget, {
+      boxShadow: `${-x}px ${-y}px 45px rgba(139,126,102,0.25)`,
+      duration: 0.2,
+    });
+  }, []);
+  const handleEnvelopeLeave = useCallback((e: React.MouseEvent) => {
+    gsap.to(e.currentTarget, {
+      boxShadow: "0 20px 40px rgba(13, 43, 78, 0.12)",
+      duration: 0.4,
+    });
+  }, []);
+
+  // 4c. Magnetic button effect
+  const handleMagneticMove = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
+    if (getIsTouch()) return;
+    const btn = e.currentTarget;
+    const rect = btn.getBoundingClientRect();
+    const x = e.clientX - rect.left - rect.width / 2;
+    const y = e.clientY - rect.top - rect.height / 2;
+    gsap.to(btn, { x: x * 0.25, y: y * 0.25, duration: 0.3, ease: "power2.out" });
+  }, []);
+  const handleMagneticLeave = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
+    gsap.to(e.currentTarget, { x: 0, y: 0, duration: 0.5, ease: "elastic.out(1, 0.4)" });
+  }, []);
+
+  // 4d. Animated underline trigger when letters scene appears
+  useEffect(() => {
+    if (scene !== "letters" || !headingUnderlineRef.current) return;
+    const timer = setTimeout(() => {
+      headingUnderlineRef.current?.classList.add("visible");
+    }, 600);
+    return () => clearTimeout(timer);
+  }, [scene, activeLetter]);
+
+  // 5c. Staggered letter animation for applicant name (celebration)
+  useEffect(() => {
+    if (scene !== "celebration" || !nameRef.current) return;
+    if (getReducedMotion()) return;
+    const chars = nameRef.current.querySelectorAll(".name-char");
+    gsap.fromTo(chars, { opacity: 0, y: 12 }, {
+      opacity: 1, y: 0, stagger: 0.04, duration: 0.4, ease: "back.out(2)", delay: 0.3
+    });
+  }, [scene]);
 
   // 3D perspective layout style calculations for Results cards (Scenic Envelope)
   const getCardStyle = (index: number) => {
@@ -484,7 +765,20 @@ export default function Home() {
      RENDER
      ====================================================== */
   return (
-    <div ref={containerRef} className="relative min-h-screen flex flex-col bg-rp-hero overflow-x-hidden">
+    <div ref={containerRef} className="relative min-h-screen flex flex-col bg-rp-hero overflow-x-hidden cursor-none sm:cursor-none" style={{ cursor: getIsTouch() ? 'auto' : undefined }}>
+
+      {/* ── Grain texture overlay ── */}
+      <div className="grain-overlay" />
+
+      {/* ── Vignette (shown during unboxing scenes) ── */}
+      {applicant && <div className="vignette" />}
+
+      {/* ── Ambient particle canvas (unboxing scenes) ── */}
+      {applicant && <canvas ref={particleCanvasRef} className="pointer-events-none fixed inset-0 z-0 w-full h-full" />}
+
+      {/* ── Custom cursor (desktop only) ── */}
+      <div ref={cursorDotRef} className="cursor-dot" />
+      <div ref={cursorRingRef} className="cursor-ring" />
 
       {/* ── Background decoration / Ambient clouds ── */}
       <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
@@ -571,6 +865,8 @@ export default function Home() {
 
               <button 
                 onClick={scrollToPortal}
+                onMouseMove={handleMagneticMove}
+                onMouseLeave={handleMagneticLeave}
                 className="hero-el flow-pill-btn px-7 py-3 text-xs sm:text-sm shadow-md cursor-pointer"
               >
                 Cek Hasil Seleksi Anda <span className="text-[#B8A88A]">→</span>
@@ -722,12 +1018,14 @@ export default function Home() {
                   <button
                     type="submit"
                     disabled={isLoading || !dataReady}
+                    onMouseMove={handleMagneticMove}
+                    onMouseLeave={handleMagneticLeave}
                     className="w-full btn-rp py-3.5 text-xs sm:text-sm font-bold tracking-wider uppercase shadow-md disabled:opacity-40 disabled:cursor-not-allowed bg-gradient-to-r from-[#5B6B54] to-[#8B7E66] border border-[#B8A88A]/20 shimmer-gold cursor-pointer"
                   >
                     {isLoading ? (
                       <span className="flex items-center justify-center gap-2">
                         <span className="spin inline-block w-4 h-4 rounded-full border-2 border-white/30 border-t-white" />
-                        Validasi Data...
+                        <span className="animate-pulse">Validasi Data...</span>
                       </span>
                     ) : (
                       "Buka Amplop Pengumuman ✉️"
@@ -772,6 +1070,8 @@ export default function Home() {
                 <div className="envelope-container py-8">
                   <div 
                     onClick={handleOpenEnvelope}
+                    onMouseMove={handleEnvelopeHover}
+                    onMouseLeave={handleEnvelopeLeave}
                     className={`envelope-wrapper ${envelopeOpen ? "open" : ""}`}
                   >
                     {/* Top Flap */}
@@ -855,14 +1155,14 @@ export default function Home() {
                               
                               <div className="space-y-1">
                                 <span className="sf-card-line text-[9px] font-bold tracking-widest text-[#B8A88A] uppercase block">KEPUTUSAN RESMI</span>
-                                <h1 className="sf-card-line text-3xl font-black text-[#5B6B54] tracking-tight leading-[1.1] font-serif">
+                                <h1 ref={headingUnderlineRef} className="sf-card-line text-3xl font-black text-[#5B6B54] tracking-tight leading-[1.1] font-serif animated-underline">
                                   CONGRATS.
                                 </h1>
                               </div>
 
                               <div className="sf-card-line text-[12px] leading-relaxed text-[#5C5549] space-y-3.5 font-serif">
                                 <p>Dengan bangga kami menyampaikan bahwa:</p>
-                                <p className="text-sm font-bold text-[#C36B62] border-y border-dashed border-[#B8A88A] py-2 my-1 tracking-wide font-sans text-center bg-[#EDF6FC]/30 rounded-lg">
+                                <p className="text-sm font-bold text-[#C36B62] border-y border-dashed border-[#B8A88A] py-2 my-1 tracking-wide font-sans text-center bg-[#EDF6FC]/30 rounded-lg gradient-text">
                                   ✦ {applicant.nama} ✦
                                 </p>
                                 <p>dinyatakan <strong className="text-[#5B6B54] font-black">LOLOS SELEKSI</strong> dan diterima sebagai anggota baru Rumah Prestasi Kabinet TumbuhAsa 2026!</p>
@@ -992,6 +1292,8 @@ export default function Home() {
                             <div className="sf-card-line relative z-10 pt-4 flex flex-col items-center">
                               <button 
                                 onClick={() => setScene("celebration")}
+                                onMouseMove={handleMagneticMove}
+                                onMouseLeave={handleMagneticLeave}
                                 className="w-full btn-rp py-3.5 rounded-xl text-sm bg-gradient-to-r from-[#5B6B54] to-[#8B7E66] border border-[#B8A88A]/20 shimmer-gold cursor-pointer"
                               >
                                 Rayakan Kelulusanmu! 🎉
@@ -1044,13 +1346,20 @@ export default function Home() {
                   Selamat Bergabung!
                 </div>
                 
-                <h1 className="text-4xl sm:text-5xl font-black text-[#5B6B54] tracking-tight leading-none font-serif animate-pulse">
+                {/* Sparkle container */}
+                <div ref={sparkleContainerRef} className="absolute inset-0 overflow-hidden pointer-events-none" />
+
+                <h1 className="text-4xl sm:text-5xl font-black tracking-tight leading-none font-serif gradient-text">
                   WELCOME. 🎉
                 </h1>
                 
-                <p className="text-xs sm:text-sm text-[#5C5549] font-medium max-w-xs mx-auto leading-relaxed font-serif">
+                <p ref={nameRef} className="text-xs sm:text-sm text-[#5C5549] font-medium max-w-xs mx-auto leading-relaxed font-serif">
                   Kamu resmi bergabung di keluarga besar <br/>
-                  <strong className="text-[#C36B62]">{deptInfo?.fullName ?? applicant.departemen}</strong> <br/>
+                  <strong className="text-[#C36B62]">
+                    {(deptInfo?.fullName ?? applicant.departemen).split("").map((ch, i) => (
+                      <span key={i} className="name-char inline-block opacity-0">{ch === " " ? "\u00A0" : ch}</span>
+                    ))}
+                  </strong> <br/>
                   Rumah Prestasi 2026
                 </p>
 
@@ -1080,13 +1389,17 @@ export default function Home() {
 
                 <div className="pt-4 flex flex-col gap-2.5 w-full font-sans">
                   <button 
-                    onClick={handleLogout} 
+                    onClick={handleLogout}
+                    onMouseMove={handleMagneticMove}
+                    onMouseLeave={handleMagneticLeave}
                     className="btn-rp py-3.5 text-sm w-full shadow-lg bg-gradient-to-r from-[#5B6B54] to-[#8B7E66] border border-[#B8A88A]/20 cursor-pointer"
                   >
                     Selesai & Keluar
                   </button>
                   <button 
-                    onClick={() => { setScene("envelope"); setEnvelopeOpen(false); setActiveLetter(0); }} 
+                    onClick={() => { setScene("envelope"); setEnvelopeOpen(false); setActiveLetter(0); }}
+                    onMouseMove={handleMagneticMove}
+                    onMouseLeave={handleMagneticLeave}
                     className="btn-light py-2.5 text-[11px] w-full cursor-pointer"
                   >
                     Lihat Ulang Surat ✉️
