@@ -2,13 +2,10 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import staffData from "@/data/staff.json";
 import divisionsData from "@/data/divisions.json";
 import gsap from "gsap";
@@ -33,75 +30,37 @@ export default function MessagePage() {
 
   useEffect(() => {
     const storedNim = sessionStorage.getItem("userNIM");
-    if (!storedNim) {
-      router.push("/nim");
-    } else {
-      setNim(storedNim);
-    }
+    if (!storedNim) { router.push("/nim"); } else { setNim(storedNim); }
   }, [router]);
 
   useEffect(() => {
     if (!containerRef.current || !nim) return;
     const ctx = gsap.context(() => {
-      gsap.fromTo(
-        ".msg-header",
-        { y: 20, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.6, ease: "power3.out", delay: 0.1 }
-      );
-      gsap.fromTo(
-        ".msg-panel",
-        { y: 30, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.6, stagger: 0.1, ease: "power3.out", delay: 0.25 }
-      );
+      gsap.fromTo(".msg-header", { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, ease: "power2.out", delay: 0.1 });
+      gsap.fromTo(".msg-panel", { y: 25, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, stagger: 0.1, ease: "power2.out", delay: 0.2 });
     }, containerRef);
     return () => ctx.revert();
   }, [nim]);
 
   const handleStaffClick = (staff: typeof staffData[0]) => {
     setSelectedStaff(staff);
-    
     const messages = JSON.parse(localStorage.getItem("messages") || "[]");
-    const existing = messages.find(
-      (m: MessageData) => m.nim === nim && m.staffNim === staff.nim
-    );
-    
-    if (existing) {
-      setExistingMessage(existing);
-      setMessage(existing.message);
-    } else {
-      setExistingMessage(null);
-      setMessage("");
-    }
+    const existing = messages.find((m: MessageData) => m.nim === nim && m.staffNim === staff.nim);
+    if (existing) { setExistingMessage(existing); setMessage(existing.message); }
+    else { setExistingMessage(null); setMessage(""); }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!selectedStaff || !message.trim()) {
-      alert("Mohon lengkapi semua field");
-      return;
-    }
-
+    if (!selectedStaff || !message.trim()) { alert("Mohon lengkapi semua field"); return; }
     const messages = JSON.parse(localStorage.getItem("messages") || "[]");
     const newMessage: MessageData = {
-      nim,
-      staffNim: selectedStaff.nim || "",
-      staffName: selectedStaff.nama || "",
-      message: message.trim(),
-      response: existingMessage?.response || "",
+      nim, staffNim: selectedStaff.nim || "", staffName: selectedStaff.nama || "",
+      message: message.trim(), response: existingMessage?.response || "",
       timestamp: existingMessage?.timestamp || new Date().toISOString(),
     };
-
-    const existingIndex = messages.findIndex(
-      (m: MessageData) => m.nim === nim && m.staffNim === (selectedStaff.nim || "")
-    );
-    
-    if (existingIndex >= 0) {
-      messages[existingIndex] = newMessage;
-    } else {
-      messages.push(newMessage);
-    }
-    
+    const existingIndex = messages.findIndex((m: MessageData) => m.nim === nim && m.staffNim === (selectedStaff.nim || ""));
+    if (existingIndex >= 0) { messages[existingIndex] = newMessage; } else { messages.push(newMessage); }
     localStorage.setItem("messages", JSON.stringify(messages));
     alert("Pesan berhasil disimpan!");
     setExistingMessage(newMessage);
@@ -112,83 +71,75 @@ export default function MessagePage() {
     return division?.name || divisionId;
   };
 
-  const filteredStaff = filterDivision === "all" 
-    ? staffData 
-    : staffData.filter(s => s.divisi === filterDivision);
+  const filteredStaff = filterDivision === "all" ? staffData : staffData.filter(s => s.divisi === filterDivision);
 
-  if (!nim) {
-    return null;
-  }
+  if (!nim) return null;
 
   return (
-    <div ref={containerRef} className="relative min-h-screen p-4 py-8 bg-[#0a0f1e] text-slate-100 overflow-hidden">
+    <div ref={containerRef} className="relative min-h-screen p-4 py-8 bg-rp-gradient overflow-hidden">
       {/* Background */}
       <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
-        <div className="absolute -top-32 -left-32 w-[400px] h-[400px] rounded-full bg-[#1E3A8A] opacity-20 blur-[140px]" />
-        <div className="absolute bottom-[-80px] right-[-60px] w-[350px] h-[350px] rounded-full bg-[#6366F1] opacity-[0.08] blur-[130px]" />
-        <div className="absolute top-1/2 left-1/2 w-[300px] h-[300px] rounded-full bg-[#3B82F6] opacity-[0.06] blur-[120px]" />
-        <div className="absolute inset-0 dot-pattern" />
+        <div className="absolute -top-20 -left-20 w-[350px] h-[350px] rounded-full bg-white/40 blur-[80px]" />
+        <div className="absolute bottom-[-60px] right-[-40px] w-[280px] h-[280px] rounded-full bg-[#A8D8F0]/25 blur-[90px]" />
       </div>
 
       <div className="relative z-10 max-w-7xl mx-auto">
         {/* Header */}
-        <div className="msg-header glass-card-strong overflow-hidden top-line-gradient mb-6 p-6">
+        <div className="msg-header card-white accent-line-blue overflow-hidden mb-6 p-5">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-white tracking-tight">Pesan & Kesan</h1>
-              <p className="text-sm text-slate-400 mt-1">
-                Pilih pengurus untuk memberikan pesan dan kesan
-              </p>
+              <h1 className="text-xl font-bold text-[#0D2B4E]">Pesan & Kesan</h1>
+              <p className="text-sm text-[#4A7BA5] mt-0.5">Pilih pengurus untuk memberikan pesan</p>
             </div>
-            <div className="inline-flex items-center text-xs font-medium px-3.5 py-1.5 rounded-lg text-slate-300 bg-white/[0.04] border border-white/[0.08]">
-              NIM: {nim}
-            </div>
+            <span className="text-xs font-medium px-3 py-1.5 rounded-lg bg-[#EDF6FC] text-[#4A7BA5] border border-[#C2DFF0]">NIM: {nim}</span>
           </div>
         </div>
 
         <div className="grid lg:grid-cols-2 gap-6">
-          {/* Left Side - Staff List */}
+          {/* Staff List */}
           <div className="msg-panel">
-            <div className="glass-card-strong overflow-hidden p-0">
-              <div className="p-6 pb-4 border-b border-white/[0.04]">
-                <h2 className="text-lg font-bold text-white mb-4">Daftar Pengurus</h2>
+            <div className="card-white overflow-hidden">
+              <div className="p-5 pb-4 border-b border-[#EDF6FC]">
+                <h2 className="text-base font-bold text-[#0D2B4E] mb-3">Daftar Pengurus</h2>
                 <Tabs value={filterDivision} onValueChange={setFilterDivision}>
-                  <TabsList className="grid w-full grid-cols-3 lg:grid-cols-4 bg-white/[0.04]">
-                    <TabsTrigger value="all" className="text-xs data-[state=active]:bg-blue-500/20 data-[state=active]:text-blue-300">Semua</TabsTrigger>
-                    <TabsTrigger value="nondivisi" className="text-xs data-[state=active]:bg-blue-500/20 data-[state=active]:text-blue-300">Non</TabsTrigger>
-                    <TabsTrigger value="psdm" className="text-xs data-[state=active]:bg-blue-500/20 data-[state=active]:text-blue-300">PSDM</TabsTrigger>
-                    <TabsTrigger value="adkesma" className="text-xs data-[state=active]:bg-blue-500/20 data-[state=active]:text-blue-300">ADKS</TabsTrigger>
-                    <TabsTrigger value="medinfo" className="text-xs data-[state=active]:bg-blue-500/20 data-[state=active]:text-blue-300">MED</TabsTrigger>
-                    <TabsTrigger value="kominfo" className="text-xs data-[state=active]:bg-blue-500/20 data-[state=active]:text-blue-300">KOM</TabsTrigger>
-                    <TabsTrigger value="kewirus" className="text-xs data-[state=active]:bg-blue-500/20 data-[state=active]:text-blue-300">KEW</TabsTrigger>
-                    <TabsTrigger value="litbang" className="text-xs data-[state=active]:bg-blue-500/20 data-[state=active]:text-blue-300">LIT</TabsTrigger>
-                    <TabsTrigger value="senbud" className="text-xs data-[state=active]:bg-blue-500/20 data-[state=active]:text-blue-300">SEN</TabsTrigger>
+                  <TabsList className="grid w-full grid-cols-3 lg:grid-cols-4 bg-[#EDF6FC]">
+                    {[
+                      { value: "all", label: "Semua" }, { value: "nondivisi", label: "Non" },
+                      { value: "psdm", label: "PSDM" }, { value: "adkesma", label: "ADKS" },
+                      { value: "medinfo", label: "MED" }, { value: "kominfo", label: "KOM" },
+                      { value: "kewirus", label: "KEW" }, { value: "litbang", label: "LIT" },
+                      { value: "senbud", label: "SEN" },
+                    ].map(tab => (
+                      <TabsTrigger key={tab.value} value={tab.value} className="text-xs data-[state=active]:bg-white data-[state=active]:text-[#1B5E9E] data-[state=active]:shadow-sm">
+                        {tab.label}
+                      </TabsTrigger>
+                    ))}
                   </TabsList>
                 </Tabs>
               </div>
-              <div className="max-h-[600px] overflow-y-auto p-4 space-y-2">
+              <div className="max-h-[600px] overflow-y-auto p-3 space-y-1.5">
                 {filteredStaff.map((staff) => (
-                  <div 
+                  <div
                     key={staff.nim}
-                    className={`cursor-pointer rounded-xl p-4 transition-all duration-300 border ${
-                      selectedStaff?.nim === staff.nim 
-                        ? 'bg-blue-500/10 border-blue-500/30 shadow-lg shadow-blue-500/5' 
-                        : 'bg-white/[0.02] border-white/[0.04] hover:bg-white/[0.05] hover:border-white/[0.1]'
+                    className={`cursor-pointer rounded-xl p-3.5 transition-all duration-200 border ${
+                      selectedStaff?.nim === staff.nim
+                        ? "bg-[#1B5E9E]/5 border-[#1B5E9E]/25 shadow-sm"
+                        : "bg-white border-transparent hover:bg-[#EDF6FC] hover:border-[#C2DFF0]"
                     }`}
                     onClick={() => handleStaffClick(staff)}
                   >
                     <div className="flex items-center gap-3">
-                      <Avatar className="h-10 w-10 rounded-lg">
+                      <Avatar className="h-9 w-9 rounded-lg">
                         <AvatarImage src={staff.photo} alt={staff.nama} className="rounded-lg" />
-                        <AvatarFallback className="bg-blue-500/10 text-blue-300 font-semibold text-xs rounded-lg">
+                        <AvatarFallback className="bg-[#EDF6FC] text-[#1B5E9E] font-semibold text-xs rounded-lg">
                           {(staff.nama || "").split(' ').slice(0, 2).map(n => n[0] || '').join('')}
                         </AvatarFallback>
                       </Avatar>
                       <div className="flex-1 min-w-0">
-                        <p className="font-medium text-sm text-white truncate">{staff.nama}</p>
-                        <p className="text-[11px] text-slate-500">{staff.nim}</p>
+                        <p className="font-medium text-sm text-[#0D2B4E] truncate">{staff.nama}</p>
+                        <p className="text-[11px] text-[#8AACCC]">{staff.nim}</p>
                       </div>
-                      <span className="shrink-0 text-[10px] font-medium px-2 py-1 rounded-md bg-white/[0.04] border border-white/[0.06] text-slate-400">
+                      <span className="shrink-0 text-[10px] font-medium px-2 py-0.5 rounded-md bg-[#EDF6FC] text-[#4A7BA5] border border-[#D9EEF9]">
                         {getDivisionName(staff.divisi || "")}
                       </span>
                     </div>
@@ -198,88 +149,59 @@ export default function MessagePage() {
             </div>
           </div>
 
-          {/* Right Side - Message Form */}
+          {/* Message Form */}
           <div className="msg-panel">
             {selectedStaff ? (
-              <div className="glass-card-strong overflow-hidden top-line-gradient">
-                <div className="p-6 pb-0">
-                  <div className="flex items-center gap-4 mb-6">
-                    <Avatar className="h-14 w-14 rounded-xl">
+              <div className="card-white accent-line-blue overflow-hidden">
+                <div className="p-5 pb-0">
+                  <div className="flex items-center gap-3 mb-5">
+                    <Avatar className="h-12 w-12 rounded-xl">
                       <AvatarImage src={selectedStaff.photo} alt={selectedStaff.nama} className="rounded-xl" />
-                      <AvatarFallback className="bg-blue-500/10 text-blue-300 text-lg font-bold rounded-xl">
+                      <AvatarFallback className="bg-[#EDF6FC] text-[#1B5E9E] text-base font-bold rounded-xl">
                         {(selectedStaff.nama || "").split(' ').slice(0, 2).map(n => n[0] || '').join('')}
                       </AvatarFallback>
                     </Avatar>
                     <div>
-                      <h3 className="text-lg font-bold text-white">{selectedStaff.nama || ""}</h3>
-                      <p className="text-xs text-slate-400">{selectedStaff.jabatan}</p>
-                      <span className="inline-flex items-center text-[10px] font-medium mt-1 px-2 py-0.5 rounded-md bg-blue-500/10 text-blue-300 border border-blue-400/15">
-                        {getDivisionName(selectedStaff.divisi || "")}
-                      </span>
+                      <h3 className="text-base font-bold text-[#0D2B4E]">{selectedStaff.nama || ""}</h3>
+                      <p className="text-xs text-[#4A7BA5]">{selectedStaff.jabatan}</p>
+                      <span className="badge-rp mt-1 text-[9px] py-0.5 px-2">{getDivisionName(selectedStaff.divisi || "")}</span>
                     </div>
                   </div>
                 </div>
-                <div className="p-6 pt-0">
-                  <form onSubmit={handleSubmit} className="space-y-6">
+                <div className="p-5 pt-0">
+                  <form onSubmit={handleSubmit} className="space-y-5">
                     <div className="space-y-2">
-                      <Label htmlFor="message" className="text-xs font-medium text-slate-400 tracking-wide uppercase">
-                        Pesan & Kesan Anda
-                      </Label>
+                      <Label htmlFor="message" className="text-[11px] font-semibold text-[#4A7BA5] tracking-wide uppercase">Pesan & Kesan Anda</Label>
                       <Textarea
-                        id="message"
-                        placeholder="Tuliskan pesan dan kesan Anda untuk pengurus ini..."
-                        value={message}
-                        onChange={(e) => setMessage(e.target.value)}
-                        rows={6}
-                        className="resize-none bg-white/[0.04] border-white/[0.08] text-white placeholder:text-slate-500/60 focus:border-blue-500/50"
+                        id="message" placeholder="Tuliskan pesan dan kesan Anda..." value={message}
+                        onChange={(e) => setMessage(e.target.value)} rows={6}
+                        className="resize-none bg-[#EDF6FC] border-[#C2DFF0] text-[#0D2B4E] placeholder:text-[#A8C8E0] focus:border-[#3A8FD6]"
                       />
-                      <p className="text-[11px] text-slate-500/60">
-                        {message.length} karakter
-                      </p>
+                      <p className="text-[11px] text-[#A8C8E0]">{message.length} karakter</p>
                     </div>
 
                     {existingMessage?.response && (
                       <div className="space-y-2">
-                        <Label className="text-xs font-medium text-[#C9A227]/80 tracking-wide uppercase">
-                          Respon dari {selectedStaff.nama}
-                        </Label>
-                        <div className="p-4 bg-[#C9A227]/[0.04] border border-[#C9A227]/15 rounded-xl">
-                          <p className="text-sm whitespace-pre-wrap text-slate-200/90">
-                            {existingMessage.response}
-                          </p>
+                        <Label className="text-[11px] font-semibold text-[#B8931F] tracking-wide uppercase">Respon dari {selectedStaff.nama}</Label>
+                        <div className="p-3.5 bg-[#FFFBEB] border border-[#F5E6A3]/40 rounded-xl">
+                          <p className="text-sm whitespace-pre-wrap text-[#5D4A0F]">{existingMessage.response}</p>
                         </div>
                       </div>
                     )}
 
                     <div className="flex gap-3">
-                      <Button
-                        type="button"
-                        variant="outline"
-                        onClick={() => router.push("/")}
-                        className="w-full h-12 bg-white/[0.04] border-white/[0.08] text-slate-300 hover:bg-white/[0.08] hover:text-white hover:border-white/[0.16]"
-                      >
-                        Kembali
-                      </Button>
-                      <Button 
-                        type="submit" 
-                        className="w-full h-12 btn-primary-glow border-0 text-white font-semibold"
-                      >
-                        <span className="relative">{existingMessage ? "Update Pesan" : "Kirim Pesan"}</span>
-                      </Button>
+                      <button type="button" onClick={() => router.push("/")} className="btn-light w-full py-3 text-sm rounded-xl">Kembali</button>
+                      <button type="submit" className="btn-rp w-full py-3 text-sm">{existingMessage ? "Update Pesan" : "Kirim Pesan"}</button>
                     </div>
                   </form>
                 </div>
               </div>
             ) : (
-              <div className="glass-card-strong border-dashed border-white/10 h-full flex items-center justify-center min-h-[400px]">
+              <div className="card-white border-dashed border-[#C2DFF0] h-full flex items-center justify-center min-h-[400px]">
                 <div className="text-center py-12 px-6">
-                  <div className="w-16 h-16 rounded-2xl bg-blue-500/8 border border-blue-400/10 flex items-center justify-center text-3xl mx-auto mb-4">
-                    💬
-                  </div>
-                  <p className="text-base font-semibold text-white mb-1">Pilih Pengurus</p>
-                  <p className="text-sm text-slate-400 max-w-[240px] mx-auto">
-                    Klik salah satu pengurus di sebelah kiri untuk mulai menulis pesan
-                  </p>
+                  <div className="w-14 h-14 rounded-2xl bg-[#EDF6FC] border border-[#C2DFF0] flex items-center justify-center text-2xl mx-auto mb-3">💬</div>
+                  <p className="text-base font-semibold text-[#0D2B4E] mb-1">Pilih Pengurus</p>
+                  <p className="text-sm text-[#4A7BA5] max-w-[220px] mx-auto">Klik pengurus di sebelah kiri untuk menulis pesan</p>
                 </div>
               </div>
             )}
