@@ -112,13 +112,12 @@ export default function Home() {
   const [windowWidth, setWindowWidth] = useState(1200);
   const [isTouch, setIsTouch] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
-  const [isDownloading, setIsDownloading] = useState(false);
 
   // Unboxing & Celebration Scene States
   const [scene, setScene] = useState<"login" | "intro" | "envelope" | "letters" | "celebration">("login");
   const [activeLetter, setActiveLetter] = useState(0);
   const [envelopeOpen, setEnvelopeOpen] = useState(false);
-  
+
   // Landing Carousel Active Card
   const [activeLandingCard, setActiveLandingCard] = useState(0);
 
@@ -219,125 +218,7 @@ export default function Home() {
     }
   }, [isMuted]);
 
-  // 0B. Certificate Acceptance Share Card Generator (HTML5 Canvas Draw)
-  const handleDownloadCertificate = async () => {
-    if (!applicant) return;
-    setIsDownloading(true);
-    try {
-      const canvas = document.createElement("canvas");
-      canvas.width = 1200;
-      canvas.height = 630;
-      const ctx = canvas.getContext("2d");
-      if (!ctx) throw new Error("Could not get canvas context");
 
-      // Background
-      ctx.fillStyle = "#FCFAF2";
-      ctx.fillRect(0, 0, 1200, 630);
-
-      // Noise texture
-      for (let i = 0; i < 120000; i++) {
-        const x = Math.random() * 1200;
-        const y = Math.random() * 630;
-        ctx.fillStyle = `rgba(139, 126, 102, ${Math.random() * 0.025})`;
-        ctx.fillRect(x, y, 1, 1);
-      }
-
-      // Elegant Dual Borders
-      ctx.lineWidth = 4;
-      ctx.strokeStyle = "#8B7E66";
-      ctx.strokeRect(20, 20, 1160, 590);
-
-      ctx.lineWidth = 2;
-      ctx.setLineDash([8, 6]);
-      ctx.strokeStyle = "#B8A88A";
-      ctx.strokeRect(32, 32, 1136, 566);
-      ctx.setLineDash([]); // reset
-
-      // Draw Logo
-      const logo = new Image();
-      logo.src = "/image/rumpres.png";
-      await new Promise<void>((resolve) => {
-        logo.onload = () => {
-          ctx.drawImage(logo, 600 - 45, 60, 90, 90);
-          resolve();
-        };
-        logo.onerror = () => {
-          ctx.fillStyle = "#B8A88A";
-          ctx.beginPath();
-          ctx.arc(600, 105, 40, 0, Math.PI * 2);
-          ctx.fill();
-          resolve();
-        };
-      });
-
-      ctx.textAlign = "center";
-      
-      // Header
-      ctx.fillStyle = "#0D2B4E";
-      ctx.font = "bold 13px sans-serif";
-      ctx.fillText("RUMAH PRESTASI FPMIPA UPI", 600, 190);
-      
-      ctx.fillStyle = "#B8A88A";
-      ctx.font = "bold 10px sans-serif";
-      ctx.fillText("SELEKSI ANGGOTA BARU 2026", 600, 210);
-
-      // Line
-      ctx.strokeStyle = "rgba(184, 168, 138, 0.4)";
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.moveTo(450, 230);
-      ctx.lineTo(750, 230);
-      ctx.stroke();
-
-      // Certificate title
-      ctx.fillStyle = "#5B6B54";
-      ctx.font = "italic bold 28px Georgia, serif";
-      ctx.fillText("SURAT KEPUTUSAN KELULUSAN", 600, 275);
-
-      ctx.fillStyle = "#5C5549";
-      ctx.font = "14px Georgia, serif";
-      ctx.fillText("Dengan bangga menyatakan bahwa pendaftar di bawah ini:", 600, 315);
-
-      // Student Name
-      ctx.fillStyle = "#C36B62";
-      ctx.font = "bold 32px sans-serif";
-      ctx.fillText(applicant.nama.toUpperCase(), 600, 365);
-
-      ctx.fillStyle = "#2D4A6A";
-      ctx.font = "bold 15px sans-serif";
-      ctx.fillText(`NIM. ${applicant.nim}`, 600, 395);
-
-      ctx.fillStyle = "#5C5549";
-      ctx.font = "14px Georgia, serif";
-      ctx.fillText("dinyatakan lolos seleksi dan resmi bergabung sebagai staf:", 600, 435);
-
-      // Role & Department
-      ctx.fillStyle = "#1B5E9E";
-      ctx.font = "bold 20px sans-serif";
-      ctx.fillText(`${applicant.jabatan} - ${deptInfo?.fullName ?? applicant.departemen}`, 600, 475);
-
-      // Hashtag
-      ctx.fillStyle = "#B8A88A";
-      ctx.font = "bold 13px sans-serif";
-      ctx.fillText("#JuaranyaFPMIPA", 600, 520);
-
-      // Copyright
-      ctx.fillStyle = "rgba(74, 123, 165, 0.7)";
-      ctx.font = "9px sans-serif";
-      ctx.fillText("© 2026 RUMAH PRESTASI FPMIPA UPI", 600, 570);
-
-      // Download trigger
-      const dataUrl = canvas.toDataURL("image/png");
-      const link = document.createElement("a");
-      link.download = `Kelulusan_${applicant.nama.replace(/\s+/g, "_")}.png`;
-      link.href = dataUrl;
-      link.click();
-    } catch (err) {
-      console.error("Error generating acceptance card:", err);
-    } finally {
-      setIsDownloading(false);
-    }
-  };
 
   // 0C. Click-to-Burst cursor confetti emitter
   const handlePageClick = (e: React.MouseEvent) => {
@@ -473,7 +354,7 @@ export default function Home() {
 
     const update = () => {
       ctx.clearRect(0, 0, width, height);
-      
+
       // Filter out particles that fell off the screen (no infinite recycling loop)
       const activeParticles = particles.filter(p => p.y <= height + 20);
       particles.length = 0;
@@ -670,7 +551,7 @@ export default function Home() {
   // 3. Stagger-in text & flip animations for Stitched Paper Cards
   useEffect(() => {
     if (scene !== "letters") return;
-    
+
     // Slide & slight rotation for the card
     gsap.fromTo(".sf-card", {
       opacity: 0,
@@ -703,7 +584,7 @@ export default function Home() {
     if (envelopeOpen) return;
     setEnvelopeOpen(true);
     playSFX("pop");
-    
+
     const tl = gsap.timeline({
       onComplete: () => {
         setTimeout(() => {
@@ -760,7 +641,7 @@ export default function Home() {
   }, []);
 
   // 4c. Magnetic button effect
-  const handleMagneticMove = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleMagneticMove = useCallback((e: React.MouseEvent<any>) => {
     if (getIsTouch()) return;
     const btn = e.currentTarget;
     const rect = btn.getBoundingClientRect();
@@ -768,7 +649,7 @@ export default function Home() {
     const y = e.clientY - rect.top - rect.height / 2;
     gsap.to(btn, { x: x * 0.25, y: y * 0.25, duration: 0.3, ease: "power2.out" });
   }, []);
-  const handleMagneticLeave = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleMagneticLeave = useCallback((e: React.MouseEvent<any>) => {
     gsap.to(e.currentTarget, { x: 0, y: 0, duration: 0.5, ease: "elastic.out(1, 0.4)" });
   }, []);
 
@@ -797,7 +678,7 @@ export default function Home() {
     const isMobile = windowWidth < 640;
     const offset = isMobile ? 120 : 230; // Compressed spacing on mobile viewports
     const farOffset = isMobile ? 200 : 360;
-    
+
     if (diff === 0) {
       return {
         transform: "translateX(0) translateZ(80px) rotateY(0deg) scale(1.02)",
@@ -849,7 +730,7 @@ export default function Home() {
     const isMobile = windowWidth < 640;
     const offset = isMobile ? 115 : 210;
     const farOffset = isMobile ? 180 : 330;
-    
+
     if (diff === 0) {
       return {
         transform: "translateX(0) translateZ(80px) rotateY(0deg) scale(1.02)",
@@ -1043,7 +924,7 @@ export default function Home() {
           </div>
 
           {/* Desktop/Tablet Middle Navigation Links (Flowblox inspired) */}
-          <nav className="hidden md:flex items-center gap-6">
+          {/* <nav className="hidden md:flex items-center gap-6">
             {["Tentang", "Departemen", "Galeri", "Hubungi"].map((link) => (
               <span 
                 key={link}
@@ -1053,21 +934,21 @@ export default function Home() {
                 {link}
               </span>
             ))}
-          </nav>
+          </nav> */}
 
           <div className="flex items-center gap-2.5">
             {/* Audio Toggle */}
-            <button
+            {/* <button
               onClick={() => setIsMuted(prev => !prev)}
               className="btn-light text-[11px] font-bold px-3.5 py-1.5 rounded-full shadow-sm flex items-center gap-1.5 hover:scale-105 transition-all duration-200 cursor-pointer"
               title={isMuted ? "Aktifkan Suara" : "Matikan Suara"}
             >
               {isMuted ? "🔇 Suara Off" : "🔊 Suara On"}
-            </button>
+            </button> */}
 
             {!applicant ? (
-              <button 
-                onClick={scrollToPortal} 
+              <button
+                onClick={scrollToPortal}
                 className="btn-light text-[11px] font-bold px-4 py-1.5 rounded-full shadow-sm hover:scale-105 transition-all duration-200"
               >
                 Cek NIM
@@ -1087,7 +968,7 @@ export default function Home() {
         {!applicant ? (
           /* ========== LANDING PAGE VIEW (Flowblox Styled) ========== */
           <div className="w-full flex flex-col items-center py-6 sm:py-10">
-            
+
             {/* Hero Section */}
             <div className="text-center max-w-3xl mb-12 flex flex-col items-center">
               <div className="hero-el badge-gold mb-5 mx-auto animate-pulse flex items-center gap-1.5">
@@ -1098,7 +979,7 @@ export default function Home() {
               <h1 className="hero-el flow-hero-title mb-5">
                 Tumbuh Bersama, <br className="sm:hidden" />
                 Raih Prestasi di <br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#5B6B54] via-[#C36B62] to-[#B8A88A]">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#C36B62] to-[#B8A88A]">
                   Rumah Prestasi
                 </span>
               </h1>
@@ -1108,7 +989,7 @@ export default function Home() {
                 <span className="block mt-2 font-bold text-[#B8A88A] text-sm">#JuaranyaFPMIPA</span>
               </p>
 
-              <button 
+              <button
                 onClick={scrollToPortal}
                 onMouseMove={handleMagneticMove}
                 onMouseLeave={handleMagneticLeave}
@@ -1140,9 +1021,9 @@ export default function Home() {
                       <div className="sf-card w-full h-full p-6 sm:p-7 flex flex-col justify-between border border-[#8B7E66]/40 shadow-md relative bg-linen-ivory">
                         <div className="sf-stitched-border" />
                         <div className="sf-paperclip" style={{ right: "32px" }} />
-                        
+
                         {/* Custom decorative felt apple inside the landing cards */}
-                        <div 
+                        <div
                           style={{ backgroundColor: dept.color }}
                           className="absolute top-5 right-5 w-8 h-8 rounded-full border border-dashed border-white flex items-center justify-center shadow-sm animate-floatGentle"
                         >
@@ -1151,7 +1032,7 @@ export default function Home() {
                         </div>
 
                         <div className="text-left space-y-3 pt-2">
-                          <span 
+                          <span
                             style={{ color: dept.color, borderColor: `${dept.color}25`, backgroundColor: `${dept.color}08` }}
                             className="inline-block text-[8px] font-bold tracking-wider px-2 py-0.5 rounded border uppercase"
                           >
@@ -1183,7 +1064,7 @@ export default function Home() {
 
               {/* Navigation dots and arrows */}
               <div className="flex items-center gap-4">
-                <button 
+                <button
                   disabled={activeLandingCard === 0}
                   onClick={() => setActiveLandingCard(prev => prev - 1)}
                   className="btn-light text-[10px] px-3 py-1 rounded-full disabled:opacity-30 cursor-pointer"
@@ -1192,14 +1073,14 @@ export default function Home() {
                 </button>
                 <div className="flex gap-1.5">
                   {LANDING_DEPARTMENTS.map((_, dot) => (
-                    <span 
+                    <span
                       key={dot}
                       onClick={() => setActiveLandingCard(dot)}
                       className={`dot w-1.5 h-1.5 rounded-full cursor-pointer transition-all duration-300 ${activeLandingCard === dot ? "bg-[#5B6B54] w-3" : "bg-[#B8A88A]/40"}`}
                     />
                   ))}
                 </div>
-                <button 
+                <button
                   disabled={activeLandingCard === 3}
                   onClick={() => setActiveLandingCard(prev => prev + 1)}
                   className="btn-light text-[10px] px-3 py-1 rounded-full disabled:opacity-30 cursor-pointer"
@@ -1213,12 +1094,12 @@ export default function Home() {
 
             {/* NIM Check Dedicated Section (id="check-portal") */}
             <div id="check-portal" className="hero-el w-full max-w-[440px] mt-4">
-              
+
               {/* Luxury Envelope styled check card */}
               <div className="sf-card w-full p-8 sm:p-9 border border-[#8B7E66]/50 shadow-xl relative overflow-hidden bg-linen-ivory">
                 <div className="sf-stitched-border" />
                 <div className="sf-paperclip" />
-                
+
                 {/* Gold wax seal at top center */}
                 <div className="absolute top-[-16px] left-1/2 -translate-x-1/2 w-12 h-12 bg-gradient-to-br from-[#ECA628] to-[#B26C08] rounded-full border-2 border-[#F3C46B] shadow-md flex items-center justify-center z-10 animate-floatGentle">
                   <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
@@ -1248,9 +1129,8 @@ export default function Home() {
                       value={nim}
                       maxLength={10}
                       onChange={(e) => { setNim(e.target.value); setError(""); setNotFound(false); }}
-                      className={`w-full rounded-xl px-4 py-3 bg-[#FCFAF2] border ${
-                        error || notFound ? "border-red-400 focus:border-red-500" : "border-[#B8A88A]/40 focus:border-[#5B6B54]"
-                      } text-[#0D2B4E] font-medium text-center tracking-[0.15em] placeholder:text-[#B8A88A]/50 placeholder:tracking-normal placeholder:text-xs outline-none transition-all duration-200 focus-ring font-sans`}
+                      className={`w-full rounded-xl px-4 py-3 bg-[#FCFAF2] border ${error || notFound ? "border-red-400 focus:border-red-500" : "border-[#B8A88A]/40 focus:border-[#5B6B54]"
+                        } text-[#0D2B4E] font-medium text-center tracking-[0.15em] placeholder:text-[#B8A88A]/50 placeholder:tracking-normal placeholder:text-xs outline-none transition-all duration-200 focus-ring font-sans`}
                     />
                     {error && (
                       <p className="text-xs text-red-500 mt-2 text-center">{error}</p>
@@ -1297,7 +1177,7 @@ export default function Home() {
               <div className="w-full max-w-[400px] text-center space-y-6 py-20 px-6 animate-pulse">
                 <div className="text-[10px] font-black tracking-[0.25em] text-[#B8931F] uppercase font-serif">RUMAH PRESTASI 2026</div>
                 <h2 className="text-[#0D2B4E] text-2xl font-black font-serif leading-relaxed">
-                  Ada pesan penting <br/> untukmu...
+                  Ada pesan penting <br /> untukmu...
                 </h2>
                 <div className="text-xl font-bold font-serif text-[#1B5E9E] border-y border-dashed border-[#B8A88A]/40 py-3.5 tracking-wide">
                   ✦ {applicant.nama} ✦
@@ -1315,7 +1195,7 @@ export default function Home() {
                 </div>
 
                 <div className="envelope-container py-8">
-                  <div 
+                  <div
                     onClick={handleOpenEnvelope}
                     onMouseMove={handleEnvelopeHover}
                     onMouseLeave={handleEnvelopeLeave}
@@ -1323,13 +1203,13 @@ export default function Home() {
                   >
                     {/* Top Flap */}
                     <div className="envelope-flap" />
-                    
+
                     {/* Wax Seal */}
                     <div className="envelope-wax-seal">
-                      <img 
-                        src="/image/rumpres.png" 
-                        alt="Segel Rumah Prestasi" 
-                        className="w-10 h-10 object-contain filter drop-shadow-sm select-none brightness-110" 
+                      <img
+                        src="/image/rumpres.png"
+                        alt="Segel Rumah Prestasi"
+                        className="w-10 h-10 object-contain filter drop-shadow-sm select-none brightness-110"
                       />
                     </div>
 
@@ -1341,7 +1221,7 @@ export default function Home() {
 
                     {/* Front sides overlay */}
                     <div className="envelope-front" />
-                    
+
                     {/* Back side panel */}
                     <div className="envelope-back" />
                   </div>
@@ -1356,7 +1236,7 @@ export default function Home() {
             {/* ── Scene 2: Flowblox Curved Stitched Card Perspective Deck ── */}
             {scene === "letters" && (
               <div className="w-full max-w-[800px] flex flex-col items-center gap-8 py-8 overflow-visible">
-                
+
                 {/* 3D Arc Card Deck */}
                 <div className="relative w-full h-[450px] flex items-center justify-center perspective-[1200px] overflow-visible mb-6">
                   {[0, 1, 2, 3].map((idx) => {
@@ -1373,7 +1253,7 @@ export default function Home() {
                           <div className="sf-card w-full p-8 sm:p-9 min-h-[400px] flex flex-col justify-between border border-[#8B7E66]/40 shadow-lg relative h-full bg-linen-ivory">
                             <div className="sf-stitched-border" />
                             <div className="sf-paperclip" />
-                            
+
                             {/* Apple 1 */}
                             <div className="absolute top-6 right-8 w-14 h-14 bg-[#C36B62] rounded-full border border-dashed border-white flex items-center justify-center shadow-md transform rotate-12 z-10 animate-floatGentle">
                               <div className="w-9 h-9 bg-[#FCFAF2] rounded-full border border-dashed border-[#8B7E66]/40 flex items-center justify-center">
@@ -1381,7 +1261,7 @@ export default function Home() {
                               </div>
                               <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-1.5 h-4 bg-[#8B7E66] rounded-sm origin-bottom transform -rotate-12" />
                             </div>
-                            
+
                             {/* Apple 2 */}
                             <div className="absolute top-24 right-5 w-10 h-10 bg-[#C36B62] rounded-full border border-dashed border-white flex items-center justify-center shadow-md transform -rotate-12 z-10 animate-floatGentle-2">
                               <div className="w-6 h-6 bg-[#FCFAF2] rounded-full border border-dashed border-[#8B7E66]/40 flex items-center justify-center">
@@ -1399,10 +1279,10 @@ export default function Home() {
                               <div className="sf-card-line flex items-center gap-1.5 text-[#5B6B54] font-bold text-[9px] tracking-wider uppercase font-serif">
                                 <span>Illustration ✩ Graphic Design</span>
                               </div>
-                              
+
                               <div className="space-y-1">
                                 <span className="sf-card-line text-[9px] font-bold tracking-widest text-[#B8A88A] uppercase block">KEPUTUSAN RESMI</span>
-                                <h1 ref={headingUnderlineRef} className="sf-card-line text-3xl font-black text-[#5B6B54] tracking-tight leading-[1.1] font-serif animated-underline">
+                                <h1 ref={headingUnderlineRef} className="sf-card-line text-3xl font-semibold text-[#5B6B54] tracking-tight leading-[1.1] font-serif animated-underline">
                                   CONGRATS.
                                 </h1>
                               </div>
@@ -1427,7 +1307,7 @@ export default function Home() {
                           <div className="sf-card w-full p-8 sm:p-9 min-h-[400px] flex flex-col justify-between border border-[#8B7E66]/40 shadow-lg relative h-full bg-linen-ivory">
                             <div className="sf-stitched-border" />
                             <div className="sf-paperclip" />
-                            
+
                             {/* Stitched felt apple bottom right */}
                             <div className="absolute bottom-6 right-8 w-11 h-11 bg-[#C36B62] rounded-full border border-dashed border-white flex items-center justify-center shadow-md transform rotate-12 z-10 animate-floatGentle">
                               <div className="w-7 h-7 bg-[#FCFAF2] rounded-full border border-dashed border-[#8B7E66]/40 flex items-center justify-center">
@@ -1468,7 +1348,7 @@ export default function Home() {
                           <div className="sf-card w-full p-8 sm:p-9 min-h-[400px] flex flex-col justify-between border border-[#8B7E66]/40 shadow-lg relative h-full bg-linen-ivory">
                             <div className="sf-stitched-border" />
                             <div className="sf-paperclip" />
-                            
+
                             {/* Stitched Star top right */}
                             <div className="absolute top-6 right-8 sf-stitched-star transform rotate-12 shadow-sm animate-pulse bg-amber-500 border-amber-300 flex items-center justify-center">
                               <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
@@ -1502,7 +1382,7 @@ export default function Home() {
                             </div>
 
                             <div className="sf-card-line text-[9px] font-bold text-[#B8A88A] tracking-wider uppercase relative z-10 font-serif text-left">
-                              — KETUA UMUM BEM
+                              — KETUA UMUM RUMAH PRESTASI FPMIPA
                             </div>
                           </div>
                         )}
@@ -1536,22 +1416,10 @@ export default function Home() {
                                   </div>
                                 ))}
                               </div>
-
-                              {/* WhatsApp LO Button */}
-                              <div className="sf-card-line pt-2 w-full">
-                                <a
-                                  href={getWhatsAppLink()}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="w-full btn-light py-2 rounded-xl text-[10px] sm:text-[11px] font-bold flex items-center justify-center gap-1.5 border border-[#128C7E]/40 text-[#128C7E] hover:bg-[#128C7E]/5 transition-colors cursor-pointer"
-                                >
-                                  Hubungi LO Staf (WhatsApp)
-                                </a>
-                              </div>
                             </div>
 
                             <div className="sf-card-line relative z-10 pt-4 flex flex-col items-center">
-                              <button 
+                              <button
                                 onClick={() => setScene("celebration")}
                                 onMouseMove={handleMagneticMove}
                                 onMouseLeave={handleMagneticLeave}
@@ -1569,7 +1437,7 @@ export default function Home() {
 
                 {/* Progress dot indicators & navigation controls */}
                 <div className="flex justify-between items-center w-full max-w-[480px] px-4 py-1 z-10 font-sans">
-                  <button 
+                  <button
                     disabled={activeLetter === 0}
                     onClick={() => { setActiveLetter(prev => prev - 1); playSFX("whoosh"); }}
                     className="btn-light text-[11px] px-3.5 py-1.5 rounded-lg disabled:opacity-30 disabled:cursor-not-allowed shrink-0 cursor-pointer"
@@ -1578,14 +1446,14 @@ export default function Home() {
                   </button>
                   <div className="progress flex justify-center gap-1.5 shrink-0 mx-2">
                     {[0, 1, 2, 3].map(dot => (
-                      <span 
+                      <span
                         key={dot}
                         onClick={() => { setActiveLetter(dot); playSFX("whoosh"); }}
                         className={`dot w-2 h-2 rounded-full cursor-pointer transition-all duration-300 ${activeLetter === dot ? "bg-[#5B6B54] scale-125 px-2" : "bg-[#B8A88A]/40"}`}
                       />
                     ))}
                   </div>
-                  <button 
+                  <button
                     disabled={activeLetter === 3}
                     onClick={() => { setActiveLetter(prev => prev + 1); playSFX("whoosh"); }}
                     className="btn-light text-[11px] px-3.5 py-1.5 rounded-lg disabled:opacity-30 disabled:cursor-not-allowed shrink-0 cursor-pointer"
@@ -1598,32 +1466,32 @@ export default function Home() {
 
             {/* ── Scene 3: Canvas Confetti Ending Celebration ── */}
             {scene === "celebration" && (
-              <div 
+              <div
                 onClick={handlePageClick}
                 className="w-full max-w-[420px] text-center space-y-6 relative z-10 py-4 flex flex-col items-center select-none"
               >
-                
+
                 {/* Overlay canvas */}
                 <canvas ref={canvasRef} className="pointer-events-none fixed inset-0 z-50 w-full h-full" />
                 <div className="badge-rp bg-[#C36B62]/10 text-[#C36B62] border-[#C36B62]/20 mx-auto font-sans">
                   Selamat Bergabung!
                 </div>
-                
+
                 {/* Sparkle container */}
                 <div ref={sparkleContainerRef} className="absolute inset-0 overflow-hidden pointer-events-none" />
 
-                <h1 className="text-4xl sm:text-5xl font-black tracking-tight leading-none font-serif welcome-title">
+                <h1 className="text-4xl sm:text-5xl font-semibold tracking-tight leading-none font-serif welcome-title">
                   WELCOME
                 </h1>
-                
+
                 <p ref={nameRef} className="text-xs sm:text-sm text-[#5C5549] font-medium max-w-xs mx-auto leading-relaxed font-serif">
-                  Kamu resmi bergabung di keluarga besar <br/>
+                  Kamu resmi bergabung di keluarga besar <br />
                   <strong className="text-[#C36B62]">
                     {(deptInfo?.fullName ?? applicant.departemen).split("").map((ch, i) => (
                       <span key={i} className="name-char inline-block opacity-0">{ch === " " ? "\u00A0" : ch}</span>
                     ))}
-                  </strong> <br/>
-                  Rumah Prestasi 2026 <br/>
+                  </strong> <br />
+                  Rumah Prestasi 2026 <br />
                   <span className="text-[11px] font-extrabold text-[#5B6B54] tracking-wider block mt-2 font-sans">#JuaranyaFPMIPA</span>
                 </p>
 
@@ -1651,43 +1519,30 @@ export default function Home() {
                   </div>
                 </div>
 
-                {/* Download Certificate Button */}
-                <button
-                  onClick={handleDownloadCertificate}
-                  disabled={isDownloading}
-                  onMouseMove={handleMagneticMove}
-                  onMouseLeave={handleMagneticLeave}
-                  className="w-full btn-light py-3.5 text-xs font-bold tracking-wider uppercase shadow-md flex items-center justify-center gap-2 border border-[#B8A88A]/40 text-[#5B6B54] bg-[#FCFAF2] hover:bg-white hover:border-[#5B6B54]/60 transition-all cursor-pointer"
-                >
-                  {isDownloading ? (
-                    <>
-                      <span className="spin inline-block w-4 h-4 rounded-full border-2 border-[#5B6B54]/30 border-t-[#5B6B54]" />
-                      Mengunduh Gambar...
-                    </>
-                  ) : (
-                    <>
-                      🎓 Unduh Bukti Kelulusan (PNG)
-                    </>
-                  )}
-                </button>
 
                 <div className="pt-4 flex flex-col gap-2.5 w-full font-sans">
-                  <button 
-                    onClick={handleLogout}
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleLogout();
+                    }}
                     onMouseMove={handleMagneticMove}
                     onMouseLeave={handleMagneticLeave}
                     className="btn-rp py-3.5 text-sm w-full shadow-lg bg-gradient-to-r from-[#5B6B54] to-[#8B7E66] border border-[#B8A88A]/20 cursor-pointer"
                   >
                     Selesai & Keluar
                   </button>
-                  <button 
-                    onClick={() => { setScene("envelope"); setEnvelopeOpen(false); setActiveLetter(0); }}
+                  <a
+                    href={getWhatsAppLink()}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={(e) => e.stopPropagation()}
                     onMouseMove={handleMagneticMove}
                     onMouseLeave={handleMagneticLeave}
-                    className="btn-light py-2.5 text-[11px] w-full cursor-pointer"
+                    className="w-full btn-light py-3 text-[11px] font-bold flex items-center justify-center gap-1.5 border border-[#128C7E]/40 text-[#128C7E] hover:bg-[#128C7E]/5 transition-colors transition-all cursor-pointer"
                   >
-                    Lihat Ulang Surat
-                  </button>
+                    💬 Chat Kadep Kamu ({deptInfo?.kadepName ?? "LO"})
+                  </a>
                 </div>
               </div>
             )}
