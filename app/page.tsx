@@ -66,7 +66,7 @@ const LANDING_DEPARTMENTS = [
   {
     title: "Teknologi dan Rekayasa",
     tagline: "Inovasi Sistem & Platform Digital",
-    desc: "Membangun sistem, infrastruktur digital, dan platform web yang andal, solutif, serta menunjang transformasi digital seluruh program kerja di Rumah Prestasi.",
+    desc: "Membangun sistem, infrastruktur digital, and platform web yang andal, solutif, serta menunjang transformasi digital seluruh program kerja di Rumah Prestasi.",
     icon: "/divisions/kominfo.svg",
     color: "#1E40AF",
     badge: "DIGITAL & SYSTEM",
@@ -143,7 +143,7 @@ const LANDING_DEPARTMENTS = [
   {
     title: "Sekretaris Umum",
     tagline: "Administrasi & Pengarsipan Presisi",
-    desc: "Mengelola administrasi surat-menyurat, pengarsipan berkas penting, koordinasi agenda kerja kabinet, dan menyusun laporan pertanggungjawaban secara teratur.",
+    desc: "Mengelola administrasi surat-menyurat, pengarsipan berkas penting, koordinasi agenda kerja kabinet, and menyusun laporan pertanggungjawaban secara teratur.",
     icon: "/divisions/nondivisi.svg",
     color: "#6B7280",
     badge: "ADMINISTRATION & SECRETARIAT",
@@ -154,7 +154,7 @@ const LANDING_DEPARTMENTS = [
   {
     title: "Bendahara Umum",
     tagline: "Transparansi & Pengelolaan Keuangan",
-    desc: "Mengelola arus kas keuangan kabinet, penyusunan anggaran kegiatan, pengawasan realisasi dana, dan penyusunan laporan keuangan bulanan secara transparan.",
+    desc: "Mengelola arus kas keuangan kabinet, penyusunan anggaran kegiatan, pengawasan realisasi dana, and menyusun laporan keuangan bulanan secara transparan.",
     icon: "/divisions/nondivisi.svg",
     color: "#10B981",
     badge: "FINANCE & TREASURY",
@@ -1088,7 +1088,7 @@ export default function Home() {
               </div>
 
               <h1 className="hero-el flow-hero-title mb-5">
-                Selamat Datang <br className="sm:hidden" />
+                Selamat Datang  <br className="sm:hidden" />
                 Orang Orang Hebat di<br />
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#C36B62] to-[#B8A88A]">
                   Rumah Prestasi FPMIPA
@@ -1113,8 +1113,8 @@ export default function Home() {
             {/* 3D curved department cards perspective carousel (Flowblox style team arc) */}
             <div className="hero-el w-full flex flex-col items-center gap-6 py-6 overflow-visible mb-16">
               <div className="text-center space-y-1">
-                <span className="text-[10px] font-bold text-[#B8A88A] tracking-widest uppercase block">KABINET STRUKTUR</span>
-                <h2 className="text-xl sm:text-2xl font-serif font-bold text-[#0D2B4E]">Eksplorasi Departemen Kami</h2>
+                <span className="text-[10px] font-bold text-[#B8A88A] tracking-widest uppercase block">Mari Mengenal</span>
+                <h2 className="text-xl sm:text-2xl font-serif font-bold text-[#0D2B4E]">Departemen Rumah Prestasi FPMIPA</h2>
               </div>
 
               {/* 3D Curved deck container */}
