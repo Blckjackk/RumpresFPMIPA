@@ -834,7 +834,11 @@ export default function Home() {
 
   // 3D perspective layout style calculations for Landing Page Departments Carousel
   const getLandingCardStyle = (index: number) => {
-    const diff = index - activeLandingCard;
+    const N = LANDING_DEPARTMENTS.length;
+    let diff = index - activeLandingCard;
+    // Circular wrap to range [-N/2, N/2] i.e. [-5, 4]
+    diff = ((diff + N / 2) % N + N) % N - N / 2;
+
     const isMobile = windowWidth < 640;
     const offset = isMobile ? 115 : 210;
     const farOffset = isMobile ? 180 : 330;
@@ -1214,9 +1218,8 @@ export default function Home() {
               {/* Navigation dots and arrows */}
               <div className="flex items-center gap-4">
                 <button
-                  disabled={activeLandingCard === 0}
-                  onClick={() => setActiveLandingCard(prev => prev - 1)}
-                  className="btn-light text-[10px] px-3 py-1 rounded-full disabled:opacity-30 cursor-pointer"
+                  onClick={() => setActiveLandingCard(prev => (prev - 1 + LANDING_DEPARTMENTS.length) % LANDING_DEPARTMENTS.length)}
+                  className="btn-light text-[10px] px-3 py-1 rounded-full cursor-pointer"
                 >
                   ←
                 </button>
@@ -1230,9 +1233,8 @@ export default function Home() {
                   ))}
                 </div>
                 <button
-                  disabled={activeLandingCard === LANDING_DEPARTMENTS.length - 1}
-                  onClick={() => setActiveLandingCard(prev => prev + 1)}
-                  className="btn-light text-[10px] px-3 py-1 rounded-full disabled:opacity-30 cursor-pointer"
+                  onClick={() => setActiveLandingCard(prev => (prev + 1) % LANDING_DEPARTMENTS.length)}
+                  className="btn-light text-[10px] px-3 py-1 rounded-full cursor-pointer"
                 >
                   →
                 </button>
