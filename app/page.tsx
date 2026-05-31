@@ -51,43 +51,83 @@ interface DepartmentData {
    ====================================================== */
 const LANDING_DEPARTMENTS = [
   {
-    title: "Medinfo & Teknologi",
-    tagline: "Wadah Kreatif & Media Digital",
-    desc: "Mengasah kemampuan di bidang multimedia, publikasi visual, desain grafis, jurnalistik, serta pengembangan platform web inovatif untuk kabinet.",
+    title: "Media dan Informasi",
+    tagline: "Mata, Suara, dan Publikasi Kreatif",
+    desc: "Menjadi jembatan informasi bagi seluruh elemen Rumah Prestasi dengan memproduksi publikasi visual, desain grafis, multimedia, serta jurnalistik yang kreatif dan menginspirasi.",
     icon: "/divisions/medinfo.svg",
-    color: "#C36B62", // Terracotta
-    badge: "DIGITAL & CREATIVE",
-    feltAppleColor: "#C36B62",
+    color: "#06B6D4",
+    badge: "MEDIA & CREATIVE",
+    feltAppleColor: "#06B6D4",
     rotation: "-3deg"
   },
   {
-    title: "Pengembangan SDM (PSDM)",
-    tagline: "Kaderisasi & Pelatihan Kepemimpinan",
-    desc: "Fokus pada pemberdayaan potensi pengurus, mengelola sistem kaderisasi berkelanjutan, menyelenggarakan pelatihan kepemimpinan, dan membangun keakraban.",
-    icon: "/divisions/psdm.svg",
-    color: "#5B6B54", // Sage green
-    badge: "LEADERSHIP & TALENT",
-    feltAppleColor: "#5B6B54",
+    title: "Teknologi dan Rekayasa",
+    tagline: "Inovasi Sistem & Platform Digital",
+    desc: "Membangun sistem, infrastruktur digital, dan platform web yang andal, solutif, serta menunjang transformasi digital seluruh program kerja di Rumah Prestasi.",
+    icon: "/divisions/kominfo.svg",
+    color: "#1E40AF",
+    badge: "DIGITAL & SYSTEM",
+    feltAppleColor: "#1E40AF",
     rotation: "2deg"
   },
   {
-    title: "Litbang & Riset Keilmuan",
-    tagline: "Inkubasi Prestasi & Kajian Akademis",
-    desc: "Mendorong atmosfer riset ilmiah, inkubasi kompetisi nasional mahasiswa, penulisan kajian, serta menyelenggarakan diskusi akademis yang mendalam.",
-    icon: "/divisions/litbang.svg",
-    color: "#B8A88A", // Sandy gold
-    badge: "RESEARCH & STRATEGY",
-    feltAppleColor: "#B8A88A",
+    title: "Pengembangan Sumber Daya Talenta (PSDT)",
+    tagline: "Kaderisasi & Pelatihan Kepemimpinan",
+    desc: "Fokus pada pemberdayaan potensi talenta, mengelola sistem kaderisasi berkelanjutan, menyelenggarakan pelatihan kepemimpinan, dan membangun keakraban internal.",
+    icon: "/divisions/psdm.svg",
+    color: "#3B82F6",
+    badge: "LEADERSHIP & TALENT",
+    feltAppleColor: "#3B82F6",
     rotation: "-4deg"
   },
   {
-    title: "Kewirausahaan (Kewirus)",
-    tagline: "Kemandirian Finansial & Creative Hub",
-    desc: "Mengembangkan jiwa entrepreneurship bagi pengurus dan mahasiswa melalui pengelolaan unit bisnis kreatif, penjualan merchandise, dan pendanaan mandiri.",
+    title: "Riset dan Kreatifitas",
+    tagline: "Inkubasi Inovasi & Gagasan Baru",
+    desc: "Mendorong iklim berpikir kritis, riset inovatif, inkubasi gagasan, serta memfasilitasi keikutsertaan pengurus dalam ajang kompetisi nasional.",
+    icon: "/divisions/litbang.svg",
+    color: "#10B981",
+    badge: "RESEARCH & CREATIVE",
+    feltAppleColor: "#10B981",
+    rotation: "3deg"
+  },
+  {
+    title: "Penalaran dan Literasi",
+    tagline: "Budaya Membaca & Kajian Akademis",
+    desc: "Membudayakan kegemaran membaca, berdiskusi ilmiah secara kritis, dan menyusun kajian strategis untuk menyebarkan kebermanfaatan ilmu pengetahuan.",
+    icon: "/divisions/litbang.svg",
+    color: "#8B5CF6",
+    badge: "ACADEMIC & LITERACY",
+    feltAppleColor: "#8B5CF6",
+    rotation: "-2deg"
+  },
+  {
+    title: "Seni dan Karakter",
+    tagline: "Imajinasi, Ekspresi, & Seni Budaya",
+    desc: "Wadah kreativitas seni dan budaya untuk memperindah Rumah Prestasi. Mengembangkan potensi bakat non-akademis pengurus dalam suasana yang harmonis.",
+    icon: "/divisions/senbud.svg",
+    color: "#EC4899",
+    badge: "ARTS & CULTURE",
+    feltAppleColor: "#EC4899",
+    rotation: "2deg"
+  },
+  {
+    title: "Sertifikasi",
+    tagline: "Standardisasi & Sertifikasi Profesional",
+    desc: "Meningkatkan daya saing dan keahlian pengurus melalui persiapan program pelatihan kompetensi serta standarisasi keahlian untuk masa depan karir.",
+    icon: "/divisions/nondivisi.svg",
+    color: "#F59E0B",
+    badge: "PROFESSIONAL COMPETENCY",
+    feltAppleColor: "#F59E0B",
+    rotation: "-3deg"
+  },
+  {
+    title: "Kewirausahaan dan Karir",
+    tagline: "Kemandirian Finansial & Mental Bisnis",
+    desc: "Mengembangkan jiwa entrepreneurship melalui unit usaha kreatif, merchandise, dan kolaborasi finansial guna mewujudkan kemandirian ekonomi organisasi.",
     icon: "/divisions/kewirus.svg",
-    color: "#D4A828", // Trophy gold
+    color: "#10B981",
     badge: "BUSINESS & FINTECH",
-    feltAppleColor: "#D4A828",
+    feltAppleColor: "#10B981",
     rotation: "3deg"
   }
 ];
@@ -862,7 +902,10 @@ export default function Home() {
       );
       if (!found) { setNotFound(true); setIsLoading(false); return; }
       const foundMsg = messagesList.find((m) => m.staffNim === found.nim && m.message.trim() !== "");
-      const foundDept = departmentsList.find((d) => d.name.toLowerCase() === found.departemen.toLowerCase());
+      const foundDept = departmentsList.find(
+        (d) => d.id === found.departemen.toLowerCase() ||
+          d.name.toLowerCase() === found.departemen.toLowerCase()
+      );
       setApplicant(found);
       setPersonalMessage(foundMsg?.message ?? "");
       setDeptInfo(foundDept ?? null);
@@ -1081,7 +1124,7 @@ export default function Home() {
                   ))}
                 </div>
                 <button
-                  disabled={activeLandingCard === 3}
+                  disabled={activeLandingCard === LANDING_DEPARTMENTS.length - 1}
                   onClick={() => setActiveLandingCard(prev => prev + 1)}
                   className="btn-light text-[10px] px-3 py-1 rounded-full disabled:opacity-30 cursor-pointer"
                 >
@@ -1317,22 +1360,23 @@ export default function Home() {
                             </div>
 
                             <div className="space-y-5 text-left">
-                              <div className="sf-card-line flex items-center gap-3 border-b border-[#B8A88A]/30 pb-4 mt-2">
-                                <div className="relative shrink-0">
-                                  <div className="absolute -inset-1 rounded-full border border-dashed border-[#5B6B54]" />
+                              <div className="sf-card-line flex flex-col items-center gap-3 border-b border-[#B8A88A]/30 pb-4 mt-2">
+                                {/* Premium Stitched Photo Polaroid Frame */}
+                                <div className="relative w-28 h-28 sm:w-32 sm:h-32 rotate-[-2deg] shadow-md border border-[#8B7E66]/40 p-1.5 bg-white rounded-sm transition-transform duration-300 hover:rotate-[1deg] hover:scale-105">
+                                  <div className="absolute top-[-10px] left-[35%] w-8 h-4 bg-[#8B7E66]/15 backdrop-blur-[1px] border-x border-[#8B7E66]/20 rotate-[12deg] shadow-[0_1px_2px_rgba(0,0,0,0.05)] pointer-events-none" />
                                   <img
                                     src={deptInfo?.kadepPhoto ?? "/image/foto_kadep.png"}
                                     alt={deptInfo?.kadepName ?? "Kadep"}
-                                    className="w-12 h-12 rounded-full object-cover bg-stone-100 border border-white"
+                                    className="w-full h-full object-cover bg-stone-100 filter brightness-[1.02] contrast-[0.98]"
                                   />
                                 </div>
-                                <div>
-                                  <h4 className="text-[13px] font-bold text-[#5B6B54] font-serif leading-tight">{deptInfo?.kadepName ?? "Kepala Departemen"}</h4>
-                                  <p className="text-[9px] text-[#B8A88A] font-bold uppercase tracking-wider mt-0.5">Ketua {deptInfo?.name ?? applicant.departemen}</p>
+                                <div className="text-center">
+                                  <h4 className="text-[14px] sm:text-[15px] font-black text-[#5B6B54] font-serif leading-tight">{deptInfo?.kadepName ?? "Kepala Departemen"}</h4>
+                                  <p className="text-[9px] text-[#B8A88A] font-bold uppercase tracking-widest mt-1">Ketua {deptInfo?.name ?? applicant.departemen}</p>
                                 </div>
                               </div>
 
-                              <div className="sf-card-line text-[12px] leading-relaxed text-[#5C5549] font-medium font-serif italic pl-4 border-l-2 border-[#5B6B54] bg-[#EDF6FC]/20 py-2 pr-2 rounded-r-lg">
+                              <div className="sf-card-line text-[12px] leading-relaxed text-[#5C5549] font-medium font-serif italic pl-4 border-l-2 border-[#5B6B54] bg-[#EDF6FC]/20 py-2.5 pr-2.5 rounded-r-lg">
                                 &ldquo;{deptInfo?.message ?? "Selamat bergabung! Mari berkarya dan melangkah bersama demi masa depan gemilang di departemen ini."}&rdquo;
                               </div>
                             </div>
@@ -1357,22 +1401,23 @@ export default function Home() {
                             </div>
 
                             <div className="space-y-5 text-left">
-                              <div className="sf-card-line flex items-center gap-3 border-b border-[#B8A88A]/30 pb-4 mt-2">
-                                <div className="relative shrink-0">
-                                  <div className="absolute -inset-1 rounded-full border border-dashed border-[#D4A828]" />
+                              <div className="sf-card-line flex flex-col items-center gap-3 border-b border-[#B8A88A]/30 pb-4 mt-2">
+                                {/* Premium Stitched Photo Polaroid Frame for President */}
+                                <div className="relative w-28 h-28 sm:w-32 sm:h-32 rotate-[1.5deg] shadow-md border border-[#8B7E66]/40 p-1.5 bg-white rounded-sm transition-transform duration-300 hover:rotate-[-1deg] hover:scale-105">
+                                  <div className="absolute top-[-10px] left-[35%] w-8 h-4 bg-[#8B7E66]/15 backdrop-blur-[1px] border-x border-[#8B7E66]/20 rotate-[-8deg] shadow-[0_1px_2px_rgba(0,0,0,0.05)] pointer-events-none" />
                                   <img
-                                    src="/image/foto_ketum.png"
+                                    src="/image/ketua_rumah_prestasi.jpg"
                                     alt="Ahmad Izzuddin Azzam"
-                                    className="w-12 h-12 rounded-full object-cover bg-stone-100 border border-white"
+                                    className="w-full h-full object-cover bg-stone-100 filter brightness-[1.02] contrast-[0.98]"
                                   />
                                 </div>
-                                <div>
-                                  <h4 className="text-[13px] font-bold text-[#5B6B54] font-serif leading-tight">Ahmad Izzuddin Azzam</h4>
-                                  <p className="text-[9px] text-[#B8A88A] font-bold uppercase tracking-wider mt-0.5">Ketua Umum BEM</p>
+                                <div className="text-center">
+                                  <h4 className="text-[14px] sm:text-[15px] font-black text-[#5B6B54] font-serif leading-tight">Ahmad Izzuddin Azzam</h4>
+                                  <p className="text-[9px] text-[#B8A88A] font-bold uppercase tracking-widest mt-1">Ketua Umum Rumah Prestasi</p>
                                 </div>
                               </div>
 
-                              <div className="sf-card-line text-[12px] leading-relaxed text-[#5C5549] font-medium font-serif italic pl-4 border-l-2 border-[#D4A828] bg-[#FFFBEB]/45 py-2 pr-2 rounded-r-lg">
+                              <div className="sf-card-line text-[12px] leading-relaxed text-[#5C5549] font-medium font-serif italic pl-4 border-l-2 border-[#D4A828] bg-[#FFFBEB]/45 py-2.5 pr-2.5 rounded-r-lg">
                                 {personalMessage ? (
                                   <span>&ldquo;{personalMessage}&rdquo;</span>
                                 ) : (
