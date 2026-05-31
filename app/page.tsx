@@ -46,6 +46,7 @@ interface DepartmentData {
   color: string;
   message: string;
   leaders?: { name: string; role: string; photo: string; message: string; }[];
+  coordinates?: { x: number; y: number };
 }
 
 /* ======================================================
@@ -77,7 +78,7 @@ const LANDING_DEPARTMENTS = [
   {
     title: "Pengembangan Sumber Daya Talenta (PSDT)",
     tagline: "Kaderisasi & Pelatihan Kepemimpinan",
-    desc: "Fokus pada pemberdayaan potensi talenta, mengelola sistem kaderisasi berkelanjutan, menyelenggarakan pelatihan kepemimpinan, dan membangun keakraban internal.",
+    desc: "Fokus pada pemberdayaan potensi talenta, mengelola sistem kaderisasi berkelanjutan, menyelenggarakan pelatihan kepemimpinan, and membangun keakraban internal.",
     icon: "/divisions/psdm.svg",
     color: "#3B82F6",
     badge: "LEADERSHIP & TALENT",
@@ -99,7 +100,7 @@ const LANDING_DEPARTMENTS = [
   {
     title: "Penalaran dan Literasi",
     tagline: "Budaya Membaca & Kajian Akademis",
-    desc: "Membudayakan kegemaran membaca, berdiskusi ilmiah secara kritis, dan menyusun kajian strategis untuk menyebarkan kebermanfaatan ilmu pengetahuan.",
+    desc: "Membudayakan kegemaran membaca, berdiskusi ilmiah secara kritis, and menyusun kajian strategis untuk menyebarkan kebermanfaatan ilmu pengetahuan.",
     icon: "/divisions/litbang.svg",
     color: "#8B5CF6",
     badge: "ACADEMIC & LITERACY",
@@ -179,6 +180,37 @@ const getDeptId = (title: string) => {
   return "";
 };
 
+const getDivisionCompetitions = (deptId: string, roleName: string) => {
+  const r = roleName.toLowerCase();
+  const d = deptId.toLowerCase();
+  
+  if (d === "teknologi") {
+    if (r.includes("gemastik")) return "Mengoordinasikan Kompetisi GEMASTIK Nasional (Ajang IT paling bergengsi tingkat nasional).";
+    if (r.includes("lidm")) return "Mengoordinasikan Lomba Inovasi Digital Mahasiswa (LIDM) Puspresnas.";
+  }
+  if (d === "seni") {
+    if (r.includes("mtq")) return "Mengoordinasikan Musabaqah Tilawatil Qur'an (MTQ) Mahasiswa Nasional.";
+    if (r.includes("seni")) return "Mengoordinasikan Festival & Kompetisi Seni Budaya Mahasiswa.";
+  }
+  if (d === "medinfo") {
+    if (r.includes("publikasi")) return "Mengoordinasikan branding media, publikasi visual, & dokumentasi resmi kabinet.";
+    if (r.includes("design")) return "Mengoordinasikan produksi aset visual grafis, motion design, & konten kreatif.";
+  }
+  if (d === "literasi") {
+    if (r.includes("pilmapres")) return "Mengoordinasikan Pemilihan Mahasiswa Berprestasi (Pilmapres) tingkat Fakultas & Universitas.";
+    if (r.includes("nudc") || r.includes("kdmi")) return "Mengoordinasikan Kompetisi Debat Bahasa Inggris (NUDC) & Debat Bahasa Indonesia (KDMI).";
+  }
+  if (d === "riset") {
+    if (r.includes("pkm")) return "Mengoordinasikan Program Kreativitas Mahasiswa (PKM) 5 Bidang & PKM-GFK menuju PIMNAS.";
+    if (r.includes("on-mipa") || r.includes("onmipa")) return "Mengoordinasikan Olimpiade Nasional Matematika & Ilmu Pengetahuan Alam (ON-MIPA).";
+  }
+  if (d === "kewirausahaan") {
+    if (r.includes("p2mw")) return "Mengoordinasikan Program Pembinaan Mahasiswa Wirausaha (P2MW) Kemendikbudristek.";
+    if (r.includes("inkubator")) return "Mengoordinasikan program pembinaan wirausaha muda, mentoring bisnis, & scale-up startup.";
+  }
+  return "Membina pembinaan minat-bakat serta menyalurkan delegasi kompetisi resmi nasional.";
+};
+
 /* ======================================================
    PAGE COMPONENT
    ====================================================== */
@@ -188,6 +220,7 @@ export default function Home() {
   const [personalMessage, setPersonalMessage] = useState<string>("");
   const [deptInfo, setDeptInfo] = useState<DepartmentData | null>(null);
   const [notFound, setNotFound] = useState(false);
+  const [selectedDept, setSelectedDept] = useState<DepartmentData | null>(null);
 
   // Resolve leader1 and leader2 for the results cards split
   const getDepartmentLeaders = (dept: DepartmentData | null, app: ApplicantData | null) => {
@@ -325,8 +358,6 @@ export default function Home() {
       console.warn("Failed playing SFX:", e);
     }
   }, [isMuted]);
-
-
 
   // 0C. Click-to-Burst cursor confetti emitter
   const handlePageClick = (e: React.MouseEvent) => {
@@ -708,7 +739,7 @@ export default function Home() {
       ease: "power2.inOut"
     });
 
-    // Seal fade out
+    // Wax Seal fade out
     tl.to(".envelope-wax-seal", {
       scale: 0.8,
       opacity: 0,
@@ -1038,29 +1069,7 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Desktop/Tablet Middle Navigation Links (Flowblox inspired) */}
-          {/* <nav className="hidden md:flex items-center gap-6">
-            {["Tentang", "Departemen", "Galeri", "Hubungi"].map((link) => (
-              <span 
-                key={link}
-                onClick={applicant ? undefined : scrollToPortal}
-                className="text-[12px] font-semibold text-[#4A7BA5] hover:text-[#0D2B4E] transition-colors duration-200 cursor-pointer"
-              >
-                {link}
-              </span>
-            ))}
-          </nav> */}
-
           <div className="flex items-center gap-2.5">
-            {/* Audio Toggle */}
-            {/* <button
-              onClick={() => setIsMuted(prev => !prev)}
-              className="btn-light text-[11px] font-bold px-3.5 py-1.5 rounded-full shadow-sm flex items-center gap-1.5 hover:scale-105 transition-all duration-200 cursor-pointer"
-              title={isMuted ? "Aktifkan Suara" : "Matikan Suara"}
-            >
-              {isMuted ? "🔇 Suara Off" : "🔊 Suara On"}
-            </button> */}
-
             {!applicant ? (
               <button
                 onClick={scrollToPortal}
@@ -1131,7 +1140,13 @@ export default function Home() {
                     <div
                       key={idx}
                       style={cardStyle}
-                      onClick={() => setActiveLandingCard(idx)}
+                      onClick={() => {
+                        if (activeLandingCard === idx) {
+                          setSelectedDept(matchedDept || null);
+                        } else {
+                          setActiveLandingCard(idx);
+                        }
+                      }}
                       className="absolute w-[240px] sm:w-[270px] h-[280px] sm:h-[310px] transition-all duration-700 ease-out-back cursor-pointer select-none origin-center"
                     >
                       {/* Department card element with Sarah Ferguson stitched details */}
@@ -1162,13 +1177,14 @@ export default function Home() {
 
                         {/* Stitched Photo Polaroid Frame inside main card */}
                         {leaders && leaders.length > 0 ? (
-                          <div className="my-2 flex justify-center items-center gap-1.5 sm:gap-2.5 overflow-visible">
+                          <div className="my-3 flex -space-x-3 sm:-space-x-4 hover:space-x-1 sm:hover:space-x-1.5 transition-all duration-300 justify-center items-center overflow-visible">
                             {leaders.map((leader, lIdx) => {
-                              const rotation = lIdx === 0 ? "rotate-[-4deg]" : lIdx === 1 ? "rotate-[3deg]" : "rotate-[-2deg]";
+                              const rotation = lIdx === 0 ? "rotate-[-6deg]" : lIdx === 1 ? "rotate-[5deg]" : "rotate-[-3deg]";
+                              const sizeClass = leaders.length === 3 ? "w-18 h-18 sm:w-22 sm:h-22" : "w-22 h-22 sm:w-26 sm:h-26";
                               return (
                                 <div
                                   key={lIdx}
-                                  className={`relative w-12 h-12 sm:w-15 sm:h-15 ${rotation} shadow-sm border border-[#8B7E66]/30 p-0.5 bg-white rounded-sm transition-all duration-300 hover:scale-110 hover:z-30 hover:rotate-0`}
+                                  className={`relative ${sizeClass} ${rotation} shadow-md border border-[#8B7E66]/30 p-0.5 bg-white rounded-sm transition-all duration-300 hover:scale-115 hover:z-30 hover:rotate-0`}
                                   title={`${leader.name} (${leader.role})`}
                                 >
                                   <div className="absolute top-[-5px] left-[30%] w-4 h-2 bg-[#8B7E66]/15 backdrop-blur-[0.5px] border-x border-[#8B7E66]/20 rotate-[10deg] pointer-events-none" />
@@ -1183,8 +1199,8 @@ export default function Home() {
                           </div>
                         ) : (
                           dept.photo && (
-                            <div className="my-2.5 flex justify-center overflow-visible">
-                              <div className="relative w-20 h-20 sm:w-22 sm:h-22 rotate-[-1.5deg] shadow-sm border border-[#8B7E66]/30 p-1 bg-white rounded-sm transition-transform duration-300 hover:rotate-[1deg] hover:scale-105">
+                            <div className="my-3 flex justify-center overflow-visible">
+                              <div className="relative w-28 h-28 sm:w-32 sm:h-32 rotate-[-1.5deg] shadow-md border border-[#8B7E66]/30 p-1.5 bg-white rounded-sm transition-transform duration-300 hover:rotate-[1deg] hover:scale-105">
                                 <div className="absolute top-[-7px] left-[35%] w-6 h-3 bg-[#8B7E66]/15 backdrop-blur-[0.5px] border-x border-[#8B7E66]/20 rotate-[10deg] shadow-[0_1px_2px_rgba(0,0,0,0.03)] pointer-events-none" />
                                 <img
                                   src={dept.photo}
@@ -1209,10 +1225,19 @@ export default function Home() {
               </div>
 
               {/* Detail drawer representing active card info */}
-              <div className="w-full max-w-[500px] text-center px-4 py-2 mt-2">
+              <div className="w-full max-w-[500px] text-center px-4 py-2 mt-2 flex flex-col items-center gap-3">
                 <p className="text-xs text-[#5C5549] leading-relaxed italic bg-white/45 backdrop-blur-sm rounded-xl px-5 py-4 border border-[#C2DFF0]/30 shadow-sm font-sans">
                   {LANDING_DEPARTMENTS[activeLandingCard].desc}
                 </p>
+                <button
+                  onClick={() => {
+                    const matched = departmentsList.find(d => d.id === getDeptId(LANDING_DEPARTMENTS[activeLandingCard].title));
+                    setSelectedDept(matched || null);
+                  }}
+                  className="btn-light text-[10px] font-bold px-4 py-1.5 rounded-full shadow-sm hover:scale-105 transition-all duration-200 cursor-pointer border border-[#8B7E66]/20 bg-white"
+                >
+                  Pelajari Lebih Lanjut ➜
+                </button>
               </div>
 
               {/* Navigation dots and arrows */}
@@ -1240,8 +1265,6 @@ export default function Home() {
                 </button>
               </div>
             </div>
-
-
 
             {/* NIM Check Dedicated Section (id="check-portal") */}
             <div id="check-portal" className="hero-el w-full max-w-[440px] mt-4">
@@ -1564,13 +1587,13 @@ export default function Home() {
                                 <div className="relative w-28 h-28 sm:w-32 sm:h-32 rotate-[1.5deg] shadow-md border border-[#8B7E66]/40 p-1.5 bg-white rounded-sm transition-transform duration-300 hover:rotate-[-1deg] hover:scale-105">
                                   <div className="absolute top-[-10px] left-[35%] w-8 h-4 bg-[#8B7E66]/15 backdrop-blur-[1px] border-x border-[#8B7E66]/20 rotate-[-8deg] shadow-[0_1px_2px_rgba(0,0,0,0.05)] pointer-events-none" />
                                   <img
-                                    src="/image/ketua_rumah_prestasi.jpg"
+                                    src="/divisions/ketua_rumah_prestasi.jpg"
                                     alt="Ahmad Izzuddin Azzam"
                                     className="w-full h-full object-cover bg-stone-100 filter brightness-[1.02] contrast-[0.98]"
                                   />
                                 </div>
                                 <div className="text-center">
-                                  <h4 className="text-[14px] sm:text-[15px] font-black text-[#5B6B54] font-serif leading-tight">Ahmad Izzuddin Azzam</h4>
+                                  <h4 className="text-[14px] sm:text-[15px] font-black text-[#5B6B54] font-serif leading-tight">Ahmad Izzuddin Azzam (Kemakom)</h4>
                                   <p className="text-[9px] text-[#B8A88A] font-bold uppercase tracking-widest mt-1">Ketua Umum Rumah Prestasi</p>
                                 </div>
                               </div>
@@ -1753,6 +1776,180 @@ export default function Home() {
           </div>
         )}
       </main>
+
+      {/* ── Department Details Modal/Overlay ── */}
+      {selectedDept && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-stone-900/65 backdrop-blur-[5px] p-4 cursor-auto select-text">
+          <div className="sf-card w-full max-w-2xl max-h-[85vh] overflow-y-auto relative p-6 sm:p-9 shadow-2xl rounded-2xl bg-linen-ivory border-2 border-[#8B7E66]/50">
+            <div className="sf-stitched-border" />
+            <div className="sf-paperclip" style={{ right: "48px" }} />
+            
+            {/* Close Button */}
+            <button
+              onClick={() => setSelectedDept(null)}
+              className="absolute top-4 right-4 w-8 h-8 rounded-full border border-[#8B7E66]/30 bg-[#FCFAF2] text-[#8B7E66] hover:bg-stone-100 flex items-center justify-center font-bold text-sm shadow-sm transition-all duration-200 z-50 cursor-pointer"
+            >
+              ✕
+            </button>
+
+            <div className="space-y-6 pt-4 text-left">
+              {/* Header */}
+              <div className="space-y-2 border-b border-[#B8A88A]/30 pb-4">
+                <span 
+                  style={{ color: selectedDept.color }}
+                  className="text-[9px] font-bold tracking-widest uppercase block"
+                >
+                  Informasi Departemen
+                </span>
+                <h2 className="text-2xl font-serif font-black text-[#5B6B54] tracking-tight leading-tight">
+                  {selectedDept.fullName}
+                </h2>
+                <p className="text-xs text-[#4A7BA5] italic font-medium leading-relaxed mt-1">
+                  "{LANDING_DEPARTMENTS.find(d => getDeptId(d.title) === selectedDept.id)?.tagline || "Bergerak Berdampak"}"
+                </p>
+              </div>
+
+              {/* Main Description */}
+              <div className="bg-[#EDF6FC]/20 border border-[#C2DFF0]/30 rounded-xl p-4 shadow-inner">
+                <p className="text-[12px] sm:text-xs text-[#5C5549] leading-relaxed font-sans font-medium">
+                  {LANDING_DEPARTMENTS.find(d => getDeptId(d.title) === selectedDept.id)?.desc || selectedDept.message}
+                </p>
+              </div>
+
+              {/* Dynamic Leaders & Division Coordinates Layout */}
+              {selectedDept.leaders && selectedDept.leaders.length === 2 && (
+                /* BPH / PSDT / Sertifikasi (2 Leaders) Layout */
+                <div className="space-y-6">
+                  <h3 className="text-sm font-bold text-[#5B6B54] font-serif tracking-tight border-b border-dashed border-[#B8A88A]/20 pb-1.5 uppercase">
+                    Pimpinan Departemen / Umum
+                  </h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 items-center">
+                    {selectedDept.leaders.map((leader, lIdx) => {
+                      const rotation = lIdx === 0 ? "rotate-[-3deg]" : "rotate-[3deg]";
+                      return (
+                        <div key={lIdx} className="flex flex-col items-center gap-3">
+                          <div className={`relative w-36 h-36 sm:w-44 sm:h-44 ${rotation} shadow-md border border-[#8B7E66]/40 p-1.5 bg-white rounded-sm transition-transform duration-300 hover:rotate-0 hover:scale-105`}>
+                            <div className="absolute top-[-7px] left-[35%] w-6 h-3 bg-[#8B7E66]/15 backdrop-blur-[1px] border-x border-[#8B7E66]/20 rotate-[10deg] shadow-[0_1px_2px_rgba(0,0,0,0.05)] pointer-events-none" />
+                            <img
+                              src={leader.photo}
+                              alt={leader.name}
+                              className="w-full h-full object-cover rounded-sm filter brightness-[1.01]"
+                            />
+                          </div>
+                          <div className="text-center">
+                            <h4 className="text-xs font-black text-[#5B6B54] font-serif leading-tight text-center">
+                              {leader.name}
+                            </h4>
+                            <p className="text-[9px] text-[#B8A88A] font-bold uppercase tracking-widest mt-1 text-center">
+                              {leader.role}
+                            </p>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                  
+                  {/* General Greeting */}
+                  {selectedDept.message && selectedDept.message !== "kata kata belum ada" && (
+                    <div className="bg-[#FCFAF2] border-l-4 border-[#5B6B54] p-3.5 rounded-r-xl shadow-sm italic text-xs text-[#5C5549] leading-relaxed whitespace-pre-line font-serif">
+                      &ldquo;{selectedDept.message}&rdquo;
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {selectedDept.leaders && selectedDept.leaders.length === 3 && (
+                /* 3 Leaders (Kadep + 2 Kadivs) Layout */
+                <div className="space-y-6">
+                  {/* Kadep Section */}
+                  <div className="space-y-4">
+                    <h3 className="text-sm font-bold text-[#5B6B54] font-serif tracking-tight border-b border-dashed border-[#B8A88A]/20 pb-1.5 uppercase">
+                      Kepala Departemen
+                    </h3>
+                    <div className="flex flex-col sm:flex-row items-center gap-5 bg-[#FCFAF2] p-4 rounded-xl border border-[#8B7E66]/15">
+                      <div className="relative w-32 h-32 sm:w-40 sm:h-40 rotate-[-2.5deg] shadow-md border border-[#8B7E66]/40 p-1 bg-white rounded-sm shrink-0 transition-transform duration-300 hover:rotate-0">
+                        <div className="absolute top-[-7px] left-[35%] w-6 h-3 bg-[#8B7E66]/15 backdrop-blur-[1px] border-x border-[#8B7E66]/20 rotate-[10deg] shadow-[0_1px_2px_rgba(0,0,0,0.05)] pointer-events-none" />
+                        <img
+                          src={selectedDept.leaders[0].photo}
+                          alt={selectedDept.leaders[0].name}
+                          className="w-full h-full object-cover rounded-sm filter brightness-[1.01]"
+                        />
+                      </div>
+                      <div className="text-left space-y-2 flex-1">
+                        <div>
+                          <h4 className="text-sm font-black text-[#5B6B54] font-serif">
+                            {selectedDept.leaders[0].name}
+                          </h4>
+                          <p className="text-[9px] text-[#B8A88A] font-bold uppercase tracking-widest mt-0.5">
+                            {selectedDept.leaders[0].role}
+                          </p>
+                        </div>
+                        {selectedDept.message && selectedDept.message !== "kata kata belum ada" ? (
+                          <p className="text-[11px] text-[#5C5549] leading-relaxed italic font-serif">
+                            &ldquo;{selectedDept.message.length > 180 ? selectedDept.message.substring(0, 180) + "..." : selectedDept.message}&rdquo;
+                          </p>
+                        ) : (
+                          <p className="text-[11px] text-[#8AACCC] italic">
+                            "Selamat berproses di departemen kami. Bersama-sama, mari kita kembangkan minat bakat dan ukir sejarah prestasi!"
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Divisions Section */}
+                  <div className="space-y-4">
+                    <h3 className="text-sm font-bold text-[#5B6B54] font-serif tracking-tight border-b border-dashed border-[#B8A88A]/20 pb-1.5 uppercase">
+                      Divisi & Penanggung Jawab Lomba
+                    </h3>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      {selectedDept.leaders.slice(1).map((kadiv, kIdx) => {
+                        const rotation = kIdx === 0 ? "rotate-[-1.5deg]" : "rotate-[1.5deg]";
+                        const divName = kadiv.role.replace("Kadiv", "Divisi");
+                        const compDesc = getDivisionCompetitions(selectedDept.id, kadiv.role);
+                        return (
+                          <div key={kIdx} className="bg-white/60 hover:bg-white/80 p-4 border border-[#8B7E66]/20 rounded-xl flex flex-col justify-between shadow-sm transition-all duration-300">
+                            <div className="flex items-center gap-3">
+                              <div className={`relative w-24 h-24 sm:w-28 sm:h-28 ${rotation} shadow-sm border border-[#8B7E66]/30 p-0.5 bg-white rounded-sm shrink-0`}>
+                                <img
+                                  src={kadiv.photo}
+                                  alt={kadiv.name}
+                                  className="w-full h-full object-cover rounded-sm filter brightness-[1.01]"
+                                />
+                              </div>
+                              <div className="text-left leading-tight">
+                                <span className="text-[8px] font-extrabold tracking-wide px-1.5 py-0.5 rounded border border-[#8B7E66]/20 bg-[#FCFAF2] text-[#B8A88A] uppercase">
+                                  {divName}
+                                </span>
+                                <h4 className="text-xs font-black text-[#5B6B54] font-serif mt-1">
+                                  {kadiv.name}
+                                </h4>
+                                <p className="text-[8px] text-[#4A7BA5] font-semibold uppercase mt-0.5">
+                                  {kadiv.role}
+                                </p>
+                              </div>
+                            </div>
+                            
+                            {/* Competition Description Card */}
+                            <div className="bg-[#FCFAF2]/65 border border-dashed border-[#B8A88A]/35 rounded-lg p-2.5 mt-3 text-left">
+                              <span className="text-[8px] font-black text-[#B8931F] uppercase block tracking-wider mb-0.5">
+                                FOKUS UTAMA & BIDANG LOMBA:
+                              </span>
+                              <p className="text-[10px] text-[#5C5549] leading-normal font-sans font-medium">
+                                {compDesc}
+                              </p>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ── Footer ── */}
       <footer className="relative z-10 w-full py-8 px-5 border-t border-[#C2DFF0]/50 bg-white/50 backdrop-blur-sm">
