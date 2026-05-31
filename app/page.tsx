@@ -1779,8 +1779,8 @@ export default function Home() {
 
       {/* ── Department Details Modal/Overlay ── */}
       {selectedDept && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-stone-900/65 backdrop-blur-[5px] p-4 cursor-auto select-text">
-          <div className="sf-card w-full max-w-2xl max-h-[85vh] overflow-y-auto relative p-6 sm:p-9 shadow-2xl rounded-2xl bg-linen-ivory border-2 border-[#8B7E66]/50">
+        <div className="fixed inset-0 z-[100] overflow-y-auto bg-stone-900/65 backdrop-blur-[5px] p-4 cursor-auto select-text flex justify-center items-start">
+          <div className="sf-card w-full max-w-2xl relative p-6 sm:p-9 shadow-2xl rounded-2xl bg-linen-ivory border-2 border-[#8B7E66]/50 my-auto">
             <div className="sf-stitched-border" />
             <div className="sf-paperclip" style={{ right: "48px" }} />
             
@@ -1885,13 +1885,17 @@ export default function Home() {
                           </p>
                         </div>
                         {selectedDept.message && selectedDept.message !== "kata kata belum ada" ? (
-                          <p className="text-[11px] text-[#5C5549] leading-relaxed italic font-serif">
-                            &ldquo;{selectedDept.message.length > 180 ? selectedDept.message.substring(0, 180) + "..." : selectedDept.message}&rdquo;
-                          </p>
+                          <div className="max-h-[80px] sm:max-h-[95px] overflow-y-auto pr-1.5 scrollbar-thin">
+                            <p className="text-[11px] text-[#5C5549] leading-relaxed italic font-serif whitespace-pre-line">
+                              &ldquo;{selectedDept.message}&rdquo;
+                            </p>
+                          </div>
                         ) : (
-                          <p className="text-[11px] text-[#8AACCC] italic">
-                            "Selamat berproses di departemen kami. Bersama-sama, mari kita kembangkan minat bakat dan ukir sejarah prestasi!"
-                          </p>
+                          <div className="max-h-[80px] sm:max-h-[95px] overflow-y-auto pr-1.5">
+                            <p className="text-[11px] text-[#8AACCC] italic font-serif">
+                              "Selamat berproses di departemen kami. Bersama-sama, mari kita kembangkan minat bakat dan ukir sejarah prestasi!"
+                            </p>
+                          </div>
                         )}
                       </div>
                     </div>
