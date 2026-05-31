@@ -6,7 +6,11 @@
     "kadepName": "Fathur Rahman",
     "kadepPhoto": "/divisions/kadep_psdt.jpg",
     "color": "#3B82F6",
-    "message": "kata kata belum ada"
+    "message": "kata kata belum ada",
+    "leaders": [
+      { "name": "Fathur Rahman", "role": "Ketua", "photo": "/divisions/kadep_psdt.jpg", "message": "kata kata belum ada" },
+      { "name": "Syahroni", "role": "Wakadep", "photo": "/divisions/psdt_wakadep.jpg", "message": "kata kata belum ada" }
+    ]
   },
   {
     "id": "seni",
@@ -15,7 +19,12 @@
     "kadepName": "Nadia Salsabila",
     "kadepPhoto": "/divisions/kadep_seni_dan_karakter.jpg",
     "color": "#EC4899",
-    "message": "kata kata belum ada"
+    "message": "kata kata belum ada",
+    "leaders": [
+      { "name": "Nadia Salsabila", "role": "Ketua", "photo": "/divisions/kadep_seni_dan_karakter.jpg", "message": "kata kata belum ada" },
+      { "name": "Ahmad Hilmi", "role": "Kadiv MTQ", "photo": "/divisions/seni_mtq.jpg", "message": "kata kata belum ada" },
+      { "name": "Siti Rahma", "role": "Kadiv Seni", "photo": "/divisions/seni_senbud.jpg", "message": "kata kata belum ada" }
+    ]
   },
   {
     "id": "medinfo",
@@ -24,7 +33,12 @@
     "kadepName": "Rian Adi Wijaya",
     "kadepPhoto": "/divisions/kadep_media_dan_informasi.jpg",
     "color": "#06B6D4",
-    "message": "kata kata belum ada"
+    "message": "HAI!!! welcomee to Medinfo Rumah Prestasi FPMIPA ✨ seneng banget bisa bertemu dan berproses bareng kalian di sini. semoga Medinfo bukan cuma jadi tempat untuk belajar desain atau publikasi aja, tapi juga jadi ruang buat saling berkembang, berbagi ide, bikin karya keren, dan sama-sama menyebarkan semangat prestasi untuk mahasiswa FPMIPA 🚀 let’s grow, create, and inspire together 🤩",
+    "leaders": [
+      { "name": "Rian Adi Wijaya", "role": "Ketua", "photo": "/divisions/kadep_media_dan_informasi.jpg", "message": "HAI!!! welcomee to Medinfo Rumah Prestasi FPMIPA ✨ seneng banget bisa bertemu dan berproses bareng kalian di sini. semoga Medinfo bukan cuma jadi tempat untuk belajar desain atau publikasi aja, tapi juga jadi ruang buat saling berkembang, berbagi ide, bikin karya keren, dan sama-sama menyebarkan semangat prestasi untuk mahasiswa FPMIPA 🚀 let’s grow, create, and inspire together 🤩" },
+      { "name": "Giri Mukti", "role": "Kadiv Publikasi", "photo": "/divisions/medinfo_publikasi.jpg", "message": "kata kata belum ada" },
+      { "name": "Dewi Sinta", "role": "Kadiv Design", "photo": "/divisions/medinfo_design.jpg", "message": "kata kata belum ada" }
+    ]
   },
   {
     "id": "riset",
@@ -33,7 +47,12 @@
     "kadepName": "Ahmad Dani",
     "kadepPhoto": "/divisions/kadep_riset_dan_kreatifitas.jpg",
     "color": "#10B981",
-    "message": "kata kata belum ada"
+    "message": "Selamat datang di Departemen Riset dan Kreativitas! Di sinilah ide dikembangkan menjadi inovasi dan rasa ingin tahu diubah menjadi karya nyata. Mari bersama membangun budaya berpikir kritis, berkarya tanpa batas, dan menghadirkan kontribusi terbaik untuk kemajuan Rumah Prestasi.",
+    "leaders": [
+      { "name": "Ahmad Dani", "role": "Ketua", "photo": "/divisions/kadep_riset_dan_kreatifitas.jpg", "message": "Selamat datang di Departemen Riset dan Kreativitas! Di sinilah ide dikembangkan menjadi inovasi dan rasa ingin tahu diubah menjadi karya nyata. Mari bersama membangun budaya berpikir kritis, berkarya tanpa batas, dan menghadirkan kontribusi terbaik untuk kemajuan Rumah Prestasi." },
+      { "name": "Rian Hidayat", "role": "Kadiv PKM", "photo": "/divisions/riset_pkm.jpg", "message": "kata kata belum ada" },
+      { "name": "Fuji Astuti", "role": "Kadiv ON-MIPA", "photo": "/divisions/riset_onmipa.jpg", "message": "kata kata belum ada" }
+    ]
   },
   {
     "id": "literasi",
@@ -42,7 +61,12 @@
     "kadepName": "Siti Nurhaliza",
     "kadepPhoto": "/divisions/kadep_penalaran_dan_literasi.jpg",
     "color": "#8B5CF6",
-    "message": "kata kata belum ada"
+    "message": "kata kata belum ada",
+    "leaders": [
+      { "name": "Siti Nurhaliza", "role": "Ketua", "photo": "/divisions/kadep_penalaran_dan_literasi.jpg", "message": "kata kata belum ada" },
+      { "name": "Bayu Aji", "role": "Kadiv Pilmapres", "photo": "/divisions/penalaran_pilmapres.jpg", "message": "kata kata belum ada" },
+      { "name": "Larasati", "role": "Kadiv NUDC KDMI", "photo": "/divisions/penalaran_nudc.jpg", "message": "kata kata belum ada" }
+    ]
   },
   {
     "id": "teknologi",
@@ -51,7 +75,12 @@
     "kadepName": "Farhan Maulana",
     "kadepPhoto": "/divisions/kadep_teknologi_dan_rekayasa.jpg",
     "color": "#1E40AF",
-    "message": "kata kata belum ada"
+    "message": "Selamat datang dan selamat bergabung di Departemen Teknologi dan Rekayasa 🎉\n\nTerima kasih karena sudah bersedia menjadi bagian dari departemen ini. Ke depannya kita akan bersama-sama menghimpun, membina, dan memfasilitasi mahasiswa yang memiliki minat dalam bidang teknologi serta berbagai kompetisi seperti LIDM dan GEMASTIK.\n\nSemoga selama berada di departemen ini kalian bisa mendapatkan banyak pengalaman baru, relasi baru, ilmu baru, dan tentunya kesempatan untuk terus berkembang bersama.\n\nJangan takut untuk belajar, berpendapat, dan mencoba hal-hal baru karena di sini kita tumbuh dan berproses bersama.\n\nSekali lagi, selamat bergabung! 🚀\n\nSee you di pertemuan pertama nanti! ✨",
+    "leaders": [
+      { "name": "Farhan Maulana", "role": "Ketua", "photo": "/divisions/kadep_teknologi_dan_rekayasa.jpg", "message": "Selamat datang dan selamat bergabung di Departemen Teknologi dan Rekayasa 🎉\n\nTerima kasih karena sudah bersedia menjadi bagian dari departemen ini. Ke depannya kita akan bersama-sama menghimpun, membina, dan memfasilitasi mahasiswa yang memiliki minat dalam bidang teknologi serta berbagai kompetisi seperti LIDM dan GEMASTIK.\n\nSemoga selama berada di departemen ini kalian bisa mendapatkan banyak pengalaman baru, relasi baru, ilmu baru, dan tentunya kesempatan untuk terus berkembang bersama.\n\nJangan takut untuk belajar, berpendapat, dan mencoba hal-hal baru karena di sini kita tumbuh dan berproses bersama.\n\nSekali lagi, selamat bergabung! 🚀\n\nSee you di pertemuan pertama nanti! ✨" },
+      { "name": "Aris Munandar", "role": "Kadiv LIDM", "photo": "/divisions/teknologi_lidm.jpg", "message": "kata kata belum ada" },
+      { "name": "Budi Santoso", "role": "Kadiv Gemastik", "photo": "/divisions/teknologi_gemastik.jpg", "message": "kata kata belum ada" }
+    ]
   },
   {
     "id": "sertifikasi",
@@ -60,7 +89,11 @@
     "kadepName": "Zahra Annisa",
     "kadepPhoto": "/divisions/kadep_sertifikasi.jpg",
     "color": "#F59E0B",
-    "message": "kata kata belum ada"
+    "message": "kata kata belum ada",
+    "leaders": [
+      { "name": "Zahra Annisa", "role": "Ketua", "photo": "/divisions/kadep_sertifikasi.jpg", "message": "kata kata belum ada" },
+      { "name": "Taufik Hidayat", "role": "Wakadep", "photo": "/divisions/sertifikasi_wakadep.jpg", "message": "kata kata belum ada" }
+    ]
   },
   {
     "id": "kewirausahaan",
@@ -69,6 +102,37 @@
     "kadepName": "Rafi Pratama",
     "kadepPhoto": "/divisions/kadep_kewirausaan_dan_karir.jpg",
     "color": "#10B981",
-    "message": "kata kata belum ada"
+    "message": "Selamat Datang di Departemen Kewirausahaan dan Karir Rumah Prestasi FPMIPA UPI! \n\n​Punya mimpi besar di bidang bisnis tapi bingung harus mulai dari mana? Tenang, kamu berada di tempat yang tepat! Departemen ini adalah pusat inkubasi dan akselerasi yang siap membersamai perjalananmu. ​Kami berfokus pada tiga pilar utama, yaitu mendampingi dalam pembinaan lomba bisnis, memfasilitasi pengembangan ide hingga praktik bisnis dengan mentor-mentor yang berpengalaman, serta membuka wawasan seputar karir bisnis jangka panjang. Melalui Divisi Inkubator dan Divisi P2MW, mari berkolaborasi, bertumbuh bersama, and bawa pulang prestasi bisnis terbaik untuk FPMIPA!",
+    "leaders": [
+      { "name": "Rafi Pratama", "role": "Ketua", "photo": "/divisions/kadep_kewirausaan_dan_karir.jpg", "message": "Selamat Datang di Departemen Kewirausahaan dan Karir Rumah Prestasi FPMIPA UPI! \n\n​Punya mimpi besar di bidang bisnis tapi bingung harus mulai dari mana? Tenang, kamu berada di tempat yang tepat! Departemen ini adalah pusat inkubasi and akselerasi yang siap membersamai perjalananmu. ​Kami berfokus pada tiga pilar utama, yaitu mendampingi dalam pembinaan lomba bisnis, memfasilitasi pengembangan ide hingga praktik bisnis dengan mentor-mentor yang berpengalaman, serta membuka wawasan seputar karir bisnis jangka panjang. Melalui Divisi Inkubator dan Divisi P2MW, mari berkolaborasi, bertumbuh bersama, and bawa pulang prestasi bisnis terbaik untuk FPMIPA!" },
+      { "name": "Eka Putri", "role": "Kadiv Inkubator Bisnis", "photo": "/divisions/kewirausahaan_inkubator.jpg", "message": "kata kata belum ada" },
+      { "name": "Hendri Setiawan", "role": "Kadiv P2MW", "photo": "/divisions/kewirausahaan_p2mw.jpg", "message": "kata kata belum ada" }
+    ]
+  },
+  {
+    "id": "sekretaris",
+    "name": "Sekretaris",
+    "fullName": "Sekretaris Umum",
+    "kadepName": "Nasywa Putri Ramadhina",
+    "kadepPhoto": "/divisions/sekretaris.jpg",
+    "color": "#6B7280",
+    "message": "Selamat bergabung di keluarga Rumah Prestasi! Administrasi yang rapi adalah kunci kekuatan organisasi kita. Mari kita tertibkan administrasi, berkolaborasi dengan presisi, dan sukseskan seluruh agenda kabinet bersama-sama!",
+    "leaders": [
+      { "name": "Nasywa Putri Ramadhina", "role": "Sekretaris Umum 1", "photo": "/divisions/sekretaris.jpg", "message": "Selamat bergabung di keluarga Rumah Prestasi! Administrasi yang rapi adalah kunci kekuatan organisasi kita. Mari kita tertibkan administrasi, berkolaborasi dengan presisi, dan sukseskan seluruh agenda kabinet bersama-sama!" },
+      { "name": "Rifa Nur Habibah", "role": "Sekretaris Umum 2", "photo": "/divisions/sekretaris_2.jpg", "message": "kata kata belum ada" }
+    ]
+  },
+  {
+    "id": "bendahara",
+    "name": "Bendahara",
+    "fullName": "Bendahara Umum",
+    "kadepName": "Aurylia Taffana",
+    "kadepPhoto": "/divisions/bendahara.jpg",
+    "color": "#10B981",
+    "message": "Halo Bendahara Muda! Selamat datang di tim pengelola keuangan Rumah Prestasi. Keuangan yang sehat dan transparan adalah pilar sukses setiap kegiatan kita. Bersama-sama, mari kita jaga amanah, kelola dana secara cerdas, dan dukung prestasi kabinet!",
+    "leaders": [
+      { "name": "Aurylia Taffana", "role": "Bendahara Umum 1", "photo": "/divisions/bendahara.jpg", "message": "Halo Bendahara Muda! Selamat datang di tim pengelola keuangan Rumah Prestasi. Keuangan yang sehat dan transparan adalah pilar sukses setiap kegiatan kita. Bersama-sama, mari kita jaga amanah, kelola dana secara cerdas, dan dukung prestasi kabinet!" },
+      { "name": "Virgiani Azali Ishmah", "role": "Bendahara Umum 2", "photo": "/divisions/bendahara_2.jpg", "message": "kata kata belum ada" }
+    ]
   }
 ]

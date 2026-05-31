@@ -25,6 +25,7 @@ interface ApplicantData {
   nama: string;
   departemen: string;
   jabatan: string;
+  divisi?: string;
 }
 
 interface MessageData {
@@ -44,6 +45,7 @@ interface DepartmentData {
   kadepPhoto: string;
   color: string;
   message: string;
+  leaders?: { name: string; role: string; photo: string; message: string; }[];
 }
 
 /* ======================================================
@@ -58,7 +60,8 @@ const LANDING_DEPARTMENTS = [
     color: "#06B6D4",
     badge: "MEDIA & CREATIVE",
     feltAppleColor: "#06B6D4",
-    rotation: "-3deg"
+    rotation: "-3deg",
+    photo: "/divisions/kadep_media_dan_informasi.jpg"
   },
   {
     title: "Teknologi dan Rekayasa",
@@ -68,7 +71,8 @@ const LANDING_DEPARTMENTS = [
     color: "#1E40AF",
     badge: "DIGITAL & SYSTEM",
     feltAppleColor: "#1E40AF",
-    rotation: "2deg"
+    rotation: "2deg",
+    photo: "/divisions/kadep_teknologi_dan_rekayasa.jpg"
   },
   {
     title: "Pengembangan Sumber Daya Talenta (PSDT)",
@@ -78,7 +82,8 @@ const LANDING_DEPARTMENTS = [
     color: "#3B82F6",
     badge: "LEADERSHIP & TALENT",
     feltAppleColor: "#3B82F6",
-    rotation: "-4deg"
+    rotation: "-4deg",
+    photo: "/divisions/kadep_psdt.jpg"
   },
   {
     title: "Riset dan Kreatifitas",
@@ -88,7 +93,8 @@ const LANDING_DEPARTMENTS = [
     color: "#10B981",
     badge: "RESEARCH & CREATIVE",
     feltAppleColor: "#10B981",
-    rotation: "3deg"
+    rotation: "3deg",
+    photo: "/divisions/kadep_riset_dan_kreatifitas.jpg"
   },
   {
     title: "Penalaran dan Literasi",
@@ -98,7 +104,8 @@ const LANDING_DEPARTMENTS = [
     color: "#8B5CF6",
     badge: "ACADEMIC & LITERACY",
     feltAppleColor: "#8B5CF6",
-    rotation: "-2deg"
+    rotation: "-2deg",
+    photo: "/divisions/kadep_penalaran_dan_literasi.jpg"
   },
   {
     title: "Seni dan Karakter",
@@ -108,7 +115,8 @@ const LANDING_DEPARTMENTS = [
     color: "#EC4899",
     badge: "ARTS & CULTURE",
     feltAppleColor: "#EC4899",
-    rotation: "2deg"
+    rotation: "2deg",
+    photo: "/divisions/kadep_seni_dan_karakter.jpg"
   },
   {
     title: "Sertifikasi",
@@ -118,7 +126,8 @@ const LANDING_DEPARTMENTS = [
     color: "#F59E0B",
     badge: "PROFESSIONAL COMPETENCY",
     feltAppleColor: "#F59E0B",
-    rotation: "-3deg"
+    rotation: "-3deg",
+    photo: "/divisions/kadep_sertifikasi.jpg"
   },
   {
     title: "Kewirausahaan dan Karir",
@@ -128,9 +137,47 @@ const LANDING_DEPARTMENTS = [
     color: "#10B981",
     badge: "BUSINESS & FINTECH",
     feltAppleColor: "#10B981",
-    rotation: "3deg"
+    rotation: "3deg",
+    photo: "/divisions/kadep_kewirausaan_dan_karir.jpg"
+  },
+  {
+    title: "Sekretaris Umum",
+    tagline: "Administrasi & Pengarsipan Presisi",
+    desc: "Mengelola administrasi surat-menyurat, pengarsipan berkas penting, koordinasi agenda kerja kabinet, dan menyusun laporan pertanggungjawaban secara teratur.",
+    icon: "/divisions/nondivisi.svg",
+    color: "#6B7280",
+    badge: "ADMINISTRATION & SECRETARIAT",
+    feltAppleColor: "#6B7280",
+    rotation: "1deg",
+    photo: "/divisions/sekretaris.jpg"
+  },
+  {
+    title: "Bendahara Umum",
+    tagline: "Transparansi & Pengelolaan Keuangan",
+    desc: "Mengelola arus kas keuangan kabinet, penyusunan anggaran kegiatan, pengawasan realisasi dana, dan penyusunan laporan keuangan bulanan secara transparan.",
+    icon: "/divisions/nondivisi.svg",
+    color: "#10B981",
+    badge: "FINANCE & TREASURY",
+    feltAppleColor: "#10B981",
+    rotation: "-2deg",
+    photo: "/divisions/bendahara.jpg"
   }
 ];
+
+const getDeptId = (title: string) => {
+  const t = title.toLowerCase();
+  if (t.includes("media")) return "medinfo";
+  if (t.includes("teknologi")) return "teknologi";
+  if (t.includes("psdt") || t.includes("sumber daya talenta")) return "psdt";
+  if (t.includes("riset")) return "riset";
+  if (t.includes("penalaran") || t.includes("literasi")) return "literasi";
+  if (t.includes("seni")) return "seni";
+  if (t.includes("sertifikasi")) return "sertifikasi";
+  if (t.includes("wirausaha")) return "kewirausahaan";
+  if (t.includes("sekretaris")) return "sekretaris";
+  if (t.includes("bendahara")) return "bendahara";
+  return "";
+};
 
 /* ======================================================
    PAGE COMPONENT
@@ -141,6 +188,27 @@ export default function Home() {
   const [personalMessage, setPersonalMessage] = useState<string>("");
   const [deptInfo, setDeptInfo] = useState<DepartmentData | null>(null);
   const [notFound, setNotFound] = useState(false);
+
+  // Resolve leader1 and leader2 for the results cards split
+  const getDepartmentLeaders = (dept: DepartmentData | null, app: ApplicantData | null) => {
+    if (!dept || !dept.leaders || dept.leaders.length === 0) return { leader1: null, leader2: null };
+
+    const l1 = dept.leaders[0];
+    let l2 = null;
+
+    if (dept.leaders.length === 2) {
+      l2 = dept.leaders[1];
+    } else if (dept.leaders.length === 3 && app) {
+      const div = app.divisi || "";
+      const matched = dept.leaders.slice(1).find(l =>
+        l.role.toLowerCase().includes(div.toLowerCase())
+      );
+      l2 = matched || dept.leaders[1];
+    }
+    return { leader1: l1, leader2: l2 };
+  };
+
+  const { leader1, leader2 } = getDepartmentLeaders(deptInfo, applicant);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [applicantsList, setApplicantsList] = useState<ApplicantData[]>([]);
@@ -1020,15 +1088,15 @@ export default function Home() {
               </div>
 
               <h1 className="hero-el flow-hero-title mb-5">
-                Tumbuh Bersama, <br className="sm:hidden" />
-                Raih Prestasi di <br />
+                Selamat Datang <br className="sm:hidden" />
+                Orang Orang Hebat di<br />
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#C36B62] to-[#B8A88A]">
-                  Rumah Prestasi
+                  Rumah Prestasi FPMIPA
                 </span>
               </h1>
 
               <p className="hero-el text-xs sm:text-[14px] text-[#4A7BA5] max-w-xl mx-auto leading-relaxed mb-8">
-                Platform resmi penerimaan anggota baru Rumah Prestasi FPMIPA UPI 2026. Buka lembaran perjuanganmu, ukir prestasi terbaik, dan tumbuh bersama keluarga juara.
+                Tempat untuk kamu membuka lembaran , ukir prestasi terbaik, dan tumbuh bersama keluarga juara.
                 <span className="block mt-2 font-bold text-[#B8A88A] text-sm">#JuaranyaFPMIPA</span>
               </p>
 
@@ -1053,6 +1121,8 @@ export default function Home() {
               <div className="relative w-full h-[320px] sm:h-[350px] flex items-center justify-center perspective-[1200px] overflow-visible mt-4 mb-2">
                 {LANDING_DEPARTMENTS.map((dept, idx) => {
                   const cardStyle = getLandingCardStyle(idx);
+                  const matchedDept = departmentsList.find(d => d.id === getDeptId(dept.title));
+                  const leaders = matchedDept?.leaders || [];
                   return (
                     <div
                       key={idx}
@@ -1085,6 +1155,42 @@ export default function Home() {
                             {dept.title}
                           </h3>
                         </div>
+
+                        {/* Stitched Photo Polaroid Frame inside main card */}
+                        {leaders && leaders.length > 0 ? (
+                          <div className="my-2 flex justify-center items-center gap-1.5 sm:gap-2.5 overflow-visible">
+                            {leaders.map((leader, lIdx) => {
+                              const rotation = lIdx === 0 ? "rotate-[-4deg]" : lIdx === 1 ? "rotate-[3deg]" : "rotate-[-2deg]";
+                              return (
+                                <div
+                                  key={lIdx}
+                                  className={`relative w-12 h-12 sm:w-15 sm:h-15 ${rotation} shadow-sm border border-[#8B7E66]/30 p-0.5 bg-white rounded-sm transition-all duration-300 hover:scale-110 hover:z-30 hover:rotate-0`}
+                                  title={`${leader.name} (${leader.role})`}
+                                >
+                                  <div className="absolute top-[-5px] left-[30%] w-4 h-2 bg-[#8B7E66]/15 backdrop-blur-[0.5px] border-x border-[#8B7E66]/20 rotate-[10deg] pointer-events-none" />
+                                  <img
+                                    src={leader.photo}
+                                    alt={leader.name}
+                                    className="w-full h-full object-cover rounded-sm filter brightness-[1.01]"
+                                  />
+                                </div>
+                              );
+                            })}
+                          </div>
+                        ) : (
+                          dept.photo && (
+                            <div className="my-2.5 flex justify-center overflow-visible">
+                              <div className="relative w-20 h-20 sm:w-22 sm:h-22 rotate-[-1.5deg] shadow-sm border border-[#8B7E66]/30 p-1 bg-white rounded-sm transition-transform duration-300 hover:rotate-[1deg] hover:scale-105">
+                                <div className="absolute top-[-7px] left-[35%] w-6 h-3 bg-[#8B7E66]/15 backdrop-blur-[0.5px] border-x border-[#8B7E66]/20 rotate-[10deg] shadow-[0_1px_2px_rgba(0,0,0,0.03)] pointer-events-none" />
+                                <img
+                                  src={dept.photo}
+                                  alt={dept.title}
+                                  className="w-full h-full object-cover rounded-sm filter brightness-[1.01]"
+                                />
+                              </div>
+                            </div>
+                          )
+                        )}
 
                         <div className="text-left">
                           <p className="text-[10px] text-[#4A7BA5] italic font-medium leading-relaxed">
@@ -1282,7 +1388,7 @@ export default function Home() {
 
                 {/* 3D Arc Card Deck */}
                 <div className="relative w-full h-[450px] flex items-center justify-center perspective-[1200px] overflow-visible mb-6">
-                  {[0, 1, 2, 3].map((idx) => {
+                  {[0, 1, 2, 3, 4].map((idx) => {
                     const cardStyle = getCardStyle(idx);
                     return (
                       <div
@@ -1345,8 +1451,8 @@ export default function Home() {
                           </div>
                         )}
 
-                        {idx === 1 && (
-                          /* Card 1: Sambutan Ketua Departemen */
+                        {idx === 1 && leader1 && (
+                          /* Card 1: Sambutan Ketua Departemen / Sekre 1 / Bendahara 1 */
                           <div className="sf-card w-full p-8 sm:p-9 min-h-[400px] flex flex-col justify-between border border-[#8B7E66]/40 shadow-lg relative h-full bg-linen-ivory">
                             <div className="sf-stitched-border" />
                             <div className="sf-paperclip" />
@@ -1361,34 +1467,84 @@ export default function Home() {
 
                             <div className="space-y-5 text-left">
                               <div className="sf-card-line flex flex-col items-center gap-3 border-b border-[#B8A88A]/30 pb-4 mt-2">
-                                {/* Premium Stitched Photo Polaroid Frame */}
-                                <div className="relative w-28 h-28 sm:w-32 sm:h-32 rotate-[-2deg] shadow-md border border-[#8B7E66]/40 p-1.5 bg-white rounded-sm transition-transform duration-300 hover:rotate-[1deg] hover:scale-105">
-                                  <div className="absolute top-[-10px] left-[35%] w-8 h-4 bg-[#8B7E66]/15 backdrop-blur-[1px] border-x border-[#8B7E66]/20 rotate-[12deg] shadow-[0_1px_2px_rgba(0,0,0,0.05)] pointer-events-none" />
+                                {/* Premium Polaroid Frame for Leader 1 */}
+                                <div className="relative w-24 h-24 sm:w-28 sm:h-28 rotate-[-3deg] shadow-md border border-[#8B7E66]/40 p-1 bg-white rounded-sm transition-transform duration-300 hover:rotate-[1deg] hover:scale-105">
+                                  <div className="absolute top-[-7px] left-[35%] w-6 h-3 bg-[#8B7E66]/15 backdrop-blur-[1px] border-x border-[#8B7E66]/20 rotate-[10deg] shadow-[0_1px_2px_rgba(0,0,0,0.05)] pointer-events-none" />
                                   <img
-                                    src={deptInfo?.kadepPhoto ?? "/image/foto_kadep.png"}
-                                    alt={deptInfo?.kadepName ?? "Kadep"}
+                                    src={leader1.photo}
+                                    alt={leader1.name}
                                     className="w-full h-full object-cover bg-stone-100 filter brightness-[1.02] contrast-[0.98]"
                                   />
                                 </div>
                                 <div className="text-center">
-                                  <h4 className="text-[14px] sm:text-[15px] font-black text-[#5B6B54] font-serif leading-tight">{deptInfo?.kadepName ?? "Kepala Departemen"}</h4>
-                                  <p className="text-[9px] text-[#B8A88A] font-bold uppercase tracking-widest mt-1">Ketua {deptInfo?.name ?? applicant.departemen}</p>
+                                  <h4 className="text-[13px] sm:text-[14px] font-black text-[#5B6B54] font-serif leading-tight">
+                                    {leader1.name}
+                                  </h4>
+                                  <p className="text-[9px] text-[#B8A88A] font-bold uppercase tracking-widest mt-1">
+                                    {leader1.role}
+                                  </p>
                                 </div>
                               </div>
 
-                              <div className="sf-card-line text-[12px] leading-relaxed text-[#5C5549] font-medium font-serif italic pl-4 border-l-2 border-[#5B6B54] bg-[#EDF6FC]/20 py-2.5 pr-2.5 rounded-r-lg">
-                                &ldquo;{deptInfo?.message ?? "Selamat bergabung! Mari berkarya dan melangkah bersama demi masa depan gemilang di departemen ini."}&rdquo;
+                              <div className="sf-card-line text-[11px] sm:text-[12px] leading-relaxed text-[#5C5549] font-medium font-serif italic pl-4 border-l-2 border-[#5B6B54] bg-[#EDF6FC]/20 py-2.5 pr-2.5 rounded-r-lg max-h-[160px] overflow-y-auto whitespace-pre-line">
+                                &ldquo;{leader1.message || "Selamat bergabung! Mari berkarya dan melangkah bersama demi masa depan gemilang di departemen ini."}&rdquo;
                               </div>
                             </div>
 
                             <div className="sf-card-line text-[9px] font-bold text-[#B8A88A] tracking-wider uppercase relative z-10 font-serif text-left">
-                              — KETUA DEPARTEMEN
+                              — {leader1.role.toUpperCase()}
                             </div>
                           </div>
                         )}
 
-                        {idx === 2 && (
-                          /* Card 2: Pesan Ketua Umum BEM */
+                        {idx === 2 && leader2 && (
+                          /* Card 2: Sambutan Wakadep / Kadiv / Sekre 2 / Bendahara 2 */
+                          <div className="sf-card w-full p-8 sm:p-9 min-h-[400px] flex flex-col justify-between border border-[#8B7E66]/40 shadow-lg relative h-full bg-linen-ivory">
+                            <div className="sf-stitched-border" />
+                            <div className="sf-paperclip" />
+
+                            {/* Stitched felt apple bottom right */}
+                            <div className="absolute bottom-6 right-8 w-11 h-11 bg-[#C36B62] rounded-full border border-dashed border-white flex items-center justify-center shadow-md transform rotate-[-12deg] z-10 animate-floatGentle-2">
+                              <div className="w-7 h-7 bg-[#FCFAF2] rounded-full border border-dashed border-[#8B7E66]/40 flex items-center justify-center">
+                                <span className="text-[4px] text-[#8B7E66] font-bold">● ●</span>
+                              </div>
+                              <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-1.5 h-3 bg-[#8B7E66] rounded-sm origin-bottom" />
+                            </div>
+
+                            <div className="space-y-5 text-left">
+                              <div className="sf-card-line flex flex-col items-center gap-3 border-b border-[#B8A88A]/30 pb-4 mt-2">
+                                {/* Premium Polaroid Frame for Leader 2 */}
+                                <div className="relative w-24 h-24 sm:w-28 sm:h-28 rotate-[3deg] shadow-md border border-[#8B7E66]/40 p-1 bg-white rounded-sm transition-transform duration-300 hover:rotate-[-1deg] hover:scale-105">
+                                  <div className="absolute top-[-7px] left-[35%] w-6 h-3 bg-[#8B7E66]/15 backdrop-blur-[1px] border-x border-[#8B7E66]/20 rotate-[-10deg] shadow-[0_1px_2px_rgba(0,0,0,0.05)] pointer-events-none" />
+                                  <img
+                                    src={leader2.photo}
+                                    alt={leader2.name}
+                                    className="w-full h-full object-cover bg-stone-100 filter brightness-[1.02] contrast-[0.98]"
+                                  />
+                                </div>
+                                <div className="text-center">
+                                  <h4 className="text-[13px] sm:text-[14px] font-black text-[#5B6B54] font-serif leading-tight">
+                                    {leader2.name}
+                                  </h4>
+                                  <p className="text-[9px] text-[#B8A88A] font-bold uppercase tracking-widest mt-1">
+                                    {leader2.role}
+                                  </p>
+                                </div>
+                              </div>
+
+                              <div className="sf-card-line text-[11px] sm:text-[12px] leading-relaxed text-[#5C5549] font-medium font-serif italic pl-4 border-l-2 border-[#5B6B54] bg-[#EDF6FC]/20 py-2.5 pr-2.5 rounded-r-lg max-h-[160px] overflow-y-auto whitespace-pre-line">
+                                &ldquo;{leader2.message || "Selamat bergabung! Mari berkarya dan melangkah bersama demi masa depan gemilang di departemen ini."}&rdquo;
+                              </div>
+                            </div>
+
+                            <div className="sf-card-line text-[9px] font-bold text-[#B8A88A] tracking-wider uppercase relative z-10 font-serif text-left">
+                              — {leader2.role.toUpperCase()}
+                            </div>
+                          </div>
+                        )}
+
+                        {idx === 3 && (
+                          /* Card 3: Pesan Ketua Umum BEM */
                           <div className="sf-card w-full p-8 sm:p-9 min-h-[400px] flex flex-col justify-between border border-[#8B7E66]/40 shadow-lg relative h-full bg-linen-ivory">
                             <div className="sf-stitched-border" />
                             <div className="sf-paperclip" />
@@ -1432,8 +1588,8 @@ export default function Home() {
                           </div>
                         )}
 
-                        {idx === 3 && (
-                          /* Card 3: Langkah Selanjutnya (Next Steps) */
+                        {idx === 4 && (
+                          /* Card 4: Langkah Selanjutnya (Next Steps) */
                           <div className="sf-card w-full p-8 sm:p-9 min-h-[400px] flex flex-col justify-between border border-[#8B7E66]/40 shadow-lg relative h-full bg-linen-ivory">
                             <div className="sf-stitched-border" />
                             <div className="sf-paperclip" />
@@ -1490,7 +1646,7 @@ export default function Home() {
                     ← Kembali
                   </button>
                   <div className="progress flex justify-center gap-1.5 shrink-0 mx-2">
-                    {[0, 1, 2, 3].map(dot => (
+                    {[0, 1, 2, 3, 4].map(dot => (
                       <span
                         key={dot}
                         onClick={() => { setActiveLetter(dot); playSFX("whoosh"); }}
@@ -1499,7 +1655,7 @@ export default function Home() {
                     ))}
                   </div>
                   <button
-                    disabled={activeLetter === 3}
+                    disabled={activeLetter === 4}
                     onClick={() => { setActiveLetter(prev => prev + 1); playSFX("whoosh"); }}
                     className="btn-light text-[11px] px-3.5 py-1.5 rounded-lg disabled:opacity-30 disabled:cursor-not-allowed shrink-0 cursor-pointer"
                   >
